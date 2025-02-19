@@ -1,0 +1,46 @@
+/* SimpleMDE Dark Mode Overrides */
+.dark .EasyMDEContainer .CodeMirror {
+  background-color: rgb(24 24 27) !important;
+  border-color: rgb(39 39 42) !important;
+  color: rgb(244 244 245) !important;
+}
+
+.dark .editor-toolbar {
+  background-color: rgb(24 24 27) !important;
+  border-color: rgb(39 39 42) !important;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}  color: rgb(244 244 245) !important;  background-color: rgb(24 24 27) !important;.dark .editor-preview {}  background: rgb(63 63 70) !important;.dark .CodeMirror-line > span > span::selection {.dark .CodeMirror-line > span::selection,.dark .CodeMirror-line::selection,}  background: rgb(39 39 42) !important;.dark .CodeMirror-selected {}  border-color: rgb(244 244 245) !important;.dark .CodeMirror-cursor {}  border-color: rgb(39 39 42) !important;.dark .editor-toolbar i.separator {}  border-color: rgb(63 63 70) !important;  background: rgb(39 39 42) !important;.dark .editor-toolbar button.active {.dark .editor-toolbar button:hover,}  color: rgb(161 161 170) !important;.dark .editor-toolbar button {}
