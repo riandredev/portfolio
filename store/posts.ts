@@ -10,6 +10,7 @@ interface PostsStore {
   addPost: (post: Post) => Promise<void>
   updatePost: (post: Post) => Promise<void>
   deletePost: (id: string) => Promise<void>
+  setPosts: (posts: Post[]) => void
 }
 
 export const usePostsStore = create<PostsStore>()(

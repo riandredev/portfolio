@@ -2,10 +2,6 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { getIpInfo } from '@/lib/ip'
 
-const VALID_EMAIL = process.env.AUTH_EMAIL
-const VALID_PASSWORD = process.env.AUTH_PASSWORD
-const TOKEN_SECRET = process.env.AUTH_TOKEN
-
 export async function POST(request: Request) {
   try {
     const body = await request.json()

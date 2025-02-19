@@ -39,9 +39,7 @@ export default function ContentBlocks({ blocks }: ContentBlocksProps) {
       case 'paragraph':
         return <ParagraphBlock key={block.id} content={block.content} />;
       case 'list':
-        return Array.isArray(block.content)
-          ? <ListBlock key={block.id} items={block.content} />
-          : <ListBlock key={block.id} items={block.items} />;
+        return <ListBlock key={block.id} items={block.items} />;
       case 'heading':
         return <HeadingBlock key={block.id} content={block.content} />;
       case 'note':

@@ -1,3 +1,5 @@
+import SeparatorBlock from "@/components/content-blocks/separator-block";
+
 export type Post = {
   _id: string;
   title: string;
@@ -25,7 +27,8 @@ export type ContentBlockTypes =
   | 'image'
   | 'video'
   | 'note'
-  | 'list';  // Add list type
+  | 'list'  // Add list type
+  | 'separator';  // Add separator type
 
 export type ContentBlockBase = {
   id: string;
@@ -77,6 +80,10 @@ export type ListBlock = ContentBlockBase & {
   items: string[];
 }
 
+export type SeparatorBlock = ContentBlockBase & {
+  type: 'separator';
+}
+
 export type ContentBlock =
   | HeadingBlock
   | ParagraphBlock
@@ -84,4 +91,5 @@ export type ContentBlock =
   | ImageBlock
   | VideoBlock
   | NoteBlock
-  | ListBlock;  // Add ListBlock to union type
+  | ListBlock  // Add ListBlock to union type
+  | SeparatorBlock;

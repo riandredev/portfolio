@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ContentBlock, Post } from '@/types/post'
+import { ContentBlock, Post, ContentBlockTypes } from '@/types/post'
 import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
 import FileUpload from '@/components/file-upload'
@@ -26,6 +26,15 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [sourceUrl, setSourceUrl] = useState('')
   const [pinned, setPinned] = useState(false)
   const [logo, setLogo] = useState('')
+
+    const blockTypes: { type: ContentBlockTypes; label: string }[] = [
+      { type: 'heading', label: 'Heading' },
+      { type: 'paragraph', label: 'Paragraph' },
+      { type: 'code', label: 'Code' },
+      { type: 'image', label: 'Image' },
+      { type: 'video', label: 'Video' },
+      { type: 'note', label: 'Note' },
+    ]
 
   // Load post data
   useEffect(() => {
@@ -245,6 +254,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
             <BlockEditor
               blocks={blocks}
               onChange={setBlocks}
+              blockTypes={blockTypes}
             />
           </div>
 

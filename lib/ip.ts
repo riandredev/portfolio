@@ -11,7 +11,7 @@ export async function getIpInfo(ip: string) {
       city: data.city,
       region: data.region
     }
-  } catch (error) {
+  } catch {
     return {
       ip,
       location: 'Unknown',

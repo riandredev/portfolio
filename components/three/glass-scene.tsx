@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useRef, useEffect } from 'react'
-import { Vector3, Mesh, Group } from 'three'
+import { Mesh, Group } from 'three'
 import {
   MeshTransmissionMaterial,
   Environment,
@@ -55,7 +55,7 @@ function Scene() {
 
     // More dynamic material distortion
     if (mainMeshRef.current && mainMeshRef.current.material) {
-      const material = mainMeshRef.current.material as any
+      const material = mainMeshRef.current.material as typeof MeshTransmissionMaterial.prototype
       material.distortion = 0.8 + Math.sin(state.clock.getElapsedTime()) * 0.2 + smoothedScrollRef.current * 0.7
       material.transmission = 1 - smoothedScrollRef.current * 0.3
     }

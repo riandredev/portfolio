@@ -39,7 +39,6 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false)
     const navRef = useRef<HTMLDivElement>(null)
 
-    const isPostPage = pathname.startsWith('/posts/')
     const isHomePage = pathname === '/'
 
     // Improved route matching

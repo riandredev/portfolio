@@ -76,7 +76,7 @@ export function VisitorsTable() {
                   <div className="flex items-center gap-2">
                     {visitor.countryCode && (
                       <Image
-                        src={getFlagUrl(visitor.countryCode, 24)}
+                        src={getFlagUrl(visitor.countryCode, 24) || '/default-flag.png'}
                         alt={`Flag of ${visitor.country}`}
                         className="w-6 h-auto rounded"
                         width={32}

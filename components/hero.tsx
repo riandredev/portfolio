@@ -3,7 +3,6 @@ import { useScroll, useTransform, motion } from 'framer-motion'
 import HeroContent from './hero-content'
 import dynamic from 'next/dynamic'
 import { useGraphics } from '@/context/graphics-context'
-import { useGraphicsStore } from '@/store/graphics'
 
 const SceneWrapper = dynamic(() => import('./three/scene-wrapper'), {
   ssr: false,
@@ -12,8 +11,6 @@ const SceneWrapper = dynamic(() => import('./three/scene-wrapper'), {
 export default function Hero() {
   const { enable3D } = useGraphics()
   const { scrollYProgress } = useScroll()
-  const { sceneLoaded } = useGraphicsStore()
-
   const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0])
 
   return (

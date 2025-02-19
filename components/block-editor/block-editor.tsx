@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ContentBlock, ContentBlockTypes, HeadingBlock, ParagraphBlock, CodeBlock, ImageBlock, VideoBlock, NoteBlock, ListBlock } from '@/types/post'
 import { Plus, GripVertical } from 'lucide-react'
 import HeadingBlockEditor from './heading-block-editor'
@@ -12,6 +11,7 @@ import ListBlockEditor from './list-block-editor'
 interface BlockEditorProps {
   blocks: ContentBlock[]
   onChange: (blocks: ContentBlock[]) => void
+  blockTypes: { type: ContentBlockTypes; label: string }[]
 }
 
 const blockTypes: { type: ContentBlockTypes; label: string }[] = [

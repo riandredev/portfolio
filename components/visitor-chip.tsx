@@ -97,7 +97,7 @@ export default function VisitorChip() {
       isMounted = false
       window.removeEventListener('scroll', handleScroll)
     }
-  }, []) // Remove dependencies to prevent re-runs
+  }, [currentLocation, fetchLatestVisitor, lastVisitor, setCurrentLocation, updateVisitor])
 
   // Show loading state only during initial load
   const showLoading = isLoading && !initialLoadComplete
@@ -116,7 +116,7 @@ export default function VisitorChip() {
         <div className="flex items-center gap-2.5 px-3 h-[32px] border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white/80 dark:bg-zinc-800/80">
           {lastVisitor.country_code && (
             <Image
-              src={getFlagUrl(lastVisitor.country_code, 32)}
+              src={getFlagUrl(lastVisitor.country_code, 32) || ''}
               alt={`Flag of ${lastVisitor.country}`}
               className="w-5 h-auto rounded"
               width={32}

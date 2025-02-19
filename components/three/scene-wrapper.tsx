@@ -26,7 +26,7 @@ function LoadingSpinner() {
 
 export default function SceneWrapper() {
   const [isLoading, setIsLoading] = useState(true)
-  const { sceneLoaded, setSceneLoaded } = useGraphicsStore()
+  const { sceneLoaded } = useGraphicsStore()
 
   useEffect(() => {
     setIsLoading(true)

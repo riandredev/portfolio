@@ -9,4 +9,4 @@ if (!password) {
 
 const salt = randomBytes(16).toString('hex')
 console.log('Generated AUTH_SALT:', salt)
-console.log('Generated AUTH_PASSWORD:', hashPassword(password))
+console.log('Generated AUTH_PASSWORD:', hashPassword(password, salt))

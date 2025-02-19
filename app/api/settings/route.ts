@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const settings = await getSettings()
     return NextResponse.json(settings)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to get settings' }, { status: 500 })
   }
 }
@@ -23,7 +23,7 @@ export async function PUT(request: Request) {
     const data = await request.json()
     const settings = await updateSettings(data)
     return NextResponse.json(settings)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 })
   }
 }

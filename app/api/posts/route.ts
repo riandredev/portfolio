@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { Post } from '@/types/post'
 
 export async function GET() {
   try {
@@ -46,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Remove the temporary ID and let MongoDB generate one
-    const { _id, ...postDataWithoutId } = postData
+    const { ...postDataWithoutId } = postData
 
     const result = await db
       .collection('posts')

@@ -33,7 +33,7 @@ export default function SettingsPage() {
       const response = await fetch('/api/settings')
       const data = await response.json()
       setSettings(data)
-    } catch (error) {
+    } catch {
       setError('Failed to load settings')
     } finally {
       setIsLoading(false)
@@ -67,11 +67,12 @@ export default function SettingsPage() {
       })
 
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Failed to save settings')
+    } catch (err: Error | unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save settings'
+      setError(errorMessage)
       setToast({
         show: true,
-        message: err.message || 'Failed to save settings',
+        message: errorMessage,
         type: 'error'
       })
     } finally {

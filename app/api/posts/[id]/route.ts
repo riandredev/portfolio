@@ -36,7 +36,7 @@ export async function PUT(
     const postData = await request.json()
     const db = await getDb()
 
-    const { _id, ...updateData } = postData
+    const { ...updateData } = postData
 
     const result = await db
       .collection('posts')

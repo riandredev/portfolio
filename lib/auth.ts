@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import getMongoDb  from './mongodb';
+import { getDb } from './mongodb';
 
 export function hashPassword(password: string, salt: string): string {
   return createHash('sha256')
@@ -31,7 +31,7 @@ export async function validateCredentials(email: string, password: string): Prom
 }
 
 export async function validateToken(token: string): Promise<boolean> {
-  const db = await getMongoDb();
+  const db = await getDb();
   const auth = await db.collection('auth').findOne({ authToken: token });
   return !!auth;
 }

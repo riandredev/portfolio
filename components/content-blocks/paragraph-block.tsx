@@ -1,6 +1,5 @@
 'use client'
 
-import { useTheme } from 'next-themes'
 import { ExternalLink } from 'lucide-react'
 
 interface ParagraphBlockProps {
@@ -8,8 +7,6 @@ interface ParagraphBlockProps {
 }
 
 export default function ParagraphBlock({ content }: ParagraphBlockProps) {
-  const { resolvedTheme } = useTheme()
-
   if (!content?.trim()) return null;
 
   const renderContent = () => {

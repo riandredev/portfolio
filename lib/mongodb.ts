@@ -14,7 +14,7 @@ let client: MongoClient
 let clientPromise: Promise<MongoClient>
 
 if (process.env.NODE_ENV === 'development') {
-  let globalWithMongo = global as typeof globalThis & {
+  const globalWithMongo = global as typeof globalThis & {
     _mongoClientPromise?: Promise<MongoClient>
   }
 
@@ -58,8 +58,16 @@ export async function ensureCappedCollection() {
   }
 }
 
+interface VisitorData {
+  city: string;
+  country: string;
+  countryCode: string;
+  userAgent: string;
+  timestamp: Date;
+}
+
 // Add this helper function
-export async function logVisitor(visitorData: any) {
+export async function logVisitor(visitorData: VisitorData) {
   try {
     const db = await getDb()
     const result = await db.collection('visitors').insertOne(visitorData)
@@ -125,7 +133,7 @@ interface Settings {
 export async function getSettings() {
   try {
     const db = await getDb()
-    const settings = await db.collection<Settings>('settings').findOne({ _id: 'global' })
+    const settings = await db.collection<{ _id: string } & Settings>('settings').findOne({ _id: 'global' })
     return settings || { _id: 'global', recentPostsLimit: 4 } // Default settings
   } catch (error) {
     console.error('Failed to get settings:', error)
@@ -133,11 +141,11 @@ export async function getSettings() {
   }
 }
 
-export async function updateSettings(settings: any) {
+export async function updateSettings(settings: Partial<Settings>) {
   try {
     const db = await getDb()
-    await db.collection('settings').updateOne(
-      { _id: 'global' },
+    await db.collection<Settings>('settings').updateOne(
+      { _id: 'global' } as Pick<Settings, '_id'>,
       { $set: settings },
       { upsert: true }
     )

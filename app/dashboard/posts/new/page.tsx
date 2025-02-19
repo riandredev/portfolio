@@ -85,9 +85,9 @@ export default function NewPostPage() {
       await addPost(newPost)
 
       router.push('/dashboard/posts')
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error creating post:', err)
-      setError(err.message || 'Failed to create post')
+      setError(err instanceof Error ? err.message : 'Failed to create post')
     } finally {
       setIsSubmitting(false)
     }
@@ -250,6 +250,7 @@ export default function NewPostPage() {
             <BlockEditor
               blocks={blocks}
               onChange={setBlocks}
+              blockTypes={blockTypes}
             />
           </div>
 
