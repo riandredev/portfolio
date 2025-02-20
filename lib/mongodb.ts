@@ -1,7 +1,12 @@
 import { MongoClient } from 'mongodb'
 
 if (!process.env.MONGODB_URI) {
-  throw new Error('Please add your Mongo URI to .env.local')
+  if (process.env.NODE_ENV === 'development') {
+    throw new Error('Please add your Mongo URI to .env.local')
+  }
+  // In production, log error and use fallback
+  console.error('MongoDB URI not found, using fallback configuration')
+  process.env.MONGODB_URI = 'mongodb://localhost:27017/portfolio'
 }
 
 const uri = process.env.MONGODB_URI

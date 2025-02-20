@@ -14,8 +14,12 @@ async function generateAuth() {
   }
 
   if (!process.env.MONGODB_URI) {
-    console.error('MONGODB_URI environment variable is not set');
-    process.exit(1);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('MONGODB_URI environment variable is not set')
+      process.exit(1)
+    }
+    // In production, use fallback
+    process.env.MONGODB_URI = 'mongodb://localhost:27017/portfolio'
   }
 
   const salt = randomBytes(16).toString('hex');
