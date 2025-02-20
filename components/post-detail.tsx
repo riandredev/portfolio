@@ -8,6 +8,7 @@ import ContentBlocks from './content-blocks'
 import PostNavigation from './post-navigation'
 import { useScrollSpy } from '@/hooks/use-scroll-spy'
 import { usePostsStore } from '@/store/posts'
+import TechnologyEntry from './technology-entry'
 
 // Move interfaces outside component
 interface Section {
@@ -16,7 +17,6 @@ interface Section {
   level: number
 }
 
-// Define DemoSourceButtons as a proper React component
 const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl?: string }) => (
   <div className="flex lg:flex-col w-full gap-2">
     {demoUrl && (
@@ -50,10 +50,58 @@ const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl
   </div>
 )
 
+const ContentMediaSection = ({ post }: { post: Post }) => (
+  <>
+    {/* Featured Media */}
+    {(post.video || post.image) && (
+      <div className="w-full rounded-lg sm:rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800/50 mb-6 sm:mb-8">
+        {post.video ? (
+          <video
+            src={post.video}
+            controls
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full aspect-video"
+          />
+        ) : post.image ? (
+          <div className="aspect-video relative">
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        ) : null}
+      </div>
+    )}
+
+    {/* Technologies Section - Moved here and updated styling */}
+    {post.technologies && post.technologies.length > 0 && (
+      <div className="md:mb-4 sm:mb-2">
+        <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">Built with</h2>
+        <div className="flex flex-wrap gap-3">
+          {post.technologies.map((tech, index) => (
+            <TechnologyEntry
+              key={index}
+              entry={tech}
+              className="flex-grow-0 min-w-fit !bg-white/50 dark:!bg-zinc-800/30 border border-zinc-200 dark:border-zinc-700/50"
+              invertInDark={!tech.darkModeLogo}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </>
+)
+
 export default function PostDetail({ post }: { post: Post }) {
   const { posts } = usePostsStore()
   const [sections, setSections] = useState<Section[]>([])
-  const articleRef = useRef<HTMLElement>(null) // Add this line
+  const articleRef = useRef<HTMLElement>(null)
 
   // Memoize section IDs
   const sectionIds = useMemo(() => sections.map(section => `#${section.id}`), [sections])
@@ -63,7 +111,6 @@ export default function PostDetail({ post }: { post: Post }) {
     rootMargin: '-20% 0% -35% 0%'
   })
 
-  // Memoize navigation posts
   const { prevPost, nextPost } = useMemo(() => {
     const currentIndex = posts.findIndex(p => p._id === post._id)
     return {
@@ -119,7 +166,7 @@ export default function PostDetail({ post }: { post: Post }) {
   // Memoize scroll handler
   const handleSectionClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId.replace('#', ''))
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
@@ -135,7 +182,6 @@ export default function PostDetail({ post }: { post: Post }) {
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
 
             <div className="h-px bg-gradient-to-r from-zinc-200 dark:from-zinc-700 to-transparent" />
-
             <nav className="space-y-1 flex-grow">
               {sections.map((section) => (
                 <a
@@ -144,7 +190,7 @@ export default function PostDetail({ post }: { post: Post }) {
                   onClick={(e) => handleSectionClick(e, section.id)}
                   className={`block py-1 text-sm transition-colors duration-200
                     ${section.level === 3 ? 'pl-4' : 'pl-0'}
-                    ${activeSection === section.id
+                    ${activeSection === `#${section.id}`
                       ? 'text-blue-500 dark:text-blue-400'
                       : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-300'
                     }`}
@@ -170,7 +216,7 @@ export default function PostDetail({ post }: { post: Post }) {
             </div>
           )}
 
-          <div className="flex gap-2 flex-wrap mb-12">
+          <div className="flex flex-wrap gap-2 mb-8">
             {post.tags.map((tag) => (
               <span
                 key={tag}
@@ -181,41 +227,16 @@ export default function PostDetail({ post }: { post: Post }) {
             ))}
           </div>
 
-          {/* Featured Media - Updated responsive margins */}
-          {(post.video || post.image) && (
-            <div className="w-full rounded-lg sm:rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800/50 mb-6 sm:mb-8">
-              {post.video ? (
-                <video
-                  src={post.video}
-                  controls
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full aspect-video"
-                />
-              ) : post.image ? (
-                <div className="aspect-video relative">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              ) : null}
-            </div>
-          )}
+          {/* Featured Media and Technologies */}
+          <ContentMediaSection post={post} />
 
-          {/* Demo & Source Links - Shown only on mobile */}
+          {/* Mobile Demo & Source Buttons - Shown only on mobile */}
           <div className="lg:hidden mb-8">
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
           </div>
 
           {/* Content - Updated responsive prose styles */}
           <div className="prose dark:prose-invert w-full max-w-none
-            prose-headings:font-light
             prose-p:text-base sm:prose-p:text-lg
             prose-p:text-zinc-700 dark:prose-p:text-zinc-300
             prose-h2:text-xl sm:prose-h2:text-2xl lg:prose-h2:text-3xl prose-h2:mt-8 prose-h2:-mb-2
@@ -224,9 +245,7 @@ export default function PostDetail({ post }: { post: Post }) {
             prose-img:rounded-lg
             prose-pre:max-w-none
             [&>pre]:w-full
-            [&>*:not(:last-child)]:mb-4
-            space-y-0
-            px-0 sm:px-0"
+            [&>*:not(:last-child)]:mb-4"
           >
             {post.content?.blocks && <ContentBlocks blocks={post.content.blocks} />}
           </div>

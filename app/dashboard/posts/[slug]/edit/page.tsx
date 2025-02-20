@@ -6,6 +6,9 @@ import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
 import FileUpload from '@/components/file-upload'
 import { generateSlug } from '@/lib/utils'
+import TechnologyEntry from '@/components/technology-entry'
+import { TechnologyEntry as TechnologyEntryType } from '@/types/post'
+import { getDefaultTechIcon } from '@/lib/tech-icons'
 
 export default function EditPostPage({ params }: { params: { slug: string } }) {
   const router = useRouter()
@@ -26,15 +29,20 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [sourceUrl, setSourceUrl] = useState('')
   const [pinned, setPinned] = useState(false)
   const [logo, setLogo] = useState('')
+  const [technologies, setTechnologies] = useState<TechnologyEntryType[]>([])
+  const [newTechName, setNewTechName] = useState('')
+  const [newTechLogo, setNewTechLogo] = useState('')
+  const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
+  const [newTechUrl, setNewTechUrl] = useState('')
 
-    const blockTypes: { type: ContentBlockTypes; label: string }[] = [
-      { type: 'heading', label: 'Heading' },
-      { type: 'paragraph', label: 'Paragraph' },
-      { type: 'code', label: 'Code' },
-      { type: 'image', label: 'Image' },
-      { type: 'video', label: 'Video' },
-      { type: 'note', label: 'Note' },
-    ]
+  const blockTypes: { type: ContentBlockTypes; label: string }[] = [
+    { type: 'heading', label: 'Heading' },
+    { type: 'paragraph', label: 'Paragraph' },
+    { type: 'code', label: 'Code' },
+    { type: 'image', label: 'Image' },
+    { type: 'video', label: 'Video' },
+    { type: 'note', label: 'Note' },
+  ]
 
   // Load post data
   useEffect(() => {
@@ -51,20 +59,23 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       setSourceUrl(post.sourceUrl || '')
       setPinned(post.pinned || false)
       setLogo(post.logo || '')
+      setTechnologies(post.technologies || [])
     }
   }, [params.slug, posts])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError('')
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
 
     try {
-      const post = posts.find(p => p.slug === params.slug)
-      if (!post) throw new Error('Post not found')
+      const existingPost = posts.find(p => p.slug === params.slug);
+      if (!existingPost || !existingPost._id) {
+        throw new Error('Post not found');
+      }
 
       const updatedPost: Post = {
-        ...post,
+        _id: existingPost._id, // Ensure we include the ID
         title,
         description,
         slug,
@@ -77,21 +88,20 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         logo: logo || undefined,
         content: {
           blocks
-        }
-      }
+        },
+        technologies,
+      };
 
-      await updatePost(updatedPost)
-      router.push('/dashboard/posts')
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('An unknown error occurred')
-      }
-      console.error('Update error:', err)
-      setIsSubmitting(false) // Allow retrying
+      await updatePost(updatedPost);
+      router.push('/dashboard/posts');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(`Failed to update post: ${errorMessage}`);
+      console.error('Update error:', err);
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleAddTag = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -101,6 +111,39 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       }
       setTagInput('')
     }
+  }
+
+  const handleAddTechnology = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newTechName) return
+
+    let techLogo = newTechLogo
+
+    // If no logo provided, try to get a default one
+    if (!techLogo) {
+      const defaultIcon = await getDefaultTechIcon(newTechName)
+      if (defaultIcon) {
+        techLogo = defaultIcon
+      } else {
+        // Alert user if no logo was provided and no default found
+        alert('Please provide a logo image or use a recognized technology name')
+        return
+      }
+    }
+
+    const newTech: TechnologyEntryType = {
+      name: newTechName,
+      logo: techLogo,
+      darkModeLogo: newTechDarkLogo || undefined,
+      useDefaultIcon: !newTechLogo, // Add flag to indicate if using default icon
+      url: newTechUrl || undefined  // Add URL to the tech entry
+    }
+
+    setTechnologies([...technologies, newTech])
+    setNewTechName('')
+    setNewTechLogo('')
+    setNewTechDarkLogo('')
+    setNewTechUrl('')
   }
 
   return (
@@ -249,36 +292,101 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          {/* Content Blocks */}
-          <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
-            <BlockEditor
-              blocks={blocks}
-              onChange={setBlocks}
-              blockTypes={blockTypes}
+          {/* Technologies */}
+          <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-6">
+            <h2 className="text-lg font-medium">Technologies</h2>
+
+            <div className="flex flex-wrap gap-2">
+              {technologies.map((tech, index) => (
+                <TechnologyEntry
+                  key={index}
+                  entry={tech}
+                  onDelete={() => setTechnologies(technologies.filter((_, i) => i !== index))}
+                />
+              ))}
+            </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Technology Name</label>
+            <input
+              type="text"
+              value={newTechName}
+              onChange={(e) => setNewTechName(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
             />
           </div>
 
-          <div className="flex justify-end gap-4">
-            {error && (
-              <p className="text-red-500 text-sm">{error}</p>
-            )}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </button>
+          <div>
+            <label className="block text-sm font-medium mb-2">Logo URL (Light Mode)</label>
+            <FileUpload
+              type="image"
+              value={newTechLogo}
+              onChange={setNewTechLogo}
+              accept="image/png"
+            />
           </div>
-        </form>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Logo URL (Dark Mode - Optional)</label>
+            <FileUpload
+              type="image"
+              value={newTechDarkLogo}
+              onChange={setNewTechDarkLogo}
+              accept="image/png"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Technology URL (Optional)</label>
+            <input
+              type="url"
+              value={newTechUrl}
+              onChange={(e) => setNewTechUrl(e.target.value)}
+              placeholder="https://technology-website.com"
+              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddTechnology}
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          >
+            Add Technology
+          </button>
+        </div>
       </div>
-    </div>
-  )
-}
+
+      {/* Content Blocks */}
+      <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
+        <BlockEditor
+          blocks={blocks}
+          onChange={setBlocks}
+          blockTypes={blockTypes}
+        />
+      </div>
+
+      <div className="flex justify-end gap-4">
+        {error && (
+          <p className="text-red-500 text-sm">{error}</p>
+        )}
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? 'Saving...' : 'Save Changes'}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+  )};

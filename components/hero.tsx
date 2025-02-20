@@ -14,10 +14,10 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0])
 
   return (
-    <div className="h-screen flex items-center overflow-hidden">
+    <div className="min-h-[50vh] lg:h-screen flex items-center overflow-hidden">
       <div className="container px-4 mx-auto">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-16">
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/2 py-12 lg:py-0">
             <HeroContent />
           </div>
           {enable3D && (

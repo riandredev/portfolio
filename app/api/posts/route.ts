@@ -1,71 +1,61 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/mongodb'
+import { NextRequest, NextResponse } from 'next/server';
+import { getDb } from '@/lib/mongodb';
+import { Post } from '@/types/post';
 
 export async function GET() {
   try {
-    const db = await getDb()
-    const posts = await db
-      .collection('posts')
-      .find({ }) // Empty query to get all documents
-      .sort({ publishedAt: -1 })
-      .toArray()
-
-    return NextResponse.json(posts)
+    const db = await getDb();
+    const posts = await db.collection('posts').find().toArray();
+    return NextResponse.json(posts.map(post => ({
+      ...post,
+      _id: post._id.toString()
+    })));
   } catch (error) {
-    console.error('Database error:', error)
-    return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 })
+    console.error('Fetch error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch posts' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const postData = await request.json()
-    console.log('Received post data:', postData)
+    const postData: Post = await request.json();
 
-    // Ensure required fields are present
-    if (!postData.title || !postData.description || !postData.slug || !postData.image) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+    // Check if this is a temporary post
+    if (postData.temporary === true) {
+      // Generate a temporary ID and return without saving to DB
+      const tempPost = {
+        ...postData,
+        _id: `temp-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      return NextResponse.json(tempPost);
     }
 
-    const db = await getDb()
+    // If not temporary, save to database
+    const db = await getDb();
+    const { _id, ...newPostData } = postData;
 
-    // Check if slug is unique
-    const existingPost = await db
-      .collection('posts')
-      .findOne({ slug: postData.slug })
+    const result = await db.collection('posts').insertOne({
+      ...newPostData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
 
-    if (existingPost) {
-      return NextResponse.json(
-        { error: 'A post with this slug already exists' },
-        { status: 400 }
-      )
-    }
+    const savedPost = {
+      ...newPostData,
+      _id: result.insertedId.toString(),
+    };
 
-    // Remove the temporary ID and let MongoDB generate one
-    const { ...postDataWithoutId } = postData
-
-    const result = await db
-      .collection('posts')
-      .insertOne({
-        ...postDataWithoutId,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
-
-    const newPost = {
-      ...postDataWithoutId,
-      _id: result.insertedId.toString()
-    }
-
-    return NextResponse.json(newPost)
+    return NextResponse.json(savedPost);
   } catch (error) {
-    console.error('Database error:', error)
+    console.error('Create error:', error);
     return NextResponse.json(
-      { error: 'Failed to create post: ' + (error as Error).message },
+      { error: 'Failed to create post' },
       { status: 500 }
-    )
+    );
   }
 }

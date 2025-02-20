@@ -14,16 +14,18 @@ export async function POST(request: Request) {
       )
     }
 
-    // Set auth cookie
+    // Set secure auth cookie
     cookies().set('auth_token', process.env.AUTH_TOKEN!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7 // 1 week
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      path: '/'
     })
 
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (error) {
+    console.error('Authentication error:', error)
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE() {
+  // Clear the auth cookie
   cookies().delete('auth_token')
   return NextResponse.json({ success: true })
 }

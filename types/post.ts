@@ -18,6 +18,8 @@ export type Post = {
     blocks: ContentBlock[];
   };
   logo?: string; // Added to match PostCard props
+  temporary?: boolean;  // New field
+  technologies?: TechnologyEntry[];
 }
 
 export type ContentBlockTypes =
@@ -93,3 +95,11 @@ export type ContentBlock =
   | NoteBlock
   | ListBlock  // Add ListBlock to union type
   | SeparatorBlock;
+
+export type TechnologyEntry = {
+  name: string;
+  logo: string;
+  darkModeLogo?: string;
+  useDefaultIcon?: boolean; // Add this field
+  url?: string; // Add this line
+}
