@@ -5,20 +5,15 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**',
-      },
-      ...(process.env.NODE_ENV === 'development' ? [
-        {
-          protocol: 'http',
-          hostname: 'localhost',
-        },
-        {
-          protocol: 'http',
-          hostname: '127.0.0.1',
-        }
-      ] : [])
+      }
     ],
+    domains: ['localhost', '127.0.0.1'],
   },
+  staticPageGenerationTimeout: 300,
   poweredByHeader: false,
+  // Add these options to ensure proper CSS bundling
+  optimizeFonts: true,
+  swcMinify: true,
   ...(process.env.NODE_ENV === 'production' && {
     headers: async () => [
       {

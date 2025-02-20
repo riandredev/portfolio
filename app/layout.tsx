@@ -1,7 +1,8 @@
 // app/layout.tsx
+import '@/styles/globals.css'
+import { ThemeProvider } from '@/components/providers/theme-provider'
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/ui/navbar";
 import Footer from '@/components/footer';
 import { GraphicsProvider } from '@/context/graphics-context'
@@ -17,6 +18,12 @@ const geistSans = localFont({
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
+const manrope = localFont({
+  src: "./fonts/Manrope-VariableFont_wght.ttf",
+  variable: "--font-manrope",
   weight: "100 900",
 });
 
@@ -94,19 +101,21 @@ function validateEnvVariables() {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   validateEnvVariables()
 
   return (
-    <html lang="en" className="overflow-y-scroll">
-      <head />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-zinc-100 dark:bg-black`}
-      >
-        <GraphicsProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${geistMono.variable}`}>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GraphicsProvider>
             <div className="relative flex min-h-screen flex-col">
               <Navbar />
               <main className="flex-1 relative">
@@ -114,9 +123,9 @@ export default function RootLayout({
               </main>
               <Footer className="relative z-50" />
             </div>
-          </ThemeProvider>
-        </GraphicsProvider>
+          </GraphicsProvider>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
