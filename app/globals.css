@@ -2,25 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face{
-  font-family: 'Lora';
-  src: url('./fonts/Lora-Italic-VariableFont_wght.ttf') format('truetype');
-  font-weight: 400 700;
-  font-style: italic;
-}
-
-@font-face{
+/* Move font declarations to top */
+@font-face {
   font-family: 'GeistVF';
   src: url('./fonts/GeistVF.woff') format('woff');
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 
-@font-face{
+@font-face {
   font-family: 'GeistMonoVF';
   src: url('./fonts/GeistMonoVF.woff') format('woff');
   font-weight: 200 800;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -28,6 +24,14 @@
   src: url('./fonts/Manrope-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face{
+  font-family: 'Lora';
+  src: url('./fonts/Lora-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: italic;
 }
 
 @layer base {
@@ -85,6 +89,18 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --node-color: #60A5FA;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+  }
+
+  html {
+    @apply scroll-smooth h-full;
+  }
+
+  img {
+    @apply transition-none;
   }
 }
 

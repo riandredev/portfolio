@@ -8,6 +8,7 @@ import Footer from '@/components/footer';
 import { GraphicsProvider } from '@/context/graphics-context'
 import "./globals.css";
 import { Viewport } from "next/types"
+import ErrorBoundary from '@/components/error-boundary'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -98,17 +99,15 @@ function validateEnvVariables() {
     }
   }
 }
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
-  validateEnvVariables()
-
+}): React.JSX.Element {
+  validateEnvVariables();
   return (
-    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${geistMono.variable}`}>
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`min-h-screen bg-background ${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -121,11 +120,11 @@ export default function RootLayout({
               <main className="flex-1 relative">
                 {children}
               </main>
-              <Footer className="relative z-50" />
+              <Footer />
             </div>
           </GraphicsProvider>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

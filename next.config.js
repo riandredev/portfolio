@@ -11,8 +11,7 @@ const nextConfig = {
   },
   staticPageGenerationTimeout: 300,
   poweredByHeader: false,
-  // Add these options to ensure proper CSS bundling
-  optimizeFonts: true,
+  // Remove compiler options and add swcMinify
   swcMinify: true,
   ...(process.env.NODE_ENV === 'production' && {
     headers: async () => [
@@ -35,12 +34,22 @@ const nextConfig = {
       },
     ],
   }),
-  webpack: (config) => {
-    config.optimization.minimize = true;
+  webpack: (config, { dev, isServer }) => {
+    // Add your webpack customizations here
+    if (!dev && !isServer) {
+      // Enable webpack optimization in production
+      config.optimization.minimize = true;
+
+      // Remove console logs in production
+      config.optimization.minimizer.push(
+        new config.webpack.optimize.UglifyJsPlugin({
+          compress: {
+            drop_console: true,
+          },
+        })
+      );
+    }
     return config;
-  },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
   },
 }
 

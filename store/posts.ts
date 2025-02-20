@@ -23,11 +23,6 @@ export const usePostsStore = create<PostsStore>()(
       setPosts: (newPosts: Post[]) => set({ posts: newPosts }),
 
       fetchPosts: async () => {
-        // Don't fetch if we already have posts
-        if (get().posts.length > 0) {
-          return
-        }
-
         set({ isLoading: true, error: null })
         try {
           const response = await fetch('/api/posts')
@@ -35,7 +30,7 @@ export const usePostsStore = create<PostsStore>()(
           const posts = await response.json()
           set({ posts, isLoading: false })
         } catch (error) {
-          set({ error: 'Failed to fetch posts', isLoading: false })
+          set({ error: 'Failed to fetch posts', isLoading: false, posts: [] })
           console.error('Error fetching posts:', error)
         }
       },

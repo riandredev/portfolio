@@ -52,7 +52,7 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned }
                 className="relative w-64 h-64"
               >
                 <Image
-                  src={logo}
+                  src={logo.startsWith('/') ? logo : `/${logo}`}
                   alt={`${title} logo`}
                   fill
                   className="object-contain filter brightness-0 invert"
