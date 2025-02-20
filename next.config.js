@@ -11,7 +11,6 @@ const nextConfig = {
   },
   staticPageGenerationTimeout: 300,
   poweredByHeader: false,
-  // Remove compiler options and add swcMinify
   swcMinify: true,
   ...(process.env.NODE_ENV === 'production' && {
     headers: async () => [
@@ -34,21 +33,31 @@ const nextConfig = {
       },
     ],
   }),
-  webpack: (config, { dev, isServer }) => {
-    // Add your webpack customizations here
-    if (!dev && !isServer) {
-      // Enable webpack optimization in production
-      config.optimization.minimize = true;
-
-      // Remove console logs in production
-      config.optimization.minimizer.push(
-        new config.webpack.optimize.UglifyJsPlugin({
-          compress: {
-            drop_console: true,
+  webpack: (config, { dev, isServer, defaultLoaders, nextRuntime }) => {
+    // Handle MDX files
+    config.module.rules.push({
+      test: /\.mdx?$/,
+      use: [
+        defaultLoaders.babel,
+        {
+          loader: '@mdx-js/loader',
+          options: {
+            providerImportSource: '@mdx-js/react',
           },
-        })
-      );
+        },
+      ],
+    })
+
+    // Production optimizations
+    if (!dev && !isServer) {
+      config.optimization.minimize = true;
     }
+
+    // Edge-specific optimizations
+    if (isServer && nextRuntime === 'edge') {
+      config.optimization.moduleIds = 'deterministic';
+    }
+
     return config;
   },
 }
