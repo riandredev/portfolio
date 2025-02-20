@@ -35,6 +35,13 @@ const nextConfig = {
       },
     ],
   }),
+  webpack: (config) => {
+    config.optimization.minimize = true;
+    return config;
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
 }
 
 module.exports = nextConfig
