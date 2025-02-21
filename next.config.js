@@ -81,6 +81,12 @@ const nextConfig = {
 
     return config;
   },
+  output: 'standalone',
+  experimental: {
+    outputFileTracingIncludes: {
+      '/**/*': ['./public/uploads/**/*']
+    }
+  }
 }
 
 module.exports = nextConfig;
