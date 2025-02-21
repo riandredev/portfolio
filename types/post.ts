@@ -1,24 +1,27 @@
 import SeparatorBlock from "@/components/content-blocks/separator-block";
 
-export type Post = {
+export type PostCategory = 'development' | 'design';
+
+export interface Post {
   _id: string;
   title: string;
   description: string;
   image: string;
   slug: string;
   tags: string[];
+  category: PostCategory;
   pinned?: boolean;
   video?: string;
   demoUrl?: string;
   sourceUrl?: string;
   publishedAt?: string;
-  createdAt?: string;  // Add this
-  updatedAt?: string;  // Add this
+  createdAt?: string;
+  updatedAt?: string;
   content?: {
     blocks: ContentBlock[];
   };
-  logo?: string; // Added to match PostCard props
-  temporary?: boolean;  // New field
+  logo?: string;
+  temporary?: boolean;
   technologies?: TechnologyEntry[];
 }
 
@@ -29,8 +32,8 @@ export type ContentBlockTypes =
   | 'image'
   | 'video'
   | 'note'
-  | 'list'  // Add list type
-  | 'separator';  // Add separator type
+  | 'list'
+  | 'separator';
 
 export type ContentBlockBase = {
   id: string;
@@ -93,13 +96,13 @@ export type ContentBlock =
   | ImageBlock
   | VideoBlock
   | NoteBlock
-  | ListBlock  // Add ListBlock to union type
+  | ListBlock 
   | SeparatorBlock;
 
 export type TechnologyEntry = {
   name: string;
   logo: string;
   darkModeLogo?: string;
-  useDefaultIcon?: boolean; // Add this field
-  url?: string; // Add this line
+  useDefaultIcon?: boolean;
+  url?: string;
 }

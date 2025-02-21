@@ -4,8 +4,6 @@ import { useEffect, useRef } from 'react'
 import { usePostsStore } from '@/store/posts'
 import { useVisitorsStore } from '@/store/visitors'
 
-// Removed duplicate declaration of __PRELOADED_POSTS__
-
 export default function PreloadPosts() {
   const initialized = useRef(false)
   const { posts, setPosts } = usePostsStore()
@@ -13,11 +11,11 @@ export default function PreloadPosts() {
 
   useEffect(() => {
     if (!initialized.current) {
-      // Initialize posts from window if available
+      // Initialize posts from window
       if (window.__PRELOADED_POSTS__ && posts.length === 0) {
         setPosts(window.__PRELOADED_POSTS__)
       }
-      // Only fetch latest visitor if we don't have one stored
+      // Only fetch latest visitor if don't have one stored
       if (!lastVisitor) {
         useVisitorsStore.getState().fetchLatestVisitor()
       }

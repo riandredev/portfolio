@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic'; // Add this at the top
+export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
 import { NextResponse } from 'next/server'
@@ -48,32 +48,22 @@ export async function GET() {
       cache: 'no-store',
     })
 
-    // Add response status logging
-    console.log('Spotify API Response Status:', response.status);
-
-    // Handle 204 No Content response
     if (response.status === 204) {
-      console.log('No active playback');
       return NextResponse.json({ isPlaying: false });
     }
 
-    // Handle other non-200 responses
     if (!response.ok) {
-      console.error('Spotify API error:', response.status);
       return NextResponse.json({ isPlaying: false });
     }
 
     const data = await response.json();
-    console.log('Raw Spotify Response:', JSON.stringify(data, null, 2));
 
-    // More strict checking of playback state
     if (!data.is_playing || !data.item) {
-      console.log('Not currently playing:', { is_playing: data.is_playing, has_item: !!data.item });
       return NextResponse.json({ isPlaying: false });
     }
 
     const song = {
-      isPlaying: true, // Force to true if we get here
+      isPlaying: true,
       title: data.item.name,
       artist: data.item.artists.map((artist: any) => artist.name).join(', '),
       albumImageUrl: data.item.album.images[0]?.url,
@@ -91,7 +81,6 @@ export async function GET() {
       }
     })
   } catch (error) {
-    console.error('Spotify API error:', error);
     return NextResponse.json({ isPlaying: false });
   }
 }

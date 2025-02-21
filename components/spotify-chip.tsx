@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Loader2, Volume2, VolumeX, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import '../app/globals.css'
+import { useSiteSettings } from "@/store/site-settings"
 
 const SpotifyIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#1DB954]" fill="currentColor">
@@ -65,6 +66,7 @@ const chipVariants = {
 }
 
 export default function SpotifyChip() {
+  const { showSpotifyChip } = useSiteSettings()
   const [track, setTrack] = useState<SpotifyTrack | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
@@ -91,9 +93,8 @@ export default function SpotifyChip() {
       if (!res.ok) throw new Error('Failed to fetch');
 
       const data = await res.json();
-      console.log('Spotify response:', data);
 
-      // Only update if we have valid data
+      // Only update when data is valid
       if (data.isPlaying && data.title) {
         setTrack({
           name: data.title,
@@ -110,7 +111,6 @@ export default function SpotifyChip() {
         setTrack(null);
       }
     } catch (error) {
-      console.error('Spotify fetch error:', error);
       setIsVisible(false);
       setTrack(null);
     }
@@ -227,9 +227,9 @@ export default function SpotifyChip() {
     fetchNowPlaying();
     const fetchInterval = setInterval(fetchNowPlaying, 3000);
 
-    // Add scroll event listener
+    // croll event listener
     window.addEventListener('scroll', handleScroll)
-    handleScroll() // Initial check
+    handleScroll()
 
     return () => {
       mounted = false;
@@ -304,11 +304,12 @@ export default function SpotifyChip() {
     }
   }
 
+  if (!showSpotifyChip) return null;
+
   return (
     <AnimatePresence>
       {isVisible && track && (
         <motion.div
-          className="hidden lg:flex fixed"
           style={{ opacity }}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -326,7 +327,7 @@ export default function SpotifyChip() {
             }}
             className="flex flex-col items-center gap-2 px-2 py-1 bg-white/5 dark:bg-black/5 backdrop-blur-md rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden w-[320px]"
           >
-            {/* Wrap the opacity transition in a separate div */}
+            {/* opacity transition */}
             <div className="flex items-center gap-2.5 w-full min-h-[32px]">
               <span className="text-xs text-zinc-500 dark:text-zinc-400 shrink-0">I&rsquo;m Listening to</span>
               <div className="flex items-center gap-2.5 px-3 h-[32px] border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white/80 dark:bg-zinc-800/80 min-w-0 flex-1">
@@ -341,10 +342,10 @@ export default function SpotifyChip() {
                 <div className="marquee-container flex-1 relative overflow-hidden">
                   <div className="marquee whitespace-nowrap flex items-center h-[32px]">
                     <span className="marquee-content text-xs leading-none flex items-center text-zinc-700 dark:text-zinc-300">
-                      {track.name} <span className="mx-1 opacity-50">·</span> {track.artist}
+                      {track.name} <span className="mx-1 opacity-50">·</span><span className="opacity-65">{track.artist}</span>
                     </span>
                     <span className="marquee-content text-xs leading-none flex items-center text-zinc-700 dark:text-zinc-300">
-                      {track.name} <span className="mx-1 opacity-50">·</span> {track.artist}
+                      {track.name} <span className="mx-1 opacity-50">·</span><span className="opacity-65">{track.artist}</span>
                     </span>
                   </div>
                 </div>
@@ -383,7 +384,7 @@ export default function SpotifyChip() {
                     />
                   </div>
                   <div className="space-y-1 w-full">
-                    <div className="flex items-center gap-2 w-full overflow-hidden">
+                    <div className="flex items-center -mb-1 w-full overflow-hidden">
                       <h3 className="font-medium text-sm text-zinc-900 dark:text-zinc-100 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">
                         {track.name}
                       </h3>
@@ -445,5 +446,5 @@ export default function SpotifyChip() {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

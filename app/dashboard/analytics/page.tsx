@@ -1,13 +1,27 @@
-import { VisitorsTable } from '@/components/visitors-table'
+import VisitorsOverview from "@/components/analytics/visitors-overview"
+import GeoDistribution from "@/components/analytics/geo-distribution"
+import DeviceDistribution from "@/components/analytics/device-distribution"
+import TimeChart from "@/components/analytics/time-chart"
+import { VisitorsTable } from "@/components/visitors-table"
 
 export default function AnalyticsPage() {
   return (
-    <div className="container px-4 mx-auto py-24 min-h-screen">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-medium">Visitor Analytics</h1>
+    <div className="container mx-auto py-24 space-y-8">
+      <div>
+        <h2 className="text-2xl font-medium">Analytics</h2>
+        <p className="text-muted-foreground">Detailed visitor analytics and insights.</p>
+      </div>
+
+      <VisitorsOverview />
+
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <GeoDistribution />
+        <DeviceDistribution />
+        <div className="md:col-span-2">
+          <TimeChart />
         </div>
-        <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
+        <div className="md:col-span-2">
+          <h3 className="text-lg font-medium mb-4">Recent Visitors</h3>
           <VisitorsTable />
         </div>
       </div>

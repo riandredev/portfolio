@@ -25,7 +25,7 @@ export default function Footer({ className = '' }: FooterProps) {
   }
 
   const handleMouseLeave = (e: React.MouseEvent) => {
-    // Only start closing if we're not moving to the popover content
+    // Only start closing if not moving to the popover content
     if (!e.relatedTarget || !(e.relatedTarget as HTMLElement).closest('[data-radix-popper-content-wrapper]')) {
       const timeout = setTimeout(() => setIsOpen(false), 300)
       setTimeoutId(timeout)
@@ -93,7 +93,6 @@ export default function Footer({ className = '' }: FooterProps) {
             </Popover>
           </div>
 
-          {/* Social links */}
           <div className="space-y-2 sm:space-y-4">
             <h3 className="text-xl sm:text-2xl font-light">Connect</h3>
             <div className="flex flex-col space-y-2">
@@ -113,7 +112,6 @@ export default function Footer({ className = '' }: FooterProps) {
           </div>
         </div>
 
-        {/* Copyright and location with heart */}
         <div className="flex flex-col sm:flex-row justify-between items-center mt-8 sm:mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 gap-4 sm:gap-0">
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 text-center sm:text-left">
             © {new Date().getFullYear()} Riandre van der Voorden. All rights reserved.

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ContentBlock, Post, ContentBlockTypes } from '@/types/post'
+import { ContentBlock, Post, ContentBlockTypes, PostCategory } from '@/types/post'
 import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
 import FileUpload from '@/components/file-upload'
@@ -34,6 +34,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [newTechLogo, setNewTechLogo] = useState('')
   const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
   const [newTechUrl, setNewTechUrl] = useState('')
+  const [category, setCategory] = useState<PostCategory>('development')
 
   const blockTypes: { type: ContentBlockTypes; label: string }[] = [
     { type: 'heading', label: 'Heading' },
@@ -44,7 +45,6 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
     { type: 'note', label: 'Note' },
   ]
 
-  // Load post data
   useEffect(() => {
     const post = posts.find(p => p.slug === params.slug)
     if (post) {
@@ -60,6 +60,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       setPinned(post.pinned || false)
       setLogo(post.logo || '')
       setTechnologies(post.technologies || [])
+      setCategory(post.category || 'development')
     }
   }, [params.slug, posts])
 
@@ -75,7 +76,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       }
 
       const updatedPost: Post = {
-        _id: existingPost._id, // Ensure we include the ID
+        _id: existingPost._id,
         title,
         description,
         slug,
@@ -90,6 +91,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           blocks
         },
         technologies,
+        category
       };
 
       await updatePost(updatedPost);
@@ -135,8 +137,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       name: newTechName,
       logo: techLogo,
       darkModeLogo: newTechDarkLogo || undefined,
-      useDefaultIcon: !newTechLogo, // Add flag to indicate if using default icon
-      url: newTechUrl || undefined  // Add URL to the tech entry
+      useDefaultIcon: !newTechLogo,
+      url: newTechUrl || undefined
     }
 
     setTechnologies([...technologies, newTech])
@@ -158,6 +160,19 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-6">
             <h2 className="text-lg font-medium">Basic Information</h2>
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as PostCategory)}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                  required
+                >
+                  <option value="development">Development</option>
+                  <option value="design">Design</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Title</label>
                 <input

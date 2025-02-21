@@ -62,7 +62,7 @@ export async function GET(request: Request) {
           <p>Environment: ${state}</p>
           <p>Your refresh token (add this to your .env file):</p>
           <pre style="word-break: break-all; padding: 1rem; background: #f0f0f0; border-radius: 4px;">
-SPOTIFY_REFRESH_TOKEN=${data.refresh_token}</pre>
+          SPOTIFY_REFRESH_TOKEN=${data.refresh_token}</pre>
           <p style="color: #666;">You can close this window now.</p>
         </body>
       </html>

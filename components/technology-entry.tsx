@@ -12,7 +12,7 @@ interface TechnologyEntryProps {
   invertInDark?: boolean
 }
 
-// Memoize the content component to prevent unnecessary re-renders
+// Memoize the content component to prevent re-renders
 const Content = memo(({
   entry,
   onDelete,
@@ -62,7 +62,7 @@ const TechnologyEntry = memo(function TechnologyEntry({
   const imageClasses = invertInDark ? 'dark:invert' : '';
   const wrapperClasses = `flex items-center gap-2 px-3 py-2 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg ${className}`;
 
-  // If there's no URL, return a simple div
+  // If there's no URL, return a div
   if (!entry.url) {
     return (
       <div className={wrapperClasses}>
@@ -71,7 +71,7 @@ const TechnologyEntry = memo(function TechnologyEntry({
     );
   }
 
-  // Only render as a link if there's a URL
+  // ONLY if there's a URL
   return (
     <a
       href={entry.url}

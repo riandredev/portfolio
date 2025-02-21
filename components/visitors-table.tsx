@@ -12,7 +12,7 @@ interface Visitor {
   countryCode: string;
   timestamp: string;
   userAgent: string;
-  count: number; // Add count field
+  count: number;
 }
 
 export function VisitorsTable() {
@@ -48,8 +48,42 @@ export function VisitorsTable() {
 
   if (isLoading) {
     return (
-      <div className="w-full text-center py-8">
-        Loading visitor data...
+      <div className="relative overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs uppercase text-zinc-600 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700/50">
+            <tr>
+              <th className="px-6 py-3">Location</th>
+              <th className="px-6 py-3">Browser</th>
+              <th className="px-6 py-3">OS</th>
+              <th className="px-6 py-3">Visits</th>
+              <th className="px-6 py-3">Last Visit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(5)].map((_, i) => (
+              <tr key={i} className="border-b border-zinc-200 dark:border-zinc-700/50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-4 w-20 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-4 w-16 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-4 w-8 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-4 w-24 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     )
   }

@@ -1,18 +1,18 @@
 import { create } from 'zustand'
-import { Post } from '@/types/post'
+import { Post, PostCategory } from '@/types/post'
 
-interface PostsStore {
+interface PostsState {
   posts: Post[]
   isLoading: boolean
   error: string | null
   fetchPosts: () => Promise<void>
-  addPost: (post: Post) => Promise<void>
-  updatePost: (post: Post) => Promise<Post>
+  addPost: (post: Omit<Post, '_id'> & { category: PostCategory }) => Promise<Post>
+  updatePost: (post: Post & { category: PostCategory }) => Promise<Post>
   deletePost: (id: string) => Promise<void>
   setPosts: (posts: Post[]) => void
 }
 
-export const usePostsStore = create<PostsStore>()((set, get) => ({
+export const usePostsStore = create<PostsState>((set, get) => ({
   posts: [],
   isLoading: false,
   error: null,
@@ -34,65 +34,51 @@ export const usePostsStore = create<PostsStore>()((set, get) => ({
 
   addPost: async (post) => {
     try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...post,
-          temporary: post.temporary || false
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to create post')
+      if (!post.category) {
+        throw new Error('Category is required');
       }
 
-      const newPost = await response.json()
-      set({ posts: [newPost, ...get().posts] })
-      return newPost
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...post, category: post.category }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create post');
+
+      const newPost = await response.json();
+      set(state => ({
+        posts: [...state.posts, newPost]
+      }));
+      return newPost;
     } catch (error) {
-      console.error('Error in addPost:', error)
-      throw error
+      console.error('Add post error:', error);
+      throw error;
     }
   },
 
   updatePost: async (post) => {
     try {
-      if (!post._id) {
-        throw new Error('Post ID is required')
+      if (!post.category) {
+        throw new Error('Category is required');
       }
 
       const response = await fetch(`/api/posts/${post._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(post)
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...post, category: post.category }),
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        console.error('Server response:', errorData)
-        throw new Error(errorData.message || errorData.error || 'Failed to update post')
-      }
+      if (!response.ok) throw new Error('Failed to update post');
 
-      const updatedPost = await response.json()
-      console.log('Updated post:', updatedPost) // Debug log
-
-      // Update local state with the new post data
-      set((state) => ({
-        posts: state.posts.map((p) =>
-          p._id === post._id ? { ...updatedPost, _id: post._id } : p
-        )
-      }))
-
-      return updatedPost
+      const updatedPost = await response.json();
+      set(state => ({
+        posts: state.posts.map(p => p._id === post._id ? updatedPost : p)
+      }));
+      return updatedPost;
     } catch (error) {
-      console.error('Update error:', error)
-      throw error instanceof Error ? error : new Error('Failed to update post')
+      console.error('Update post error:', error);
+      throw error;
     }
   },
 

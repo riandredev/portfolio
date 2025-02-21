@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/mongodb';
-import { Post } from '@/types/post';
+import { Post, PostCategory } from '@/types/post';
+import { ObjectId } from 'mongodb';
 
 export async function GET() {
   try {
@@ -23,14 +24,22 @@ export async function POST(request: NextRequest) {
   try {
     const postData: Post = await request.json();
 
+    // Validate category
+    if (!postData.category || !['development', 'design'].includes(postData.category)) {
+      return NextResponse.json(
+        { error: 'Invalid category. Must be either "development" or "design"' },
+        { status: 400 }
+      );
+    }
+
     // Check if this is a temporary post
     if (postData.temporary === true) {
-      // Generate a temporary ID and return without saving to DB
       const tempPost = {
         ...postData,
         _id: `temp-${Date.now()}`,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        category: postData.category
       };
       return NextResponse.json(tempPost);
     }
@@ -42,7 +51,8 @@ export async function POST(request: NextRequest) {
     const result = await db.collection('posts').insertOne({
       ...newPostData,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      category: postData.category
     });
 
     const savedPost = {
@@ -55,6 +65,42 @@ export async function POST(request: NextRequest) {
     console.error('Create error:', error);
     return NextResponse.json(
       { error: 'Failed to create post' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const postData: Post = await request.json();
+
+    // Validate category
+    if (!postData.category || !['development', 'design'].includes(postData.category)) {
+      return NextResponse.json(
+        { error: 'Invalid category. Must be either "development" or "design"' },
+        { status: 400 }
+      );
+    }
+
+    const { _id, ...updateData } = postData;
+
+    const db = await getDb();
+    const result = await db.collection('posts').updateOne(
+      { _id: new ObjectId(_id) },
+      {
+        $set: {
+          ...updateData,
+          updatedAt: new Date().toISOString(),
+          category: postData.category
+        }
+      }
+    );
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Update error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update post' },
       { status: 500 }
     );
   }

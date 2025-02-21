@@ -31,7 +31,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
     const post = posts.find(p => p.slug === params.slug)
     if (!post) return notFound()
 
-    // Wrap PostDetail in a div without any z-index or positioning that might interfere
     return (
       <div className="w-full">
         <PostDetail post={post} />
