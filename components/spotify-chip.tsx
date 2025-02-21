@@ -170,7 +170,6 @@ export default function SpotifyChip() {
         }
 
         const data = await res.json();
-        console.log('Spotify client data:', data);
 
         if (data.isPlaying) {
           setTrack({
@@ -410,7 +409,7 @@ export default function SpotifyChip() {
                         className="relative w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full cursor-pointer group"
                       >
                         <div
-                          className="absolute left-0 h-full bg-green-500 rounded-full transition-all duration-150"
+                          className="absolute space-y-4 left-0 h-full bg-green-500 rounded-full transition-all duration-150"
                           style={{ width: `${(progress / duration) * 100}%` }}
                         />
                         <div className="absolute -top-2 -bottom-2 left-0 right-0 group-hover:bg-zinc-100/10 rounded-full" />

@@ -105,25 +105,24 @@ export default function RootLayout({
   children: React.ReactNode
 }): React.JSX.Element {
   validateEnvVariables();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`min-h-screen bg-background ${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <GraphicsProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <Navbar />
-              <main className="flex-1 relative">
+        <ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <GraphicsProvider>
+              <div className="relative flex min-h-screen flex-col">
                 {children}
-              </main>
-              <Footer />
-            </div>
-          </GraphicsProvider>
-        </ThemeProvider>
+              </div>
+            </GraphicsProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
