@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_SITE_URL}/api/spotify/callback`;
+const REDIRECT_URI = process.env.NEXT_PUBLIC_SITE_URL
+  ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/spotify/callback`
+  : 'http://localhost:3000/api/spotify/callback';
 
 export async function GET() {
-  // Error handling
+  console.log('Login route accessed, using redirect URI:', REDIRECT_URI);
+
   if (!CLIENT_ID) {
     console.error('Missing SPOTIFY_CLIENT_ID');
     return new Response('Missing Spotify client configuration', { status: 500 });
-  }
-
-  if (!REDIRECT_URI) {
-    console.error('Missing NEXT_PUBLIC_SITE_URL');
-    return new Response('Missing site URL configuration', { status: 500 });
   }
 
   const scope = [
@@ -31,6 +29,7 @@ export async function GET() {
     });
 
     const spotifyUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
+    console.log('Redirecting to Spotify:', spotifyUrl);
     return NextResponse.redirect(spotifyUrl);
   } catch (error) {
     console.error('Spotify authorization error:', error);
