@@ -8,11 +8,19 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
 export async function GET(request: Request) {
   try {
-    // Get the host from headers
-    const headersList = headers();
-    const host = headersList.get('host') || 'localhost:3000';
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const REDIRECT_URI = `${protocol}://${host}/api/spotify/callback`;
+    // Get the correct host and protocol
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.NODE_ENV === 'production'
+        ? 'https://riandre.com'
+        : 'http://localhost:3000');
+
+    const REDIRECT_URI = `${baseUrl}/api/spotify/callback`;
+
+    console.log('Callback environment:', {
+      NODE_ENV: process.env.NODE_ENV,
+      baseUrl,
+      REDIRECT_URI
+    });
 
     // Code from the URL
     const { searchParams } = new URL(request.url);

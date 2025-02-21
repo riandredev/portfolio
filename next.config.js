@@ -31,6 +31,15 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Allow Spotify API requests
+        source: '/api/spotify/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+        ],
+      },
     ],
   }),
   webpack: (config, { dev, isServer, defaultLoaders, nextRuntime }) => {
