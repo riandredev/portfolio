@@ -267,7 +267,7 @@ export default function SpotifyChip() {
           >
             {/* Wrap the opacity transition in a separate div */}
             <div className="flex items-center gap-2.5 w-full min-h-[32px]">
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 shrink-0">I'm Listening to</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400 shrink-0">I&rsquo;m Listening to</span>
               <div className="flex items-center gap-2.5 px-3 h-[32px] border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white/80 dark:bg-zinc-800/80 min-w-0 flex-1">
                 <AudioVisualizer />
                 <Image
