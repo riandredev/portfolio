@@ -99,17 +99,20 @@ export default function SpotifyChip() {
         const res = await fetch('/api/spotify/now-playing', {
           cache: 'no-store',
           headers: {
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           }
         });
 
         if (!mounted) return;
 
         if (!res.ok) {
+          console.error('Spotify API error:', await res.text());
           throw new Error('Failed to fetch');
         }
 
         const data = await res.json();
+        console.log('Spotify client data:', data);
 
         if (data.isPlaying) {
           setTrack({

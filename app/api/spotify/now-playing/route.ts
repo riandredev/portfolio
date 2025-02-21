@@ -26,21 +26,32 @@ const getAccessToken = async () => {
 
 export async function GET() {
   try {
-    const { access_token } = await getAccessToken()
+    console.log('Starting Spotify fetch...');
+    const { access_token } = await getAccessToken();
+    console.log('Got access token');
 
-    const response = await fetch(PLAYBACK_STATE_ENDPOINT, {
+    // Change endpoint to specifically get currently playing
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       headers: {
         Authorization: `Bearer ${access_token}`
       },
       cache: 'no-store'
-    })
+    });
 
-    if (response.status === 204 || response.status > 400) {
-      return NextResponse.json({ isPlaying: false })
+    console.log('Spotify API response status:', response.status);
+
+    if (response.status === 204) {
+      console.log('No track currently playing');
+      return NextResponse.json({ isPlaying: false });
     }
 
-    const data = await response.json()
-    console.log('Spotify playback data:', data)
+    if (response.status !== 200) {
+      console.error('Spotify API error:', response.status);
+      return NextResponse.json({ isPlaying: false });
+    }
+
+    const data = await response.json();
+    console.log('Spotify response data:', JSON.stringify(data, null, 2));
 
     if (!data.is_playing) {
       return NextResponse.json({ isPlaying: false })

@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const REDIRECT_URI = `${protocol}://${host}/api/spotify/callback`;
 
-    // Get the code from the URL
+    // Code from the URL
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const error = searchParams.get('error');
