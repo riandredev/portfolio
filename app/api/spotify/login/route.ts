@@ -6,18 +6,21 @@ export const dynamic = 'force-dynamic';
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 
 export async function GET() {
-  // Get the host from headers
-  const headersList = headers();
-  const host = headersList.get('host') || 'localhost:3000';
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  // Determine the correct redirect URI based on environment
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://riandre.com'
+    : 'http://localhost:3000';
 
-  const REDIRECT_URI = `${protocol}://${host}/api/spotify/callback`;
+  const REDIRECT_URI = `${baseUrl}/api/spotify/callback`;
 
-  console.log('Login route accessed, using redirect URI:', REDIRECT_URI);
+  console.log('Login initiated:', {
+    environment: process.env.NODE_ENV,
+    redirectUri: REDIRECT_URI
+  });
 
   if (!CLIENT_ID) {
     console.error('Missing SPOTIFY_CLIENT_ID');
-    return NextResponse.json({ error: 'Missing Spotify client configuration' }, { status: 500 });
+    return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
   }
 
   const scope = [
@@ -32,14 +35,16 @@ export async function GET() {
       response_type: 'code',
       redirect_uri: REDIRECT_URI,
       scope: scope,
-      show_dialog: 'true'
+      show_dialog: 'true',
+      state: process.env.NODE_ENV // Include environment as state
     });
 
     const spotifyUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-    console.log('Redirecting to Spotify:', spotifyUrl);
+    console.log('Redirecting to:', spotifyUrl);
+
     return NextResponse.redirect(spotifyUrl);
   } catch (error) {
-    console.error('Spotify authorization error:', error);
-    return NextResponse.json({ error: 'Failed to initialize Spotify authorization' }, { status: 500 });
+    console.error('Authorization error:', error);
+    return NextResponse.json({ error: 'Authorization failed' }, { status: 500 });
   }
 }
