@@ -43,7 +43,7 @@ const nextConfig = {
     ],
   }),
   webpack: (config, { dev, isServer, defaultLoaders, nextRuntime }) => {
-    // Handle MDX files
+    // MDX files
     config.module.rules.push({
       test: /\.mdx?$/,
       use: [
