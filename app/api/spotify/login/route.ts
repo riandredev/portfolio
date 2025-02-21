@@ -1,16 +1,23 @@
 import { NextResponse } from 'next/server';
+import { headers } from 'next/headers';
+
+export const dynamic = 'force-dynamic';
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = process.env.NEXT_PUBLIC_SITE_URL
-  ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/spotify/callback`
-  : 'http://localhost:3000/api/spotify/callback';
 
 export async function GET() {
+  // Get the host from headers
+  const headersList = headers();
+  const host = headersList.get('host') || 'localhost:3000';
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+
+  const REDIRECT_URI = `${protocol}://${host}/api/spotify/callback`;
+
   console.log('Login route accessed, using redirect URI:', REDIRECT_URI);
 
   if (!CLIENT_ID) {
     console.error('Missing SPOTIFY_CLIENT_ID');
-    return new Response('Missing Spotify client configuration', { status: 500 });
+    return NextResponse.json({ error: 'Missing Spotify client configuration' }, { status: 500 });
   }
 
   const scope = [
@@ -33,6 +40,6 @@ export async function GET() {
     return NextResponse.redirect(spotifyUrl);
   } catch (error) {
     console.error('Spotify authorization error:', error);
-    return new Response('Failed to initialize Spotify authorization', { status: 500 });
+    return NextResponse.json({ error: 'Failed to initialize Spotify authorization' }, { status: 500 });
   }
 }
