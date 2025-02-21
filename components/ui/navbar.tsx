@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button"
 import NavLink from '@/components/nav-link'
 import ThemeSettings from '@/components/theme-settings'
 import VisitorChip from '@/components/visitor-chip'
+import SpotifyChip from '@/components/spotify-chip'
+import { useThemeStore } from '@/store/theme'
 
 const navVariants = {
   collapsed: { height: 48 },
-  expanded: { height: 240 }
+  expanded: { height: 310 }
 }
 
 const contentVariants = {
@@ -35,6 +37,7 @@ const contentVariants = {
 
 export default function Navbar() {
     const pathname = usePathname()
+    const { showSpotifyChip } = useThemeStore()
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
     const navRef = useRef<HTMLDivElement>(null)
@@ -95,6 +98,17 @@ export default function Navbar() {
       >
         <div className="container px-4 mx-auto relative">
           <div className="flex justify-center">
+            {mounted && showSpotifyChip && isHomePage && (
+              <motion.div
+                className="absolute left-4 top-1 md:block"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              >
+                <SpotifyChip />
+              </motion.div>
+            )}
+
             <motion.nav
               ref={navRef}
               initial="collapsed"
@@ -149,17 +163,19 @@ export default function Navbar() {
                 )}
               </AnimatePresence>
             </motion.nav>
+
+            {isHomePage && (
+              <motion.div
+                className="absolute right-4 top-1 md:block"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              >
+                <VisitorChip />
+              </motion.div>
+            )}
           </div>
-    {isHomePage && (
-      <motion.div
-        className="absolute right-4 top-1 md:block"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2, duration: 0.3 }}
-      >
-        <VisitorChip />
+        </div>
       </motion.div>
-    )}
-  </div>
-</motion.div>
-)};
+    )
+}

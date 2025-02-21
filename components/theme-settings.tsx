@@ -3,6 +3,7 @@
 import { Moon, Sun, Monitor, Settings, X } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { useThemeStore } from '@/store/theme'
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ export default function ThemeSettings({ onClose }: ThemeSettingsProps) {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const { enable3D, toggle3D, isCapable } = useGraphics()
+  const { showSpotifyChip, setShowSpotifyChip } = useThemeStore()
 
   useEffect(() => {
     setMounted(true)
@@ -99,6 +101,17 @@ export default function ThemeSettings({ onClose }: ThemeSettingsProps) {
           </p>
         )}
       </div>
+
+  <div className="space-y-2">
+    <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 px-1">My Spotify activity</label>
+    <div className="flex items-center justify-between px-1">
+      <span className="text-sm text-zinc-600 dark:text-zinc-400">Show what I’m listening to</span>
+      <Switch
+        checked={showSpotifyChip}
+        onCheckedChange={setShowSpotifyChip}
+      />
     </div>
+  </div>
+</div>
   )
 }

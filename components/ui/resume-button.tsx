@@ -21,7 +21,7 @@ export default function ResumeButton() {
       </span>
       <span className={`absolute flex items-center gap-2 transition-transform duration-300 ${isHovered ? 'translate-y-0' : 'translate-y-9'}`}>
         View PDF
-        <span className="text-xs opacity-60">(61KB)</span>
+        <span className="text-xs opacity-60">(64KB)</span>
       </span>
     </Button>
   )
