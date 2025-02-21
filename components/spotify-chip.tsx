@@ -78,6 +78,64 @@ export default function SpotifyChip() {
   const [opacity, setOpacity] = useState(1)
   const [isVisible, setIsVisible] = useState(false)
 
+  const fetchNowPlaying = async () => {
+    try {
+      const res = await fetch('/api/spotify/now-playing', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch');
+
+      const data = await res.json();
+      console.log('Spotify response:', data);
+
+      // Only update if we have valid data
+      if (data.isPlaying && data.title) {
+        setTrack({
+          name: data.title,
+          artist: data.artist,
+          albumArt: data.albumImageUrl,
+          previewUrl: data.previewUrl,
+          progress_ms: data.progress_ms,
+          duration_ms: data.duration_ms,
+          spotifyUrl: data.spotifyUrl
+        });
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+        setTrack(null);
+      }
+    } catch (error) {
+      console.error('Spotify fetch error:', error);
+      setIsVisible(false);
+      setTrack(null);
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchAndUpdate = async () => {
+      if (!mounted) return;
+      await fetchNowPlaying();
+    };
+
+    // Initial fetch
+    fetchAndUpdate();
+
+    // Set up polling interval (every 3 seconds)
+    const interval = setInterval(fetchAndUpdate, 3000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   useEffect(() => {
     let mounted = true;
     let progressInterval: NodeJS.Timeout;
@@ -344,44 +402,42 @@ export default function SpotifyChip() {
                     <p className="text-sm text-zinc-500 dark:text-zinc-400 overflow-hidden text-ellipsis whitespace-nowrap">
                       {track.artist}
                     </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div
-                      ref={progressRef}
-                      onClick={handleProgressClick}
-                      className="relative w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full cursor-pointer group"
-                    >
+                    <div className="space-y-2">
                       <div
-                        className="absolute left-0 h-full bg-green-500 rounded-full transition-all duration-150"
-                        style={{ width: `${(progress / duration) * 100}%` }}
-                      />
-                      <div className="absolute -top-2 -bottom-2 left-0 right-0 group-hover:bg-zinc-100/10 rounded-full" />
+                        ref={progressRef}
+                        onClick={handleProgressClick}
+                        className="relative w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full cursor-pointer group"
+                      >
+                        <div
+                          className="absolute left-0 h-full bg-green-500 rounded-full transition-all duration-150"
+                          style={{ width: `${(progress / duration) * 100}%` }}
+                        />
+                        <div className="absolute -top-2 -bottom-2 left-0 right-0 group-hover:bg-zinc-100/10 rounded-full" />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">
+                        <span>{formatTime(progress)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">
-                      <span>{formatTime(progress)}</span>
-                      <span>{formatTime(duration)}</span>
-                    </div>
+                    {track.previewUrl && (
+                      <button
+                        onClick={toggleMute}
+                        className="w-full py-2 px-4 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                      >
+                        {isMuted ? (
+                          <>
+                            Play Preview
+                            <Volume2 className="w-4 h-4" />
+                          </>
+                        ) : (
+                          <>
+                            Stop Preview
+                            <VolumeX className="w-4 h-4" />
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
-
-                  {track.previewUrl && (
-                    <button
-                      onClick={toggleMute}
-                      className="w-full py-2 px-4 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                    >
-                      {isMuted ? (
-                        <>
-                          <Volume2 className="w-4 h-4" />
-                          Play Preview
-                        </>
-                      ) : (
-                        <>
-                          <VolumeX className="w-4 h-4" />
-                          Stop Preview
-                        </>
-                      )}
-                    </button>
-                  )}
                 </motion.div>
               )}
             </AnimatePresence>
