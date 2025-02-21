@@ -4,7 +4,7 @@ const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = `${process.env.NEXT_PUBLIC_SITE_URL}/api/spotify/callback`;
 
 export async function GET() {
-  // Add better error handling
+  // Error handling
   if (!CLIENT_ID) {
     console.error('Missing SPOTIFY_CLIENT_ID');
     return new Response('Missing Spotify client configuration', { status: 500 });
