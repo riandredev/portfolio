@@ -7,7 +7,7 @@ const nextConfig = {
         hostname: '**',
       }
     ],
-    domains: ['localhost', '127.0.0.1'],
+    domains: ['localhost', '127.0.0.1', 'i.scdn.co', 'platform-lookaside.fbsbx.com'],
   },
   staticPageGenerationTimeout: 300,
   poweredByHeader: false,
