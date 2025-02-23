@@ -45,11 +45,11 @@ export default function Footer({ className = '' }: FooterProps) {
   ]
 
   return (
-    <footer className={`w-full border-t border-zinc-200 dark:border-zinc-800 z-50 ${className}`}>
-      <div className="container mx-auto px-4 py-8 sm:py-12">
+    <footer className={`w-full border-t border-zinc-200 dark:border-zinc-800 relative z-[10] bg-white dark:bg-black pointer-events-auto ${className}`}>
+      <div className="container mx-auto px-4 py-8 sm:py-12 relative">
         <div className="flex flex-col sm:flex-row justify-between gap-8">
           {/* Get in touch section */}
-          <div className="space-y-2">
+          <div className="space-y-2 relative">
             <h3 className="text-xl sm:text-2xl font-light">Get in touch</h3>
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
@@ -93,7 +93,7 @@ export default function Footer({ className = '' }: FooterProps) {
             </Popover>
           </div>
 
-          <div className="space-y-2 sm:space-y-4">
+          <div className="space-y-2 relative z-[11]"> {/* Increased z-index and added relative positioning */}
             <h3 className="text-xl sm:text-2xl font-light">Connect</h3>
             <div className="flex flex-col space-y-2">
               {socialLinks.map((link) => (
@@ -102,7 +102,7 @@ export default function Footer({ className = '' }: FooterProps) {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-between text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="group flex items-center justify-between text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors pointer-events-auto"
                 >
                   <span>{link.name}</span>
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -112,12 +112,12 @@ export default function Footer({ className = '' }: FooterProps) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-8 sm:mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 gap-4 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-8 sm:mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 gap-4 sm:gap-0 relative z-[11]">
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 text-center sm:text-left">
             © {new Date().getFullYear()} Riandre van der Voorden. All rights reserved.
           </p>
           <div className="sm:absolute sm:left-1/2 sm:-translate-x-1/2">
-            <Heart fill="gray" strokeWidth={0} className="w-4 h-4 text-rose-500 dark:text-rose-400" />
+            <Heart className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
           </div>
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
             Gauteng, South Africa

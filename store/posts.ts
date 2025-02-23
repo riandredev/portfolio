@@ -1,6 +1,20 @@
 import { create } from 'zustand'
 import { Post, PostCategory } from '@/types/post'
 
+async function deleteMedia(url: string) {
+  try {
+    await fetch('/api/uploadthing/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+  } catch (error) {
+    console.error('Failed to delete media:', error);
+  }
+}
+
 interface PostsState {
   posts: Post[]
   isLoading: boolean
@@ -92,6 +106,9 @@ export const usePostsStore = create<PostsState>((set, get) => ({
         return
       }
 
+      const post = get().posts.find(p => p._id === id)
+      if (!post) throw new Error('Post not found')
+
       const response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
         headers: {
@@ -103,6 +120,18 @@ export const usePostsStore = create<PostsState>((set, get) => ({
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to delete post')
       }
+
+      // Delete associated media
+      if (post.image) await deleteMedia(post.image)
+      if (post.video) await deleteMedia(post.video)
+      if (post.logo) await deleteMedia(post.logo)
+
+      // Delete media from content blocks
+      post.content?.blocks?.forEach(async (block) => {
+        if ('url' in block && block.url) {
+          await deleteMedia(block.url)
+        }
+      })
 
       // Update local state
       set((state) => ({

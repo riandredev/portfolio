@@ -12,9 +12,10 @@ interface PostCardProps {
   href: string
   tags?: string[]
   pinned?: boolean
+  category?: string
 }
 
-const PostCard = ({ title, description, image, video, logo, href, tags, pinned }: PostCardProps) => {
+const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category }: PostCardProps) => {
   return (
     <article className="group flex flex-col gap-6 font-manrope">
       <Link href={href} className="relative block aspect-[16/10] overflow-hidden border dark:border-zinc-700 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
@@ -26,7 +27,12 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned }
               loop
               muted
               playsInline
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-full will-change-transform"
+              style={{
+                objectFit: 'cover',
+                imageRendering: 'auto',
+                transform: 'translate3d(0, 0, 0)' // Force GPU acceleration
+              }}
             />
           ) : (
             <Image
@@ -44,7 +50,7 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned }
             transition={{ duration: 0.3 }}
             className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px]"
           >
-            {logo ? (
+            {logo && logo.length > 0 ? (
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -52,10 +58,11 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned }
                 className="relative w-64 h-64"
               >
                 <Image
-                  src={logo.startsWith('/') ? logo : `/${logo}`}
+                  src={logo}
                   alt={`${title} logo`}
                   fill
                   className="object-contain filter brightness-0 invert"
+                  unoptimized
                 />
               </motion.div>
             ) : (
@@ -72,12 +79,22 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned }
         </AnimatePresence>
       </Link>
       <div className="flex flex-col gap-4">
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <h3 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
             {title}
+            {category && (
+              <>
+                <span className="text-2xl text-zinc-400 dark:text-zinc-500 font-normal">
+                  |
+                </span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-base font-normal capitalize">
+                  {category}
+                </span>
+              </>
+            )}
           </h3>
           {tags && tags.length > 0 && (
-            <div className="flex flex-wrap justify-end gap-2 shrink-0">
+            <div className="flex flex-wrap gap-2 shrink-0">
               {tags.slice(0, 4).map((tag) => (
                 <span
                   key={tag}

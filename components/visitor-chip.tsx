@@ -5,6 +5,7 @@ import { getFlagUrl } from '@/lib/flags'
 import { Loader2 } from 'lucide-react'
 import { useVisitorsStore } from '@/store/visitors'
 import Image from 'next/image'
+import { useScrollFade } from '@/hooks/useScrollFade'
 
 interface LocationInfo {
   city: string
@@ -14,7 +15,7 @@ interface LocationInfo {
 }
 
 export default function VisitorChip() {
-  const [opacity, setOpacity] = useState(1)
+  const opacity = useScrollFade()
   const {
     currentLocation,
     lastVisitor,
@@ -81,21 +82,10 @@ export default function VisitorChip() {
       }
     }
 
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY
-      const startFade = 850
-      const endFade = 950
-      const newOpacity = Math.max(0, 1 - (scrollPosition - startFade) / (endFade - startFade))
-      setOpacity(newOpacity)
-    }
-
     fetchLocation()
-    window.addEventListener('scroll', handleScroll)
-    handleScroll()
 
     return () => {
       isMounted = false
-      window.removeEventListener('scroll', handleScroll)
     }
   }, [currentLocation, fetchLatestVisitor, lastVisitor, setCurrentLocation, updateVisitor])
 

@@ -35,7 +35,13 @@ export default function VideoBlock({ url, caption }: VideoBlockProps) {
           loop
           muted
           playsInline
-          className="w-full h-full rounded-lg object-cover"
+          className="w-full h-full rounded-lg will-change-transform"
+          style={{
+            objectFit: 'contain',
+            imageRendering: 'auto',
+            transform: 'translate3d(0, 0, 0)', // Force GPU acceleration
+            backfaceVisibility: 'hidden'
+          }}
         />
       </div>
       {caption && (
@@ -44,5 +50,5 @@ export default function VideoBlock({ url, caption }: VideoBlockProps) {
         </figcaption>
       )}
     </figure>
-  );
-}
+  )
+};

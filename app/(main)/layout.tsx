@@ -1,18 +1,21 @@
-import Navbar from "@/components/ui/navbar"
-import Footer from "@/components/footer"
+'use client'
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+import { Suspense } from 'react'
+import Footer from '@/components/footer'
+import Navbar from '@/components/ui/navbar'
+
+export default function MainLayout({ children }) {
   return (
-    <>
+    <div className="relative min-h-screen bg-white dark:bg-black">
       <Navbar />
-      <main className="flex-1 relative">
-        {children}
-      </main>
+
+      <Suspense fallback={null}>
+        <main className="relative mx-auto">
+          {children}
+        </main>
+      </Suspense>
+
       <Footer />
-    </>
+    </div>
   )
 }

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ImageBlock } from '@/types/post'
 import { Upload, X } from 'lucide-react'
 import Image from 'next/image'
-import { uploadFile } from '@/lib/api'
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface ImageBlockEditorProps {
   block: ImageBlock
@@ -13,17 +13,28 @@ interface ImageBlockEditorProps {
 export default function ImageBlockEditor({ block, onChange, onRemove }: ImageBlockEditorProps) {
   const [uploading, setUploading] = useState(false)
 
+  const { startUpload } = useUploadThing("imageUploader", {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]) {
+        onChange({ ...block, url: res[0].url })
+      }
+      setUploading(false)
+    },
+    onUploadError: (err) => {
+      console.error('Upload failed:', err)
+      setUploading(false)
+    },
+  })
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     try {
       setUploading(true)
-      const { url } = await uploadFile(file, 'image')
-      onChange({ ...block, url })
+      await startUpload([file])
     } catch (error) {
       console.error('Upload failed:', error)
-    } finally {
       setUploading(false)
     }
   }

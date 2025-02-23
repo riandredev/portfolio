@@ -63,7 +63,13 @@ const ContentMediaSection = ({ post }: { post: Post }) => (
             loop
             muted
             playsInline
-            className="w-full aspect-video"
+            className="w-full aspect-video will-change-transform"
+            style={{
+              objectFit: 'contain',
+              imageRendering: 'auto',
+              transform: 'translate3d(0, 0, 0)', // Force GPU acceleration
+              backfaceVisibility: 'hidden'
+            }}
           />
         ) : post.image ? (
           <div className="aspect-video relative">
@@ -204,17 +210,24 @@ export default function PostDetail({ post }: { post: Post }) {
 
         {/* Main Content - Updated responsive spacing */}
         <article ref={articleRef} className="flex-1 w-full max-w-none lg:max-w-4xl">
-          {/* Header - Updated responsive typography */}
+          {/* Header */}
           <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-light mb-4">
             {post.title}
           </h1>
 
-          {post.publishedAt && (
-            <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-              <Calendar className="w-4 h-4" />
-              {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
-            </div>
-          )}
+          <div className="flex items-center gap-4 text-sm mb-4">
+            {post.publishedAt && (
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                <Calendar className="w-4 h-4" />
+                {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
+              </div>
+            )}
+            {post.category && (
+              <span className="px-2 py-0.5 rounded-md text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 capitalize text-xs">
+                {post.category}
+              </span>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-2 mb-8">
             {post.tags.map((tag) => (
@@ -227,7 +240,7 @@ export default function PostDetail({ post }: { post: Post }) {
             ))}
           </div>
 
-          {/* Featured Media and Technologies */}
+          {/* Rest of the content */}
           <ContentMediaSection post={post} />
 
           {/* Mobile Demo & Source Buttons - Shown only on mobile */}

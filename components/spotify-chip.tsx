@@ -6,6 +6,7 @@ import { Loader2, Volume2, VolumeX, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import '../app/globals.css'
 import { useSiteSettings } from "@/store/site-settings"
+import { useScrollFade } from '@/hooks/useScrollFade'
 
 const SpotifyIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#1DB954]" fill="currentColor">
@@ -77,8 +78,8 @@ export default function SpotifyChip() {
   const [progress, setProgress] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [duration, setDuration] = useState(0)
-  const [opacity, setOpacity] = useState(1)
   const [isVisible, setIsVisible] = useState(false)
+  const opacity = useScrollFade()
 
   const fetchNowPlaying = async () => {
     try {
@@ -140,15 +141,9 @@ export default function SpotifyChip() {
     let mounted = true;
     let progressInterval: NodeJS.Timeout;
 
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY
-      const startFade = 850
-      const endFade = 950
-      const newOpacity = Math.max(0, 1 - (scrollPosition - startFade) / (endFade - startFade))
-      setOpacity(newOpacity)
-    }
-
     const fetchNowPlaying = async () => {
+      if (!mounted || isRefreshing) return; // Add early return if already refreshing
+
       try {
         if (!isRefreshing) {
           setIsRefreshing(true);
@@ -226,21 +221,16 @@ export default function SpotifyChip() {
     fetchNowPlaying();
     const fetchInterval = setInterval(fetchNowPlaying, 3000);
 
-    // croll event listener
-    window.addEventListener('scroll', handleScroll)
-    handleScroll()
-
     return () => {
       mounted = false;
       clearInterval(fetchInterval);
       clearInterval(progressInterval);
-      window.removeEventListener('scroll', handleScroll)
       if (audio) {
         audio.pause();
         audio.src = '';
       }
     };
-  }, [duration]);
+  }, [audio, isRefreshing, duration]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -309,9 +299,8 @@ export default function SpotifyChip() {
     <AnimatePresence>
       {isVisible && track && (
         <motion.div
-          style={{ opacity }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
@@ -324,7 +313,8 @@ export default function SpotifyChip() {
               stiffness: 400,
               damping: 30
             }}
-            className="flex flex-col items-center gap-2 px-2 py-1 bg-white/5 dark:bg-black/5 backdrop-blur-md rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden w-[320px]"
+            style={{ opacity }}
+            className="flex flex-col items-center gap-2 px-2 py-1 bg-white/5 dark:bg-black/5 backdrop-blur-md rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden w-[320px] transition-opacity duration-200"
           >
             {/* opacity transition */}
             <div className="flex items-center gap-2.5 w-full min-h-[32px]">

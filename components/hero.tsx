@@ -1,35 +1,19 @@
 'use client'
-import { useScroll, useTransform, motion } from 'framer-motion'
+import { useThemeStore } from '@/store/theme'
+import Hero3D from './hero-3d'
 import HeroContent from './hero-content'
-import dynamic from 'next/dynamic'
-import { useGraphics } from '@/context/graphics-context'
-
-const SceneWrapper = dynamic(() => import('./three/scene-wrapper'), {
-  ssr: false,
-})
 
 export default function Hero() {
-  const { enable3D } = useGraphics()
-  const { scrollYProgress } = useScroll()
-  const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0])
+  const { enable3D } = useThemeStore()
 
   return (
-    <div className="min-h-[50vh] lg:h-screen flex items-center overflow-hidden">
-      <div className="container px-4 mx-auto">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-16">
-          <div className="w-full lg:w-1/2 py-12 lg:py-0">
-            <HeroContent />
-          </div>
-          {enable3D && (
-            <div className="hidden lg:block lg:w-1/2 h-[600px] relative">
-              <motion.div
-                className="absolute inset-0 w-full h-full"
-                style={{ opacity }}
-              >
-                <SceneWrapper />
-              </motion.div>
-            </div>
-          )}
+    <div className="relative">
+      <div className="flex min-h-[60vh] md:min-h-[80vh] items-center pt-16 md:pt-24">
+        <div className="w-full md:w-1/2 relative z-[2] px-4 md:px-0">
+          <HeroContent />
+        </div>
+        <div className="hidden md:block w-1/2 bg-transparent">
+          {enable3D && <Hero3D />}
         </div>
       </div>
     </div>

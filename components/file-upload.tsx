@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Upload, X } from 'lucide-react'
 import Image from 'next/image'
+import { useUploadThing } from "@/lib/uploadthing"
+import { toast } from "sonner"
 
 interface FileUploadProps {
   type: 'image' | 'video'
@@ -9,10 +11,58 @@ interface FileUploadProps {
   accept?: string
   hint?: string
   className?: string
+  onFileUpload?: (fileKey: string) => void; // Add this prop
 }
 
-export default function FileUpload({ type, value, onChange, accept, hint, className }: FileUploadProps) {
+export default function FileUpload({ type, value, onChange, accept, hint, className, onFileUpload }: FileUploadProps) {
   const [uploading, setUploading] = useState(false)
+  const [fileKey, setFileKey] = useState<string>('')
+
+  const { startUpload } = useUploadThing(
+    type === 'image' ? "imageUploader" : "videoUploader",
+    {
+      onClientUploadComplete: (res) => {
+        if (res?.[0]) {
+          // Use ufsUrl instead of url
+          onChange(res[0].ufsUrl)
+          // Store the fileKey for potential cleanup
+          const key = res[0].key
+          setFileKey(key)
+          onFileUpload?.(key)
+          toast.success("File uploaded successfully")
+        }
+        setUploading(false)
+      },
+      onUploadError: (err) => {
+        toast.error("Upload failed: " + err.message)
+        setUploading(false)
+      },
+    }
+  )
+
+  // Cleanup function
+  const deleteFile = useCallback(async () => {
+    if (fileKey) {
+      try {
+        await fetch('/api/upload/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileKey })
+        })
+      } catch (error) {
+        console.error('Failed to delete file:', error)
+      }
+    }
+  }, [fileKey])
+
+  // Call deleteFile when component unmounts if value is empty
+  useEffect(() => {
+    return () => {
+      if (!value && fileKey) {
+        deleteFile()
+      }
+    }
+  }, [value, fileKey, deleteFile])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -20,24 +70,10 @@ export default function FileUpload({ type, value, onChange, accept, hint, classN
 
     try {
       setUploading(true)
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch(`/api/upload?type=${type}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`
-        },
-        body: formData
-      })
-
-      if (!response.ok) throw new Error('Upload failed')
-
-      const data = await response.json()
-      onChange(data.url)
+      await startUpload([file])
     } catch (error) {
       console.error('Upload failed:', error)
-    } finally {
+      toast.error("Upload failed - please try again")
       setUploading(false)
     }
   }

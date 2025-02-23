@@ -1,7 +1,7 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ContentBlockTypes, ContentBlock } from '@/types/post' // Add Post type
+import { ContentBlockTypes, ContentBlock } from '@/types/post'
 type PostCategory = 'development' | 'design'
 import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
@@ -77,13 +77,39 @@ export default function NewPostPage() {
   const [newTechUrl, setNewTechUrl] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [category, setCategory] = useState('')
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
+  const [isCancelling, setIsCancelling] = useState(false)
   const addPost = usePostsStore((state) => state.addPost)
 
+  const cleanupUploadsInBackground = useCallback(async () => {
+    try {
+      const cleanupPromises = uploadedFiles.map(fileKey =>
+        fetch('/api/files/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileKey })
+        }).catch(err => console.error('Failed to delete file:', fileKey, err))
+      )
+
+      await Promise.allSettled(cleanupPromises)
+    } catch (error) {
+      console.error('Cleanup error:', error)
+    }
+  }, [uploadedFiles])
+
   useEffect(() => {
-    // Simulate initial load
     const timer = setTimeout(() => setIsLoading(false), 500)
     return () => clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (uploadedFiles.length > 0) {
+        cleanupUploadsInBackground()
+      }
+    }
+  }, [uploadedFiles, cleanupUploadsInBackground])
+
   if (isLoading) return <NewPostSkeleton />
 
   const blockTypes: { type: ContentBlockTypes; label: string }[] = [
@@ -101,7 +127,6 @@ export default function NewPostPage() {
     setError('')
 
     try {
-      // Add logging to help debug
       console.log('Submitting post:', {
         title,
         description,
@@ -115,7 +140,6 @@ export default function NewPostPage() {
         blocks
       })
 
-      // Validate required fields
       if (!title || !description || !slug || !image || !category) {
         throw new Error('Required fields are missing')
       }
@@ -123,7 +147,6 @@ export default function NewPostPage() {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
       const formattedImage = image.startsWith('http') ? image : `${baseUrl}${image}`
 
-      // Create new post using the store
       const newPost = {
         _id: `temp-${Date.now()}`,
         title,
@@ -165,7 +188,6 @@ export default function NewPostPage() {
     }
   }
 
-  // Auto-generate slug when title changes
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
     setTitle(newTitle)
@@ -178,13 +200,11 @@ export default function NewPostPage() {
 
     let techLogo = newTechLogo
 
-    // If no logo provided, try to get a default one
     if (!techLogo) {
       const defaultIcon = await getDefaultTechIcon(newTechName)
       if (defaultIcon) {
         techLogo = defaultIcon
       } else {
-        // Alert user if no logo was provided and no default found
         alert('Please provide a logo image or use a recognized technology name')
         return
       }
@@ -205,6 +225,16 @@ export default function NewPostPage() {
     setNewTechUrl('')
   }
 
+  const handleCancel = () => {
+    setIsCancelling(true)
+    router.back()
+    cleanupUploadsInBackground()
+  }
+
+  const handleFileUpload = (fileKey: string) => {
+    setUploadedFiles(prev => [...prev, fileKey])
+  }
+
   return (
     <div className="container px-4 mx-auto py-24 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -213,7 +243,6 @@ export default function NewPostPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Information */}
           <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-6">
             <h2 className="text-lg font-medium">Basic Information</h2>
             <div className="space-y-4">
@@ -293,6 +322,7 @@ export default function NewPostPage() {
                   type="image"
                   value={image}
                   onChange={setImage}
+                  onFileUpload={handleFileUpload}
                 />
               </div>
 
@@ -436,21 +466,22 @@ export default function NewPostPage() {
         <div className="flex justify-end gap-4">
           <button
             type="button"
-            onClick={() => router.back()}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+            onClick={handleCancel}
+            disabled={isCancelling}
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-50"
           >
-            Cancel
+            {isCancelling ? 'Cancelling...' : 'Cancel'}
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Creating...' : 'Create Post'}
-          </button>
-        </div>
-      </form>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isSubmitting ? 'Creating...' : 'Create Post'}
+      </button>
     </div>
-  </div>
-    )
+  </form>
+</div>
+</div>
+  )
 }

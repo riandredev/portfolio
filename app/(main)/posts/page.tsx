@@ -31,9 +31,9 @@ export default function PostsPage() {
 
   return (
     <main className="min-h-screen bg-zinc-100 dark:bg-black pt-24 sm:pt-28 md:pt-32 lg:pt-36">
-      <section className="w-full pb-8 sm:pb-12 md:pb-16 lg:pb-24">
+      <section className="w-full">
         <div className="container px-4 mx-auto">
-          <div className="flex flex-col gap-3 sm:gap-4 mb-8 sm:mb-12 md:mb-16">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-light">
               Featured <span className="font-normal">Projects</span>
             </h2>
@@ -49,15 +49,27 @@ export default function PostsPage() {
               ))}
             </div>
           ) : (
-            <div className="space-y-16">
-              {/* Development Projects */}
-              {developmentPosts.length > 0 && (
+            <div>
+              {/* Main Projects Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
+                {sortPosts([...developmentPosts, ...designPosts]).map((post) => (
+                  <PostCard
+                    key={post._id}
+                    {...post}
+                    href={`/posts/${post.slug}`}
+                    pinned={post.pinned}
+                  />
+                ))}
+              </div>
+
+              {/* Uncategorized Projects */}
+              {uncategorizedPosts.length > 0 && (
                 <div>
                   <h3 className="text-xl font-medium mb-8 text-zinc-800 dark:text-zinc-200">
-                    Development Projects
+                    Other Projects
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-                    {sortPosts(developmentPosts).map((post) => (
+                    {sortPosts(uncategorizedPosts).map((post) => (
                       <PostCard
                         key={post._id}
                         {...post}
@@ -69,53 +81,15 @@ export default function PostsPage() {
                 </div>
               )}
 
-          {/* Design Projects */}
-          {designPosts.length > 0 && (
-            <div>
-              <h3 className="text-xl font-medium mb-8 text-zinc-800 dark:text-zinc-200">
-                Design Projects
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-                {sortPosts(designPosts).map((post) => (
-                  <PostCard
-                    key={post._id}
-                    {...post}
-                    href={`/posts/${post.slug}`}
-                    pinned={post.pinned}
-                  />
-                ))}
-              </div>
+              {posts.length === 0 && (
+                <p className="text-center text-zinc-500 dark:text-zinc-400">
+                  No posts available.
+                </p>
+              )}
             </div>
-          )}
-
-          {/* Uncategorized Projects */}
-          {uncategorizedPosts.length > 0 && (
-            <div>
-              <h3 className="text-xl font-medium mb-8 text-zinc-800 dark:text-zinc-200">
-                Other Projects
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-                {sortPosts(uncategorizedPosts).map((post) => (
-                  <PostCard
-                    key={post._id}
-                    {...post}
-                    href={`/posts/${post.slug}`}
-                    pinned={post.pinned}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {posts.length === 0 && (
-            <p className="text-center text-zinc-500 dark:text-zinc-400">
-              No posts available.
-            </p>
           )}
         </div>
-      )}
-    </div>
-  </section>
-</main>
+      </section>
+    </main>
   )
 }

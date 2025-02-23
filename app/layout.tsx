@@ -9,6 +9,7 @@ import { GraphicsProvider } from '@/context/graphics-context'
 import "./globals.css";
 import { Viewport } from "next/types"
 import ErrorBoundary from '@/components/error-boundary'
+import { Suspense } from 'react'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -117,9 +118,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <GraphicsProvider>
-              <div className="relative flex min-h-screen flex-col">
+              <Suspense fallback={null}>
                 {children}
-              </div>
+              </Suspense>
             </GraphicsProvider>
           </ThemeProvider>
         </ErrorBoundary>

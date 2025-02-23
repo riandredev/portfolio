@@ -21,23 +21,22 @@ interface ThemeSettingsProps {
 
 export default function ThemeSettings({ onClose }: ThemeSettingsProps) {
   const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const { enable3D, toggle3D, isCapable } = useGraphics()
-  const { showSpotifyChip, setShowSpotifyChip } = useThemeStore()
+  // Use next-themes hook directly instead of store for theme switching
+  const { theme: currentTheme, setTheme: setNextTheme } = useTheme()
+  const { enable3D, setEnable3D, showSpotifyChip, setShowSpotifyChip } = useThemeStore()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const handleThemeChange = (value: string) => {
-    // Prevent closing of settings panel
-    setTheme(value)
+    setNextTheme(value) // Use next-themes setTheme directly
   }
 
   if (!mounted) return null
 
   return (
-    <div className="p-4 space-y-6" onClick={(e) => e.stopPropagation()}>
+    <div className="p-4 space-y-4" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-3">
           <Settings className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
@@ -54,7 +53,7 @@ export default function ThemeSettings({ onClose }: ThemeSettingsProps) {
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 px-1">Appearance</h3>
         <div className="relative">
-          <Select value={theme} onValueChange={handleThemeChange}>
+          <Select value={currentTheme} onValueChange={handleThemeChange}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-800/50">
               <SelectValue placeholder="Select theme" />
             </SelectTrigger>
@@ -85,33 +84,27 @@ export default function ThemeSettings({ onClose }: ThemeSettingsProps) {
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 px-1">Graphics</h3>
         <div className="flex items-center justify-between px-1">
-          <Label htmlFor="3d-toggle" className="text-sm text-zinc-600 dark:text-zinc-400">
-            3D effects
+          <Label htmlFor="3d-toggle" className="text-sm font-normal text-zinc-600 dark:text-zinc-400">
+            3D Lanyard Effect
           </Label>
           <Switch
             id="3d-toggle"
             checked={enable3D}
-            onCheckedChange={toggle3D}
-            disabled={!isCapable}
+            onCheckedChange={setEnable3D}
           />
         </div>
-        {!isCapable && (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 px-1">
-            3D effects are disabled due to hardware limitations.
-          </p>
-        )}
       </div>
 
-  <div className="space-y-2">
-    <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 px-1">My Spotify activity</label>
-    <div className="flex items-center justify-between px-1">
-      <span className="text-sm text-zinc-600 dark:text-zinc-400">Show what I’m listening to</span>
-      <Switch
-        checked={showSpotifyChip}
-        onCheckedChange={setShowSpotifyChip}
-      />
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 px-1">My Spotify activity</label>
+        <div className="flex items-center justify-between px-1">
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">Show what I’m listening to</span>
+          <Switch
+            checked={showSpotifyChip}
+            onCheckedChange={setShowSpotifyChip}
+          />
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   )
 }

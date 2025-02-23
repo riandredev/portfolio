@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { VideoBlock } from '@/types/post'
 import { Upload, X } from 'lucide-react'
-import { uploadFile } from '@/lib/api'
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface VideoBlockEditorProps {
   block: VideoBlock
@@ -12,17 +12,28 @@ interface VideoBlockEditorProps {
 export default function VideoBlockEditor({ block, onChange, onRemove }: VideoBlockEditorProps) {
   const [uploading, setUploading] = useState(false)
 
+  const { startUpload } = useUploadThing("videoUploader", {
+    onClientUploadComplete: (res) => {
+      if (res?.[0]) {
+        onChange({ ...block, url: res[0].url })
+      }
+      setUploading(false)
+    },
+    onUploadError: (err) => {
+      console.error('Upload failed:', err)
+      setUploading(false)
+    },
+  })
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     try {
       setUploading(true)
-      const { url } = await uploadFile(file, 'video')
-      onChange({ ...block, url })
+      await startUpload([file])
     } catch (error) {
       console.error('Upload failed:', error)
-    } finally {
       setUploading(false)
     }
   }
