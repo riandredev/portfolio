@@ -81,8 +81,35 @@ export default function SpotifyChip() {
   const [isVisible, setIsVisible] = useState(false)
   const opacity = useScrollFade()
 
+  useEffect(() => {
+    let progressInterval: NodeJS.Timeout;
+
+    const updateProgress = () => {
+      if (track?.duration_ms && !isMuted) {
+        setProgress(prev => {
+          const newProgress = prev + 0.1;
+          return newProgress >= (track.duration_ms / 1000) ? 0 : newProgress;
+        });
+      }
+    };
+
+    if (track && !isMuted) {
+      progressInterval = setInterval(updateProgress, 100);
+    }
+
+    return () => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+    };
+  }, [track, isMuted]);
+
   const fetchNowPlaying = async () => {
     try {
+      if (!isRefreshing) {
+        setIsRefreshing(true);
+      }
+
       const res = await fetch('/api/spotify/now-playing', {
         cache: 'no-store',
         headers: {
@@ -95,25 +122,54 @@ export default function SpotifyChip() {
 
       const data = await res.json();
 
-      // Only update when data is valid
-      if (data.isPlaying && data.title) {
-        setTrack({
-          name: data.title,
-          artist: data.artist,
-          albumArt: data.albumImageUrl,
-          previewUrl: data.previewUrl,
-          progress_ms: data.progress_ms,
-          duration_ms: data.duration_ms,
-          spotifyUrl: data.spotifyUrl
-        });
-        setIsVisible(true);
-      } else {
+      if (data.isPlaying) {
+        // Only update track if it's different or if it's the first load
+        if (!track || track.name !== data.title || track.artist !== data.artist) {
+          setTrack({
+            name: data.title,
+            artist: data.artist,
+            albumArt: data.albumImageUrl,
+            previewUrl: data.previewUrl,
+            progress_ms: data.progress_ms,
+            duration_ms: data.duration_ms,
+            spotifyUrl: data.spotifyUrl
+          });
+        }
+
+        // Only update visibility if it's not already visible
+        if (!isVisible) {
+          setIsVisible(true);
+        }
+
+        // Update progress even if track hasn't changed
+        if (data.progress_ms) {
+          setProgress(data.progress_ms / 1000);
+          setDuration(data.duration_ms / 1000);
+        }
+
+        // Handle audio setup only if needed
+        if (data.previewUrl && (!audio || audio.src !== data.previewUrl)) {
+          if (audio) {
+            audio.pause();
+            audio.src = '';
+          }
+          const newAudio = new Audio(data.previewUrl);
+          newAudio.volume = 0.5;
+          newAudio.muted = true;
+          setAudio(newAudio);
+        }
+      } else if (isVisible) { // Only update visibility if currently visible
         setIsVisible(false);
         setTrack(null);
       }
     } catch (error) {
-      setIsVisible(false);
-      setTrack(null);
+      console.error('Spotify fetch error:', error);
+      if (isVisible) { // Only update visibility if currently visible
+        setIsVisible(false);
+        setTrack(null);
+      }
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -128,109 +184,14 @@ export default function SpotifyChip() {
     // Initial fetch
     fetchAndUpdate();
 
-    // Set up polling interval (every 3 seconds)
-    const interval = setInterval(fetchAndUpdate, 3000);
+    // Increase interval to reduce unnecessary updates
+    const interval = setInterval(fetchAndUpdate, 5000);
 
     return () => {
       mounted = false;
       clearInterval(interval);
     };
   }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    let progressInterval: NodeJS.Timeout;
-
-    const fetchNowPlaying = async () => {
-      if (!mounted || isRefreshing) return; // Add early return if already refreshing
-
-      try {
-        if (!isRefreshing) {
-          setIsRefreshing(true);
-        }
-
-        const res = await fetch('/api/spotify/now-playing', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
-
-        if (!mounted) return;
-
-        if (!res.ok) {
-          console.error('Spotify API error:', await res.text());
-          throw new Error('Failed to fetch');
-        }
-
-        const data = await res.json();
-
-        if (data.isPlaying) {
-          setTrack({
-            name: data.title,
-            artist: data.artist,
-            albumArt: data.albumImageUrl,
-            previewUrl: data.previewUrl,
-            progress_ms: data.progress_ms,
-            duration_ms: data.duration_ms,
-            spotifyUrl: data.spotifyUrl
-          });
-          setIsVisible(true);
-
-          if (data.progress_ms && data.duration_ms) {
-            setProgress(data.progress_ms / 1000);
-            setDuration(data.duration_ms / 1000);
-          }
-
-          if (data.is_playing) {
-            clearInterval(progressInterval);
-            progressInterval = setInterval(() => {
-              setProgress(prev => {
-                const newProgress = prev + 0.1;
-                return newProgress >= duration ? 0 : newProgress;
-              });
-            }, 100);
-          }
-
-          if (data.previewUrl && (!audio || audio.src !== data.previewUrl)) {
-            if (audio) {
-              audio.pause();
-              audio.src = '';
-            }
-            const newAudio = new Audio(data.previewUrl);
-            newAudio.volume = 0.5;
-            newAudio.muted = true;
-            setAudio(newAudio);
-          }
-        } else {
-          setIsVisible(false);
-          setTrack(null);
-        }
-      } catch (error) {
-        console.error('Spotify fetch error:', error);
-        setIsVisible(false);
-        setTrack(null);
-      } finally {
-        if (mounted) {
-          setIsRefreshing(false);
-        }
-      }
-    };
-
-    fetchNowPlaying();
-    const fetchInterval = setInterval(fetchNowPlaying, 3000);
-
-    return () => {
-      mounted = false;
-      clearInterval(fetchInterval);
-      clearInterval(progressInterval);
-      if (audio) {
-        audio.pause();
-        audio.src = '';
-      }
-    };
-  }, [audio, isRefreshing, duration]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -283,6 +244,10 @@ export default function SpotifyChip() {
     setIsMuted(!isMuted)
     if (!audio.muted && audio.paused) {
       audio.play()
+      // Reset progress to match audio when unmuting
+      if (audio.currentTime) {
+        setProgress(audio.currentTime);
+      }
     }
   }
 
