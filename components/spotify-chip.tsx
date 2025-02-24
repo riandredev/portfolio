@@ -184,7 +184,7 @@ export default function SpotifyChip() {
     // Initial fetch
     fetchAndUpdate();
 
-    // Increase interval to reduce unnecessary updates
+    // Interval
     const interval = setInterval(fetchAndUpdate, 5000);
 
     return () => {

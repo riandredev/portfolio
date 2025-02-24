@@ -92,7 +92,7 @@ export default function AboutPage() {
                             </div>
                         </div>
                         <div className="space-y-4 text-center sm:text-left">
-                            <h1 className="text-2xl sm:text-3xl font-light">Hello, world! 🌎</h1>
+                            <h1 className="text-2xl sm:text-3xl font-light">Hello 👋,</h1>
                             <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
                                 I&apos;m Riandre, a Frontend engineer with a passion for creating engaging user experiences.
                                 Focused on building performant web applications using modern technologies.
