@@ -7,12 +7,15 @@ import { usePostsStore } from '@/store/posts'
 export default function Posts() {
   const { posts, fetchPosts, isLoading } = usePostsStore()
   const [recentPostsLimit, setRecentPostsLimit] = useState(4)
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false)
 
   useEffect(() => {
-    if (posts.length === 0) { // Only fetch if no posts exist
+    // Always fetch on initial mount
+    if (!hasAttemptedFetch) {
       fetchPosts()
+      setHasAttemptedFetch(true)
     }
-  }, [fetchPosts, posts.length])
+  }, [fetchPosts, hasAttemptedFetch])
 
   useEffect(() => {
     // Fetch settings when component mounts

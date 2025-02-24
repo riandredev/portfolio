@@ -34,15 +34,32 @@ export const usePostsStore = create<PostsState>((set, get) => ({
   setPosts: (newPosts: Post[]) => set({ posts: newPosts }),
 
   fetchPosts: async () => {
+    // Don't fetch if already loading
+    if (get().isLoading) return;
+
     set({ isLoading: true, error: null })
     try {
-      const response = await fetch('/api/posts')
-      if (!response.ok) throw new Error('Failed to fetch posts')
+      const response = await fetch('/api/posts', {
+        // Add cache control headers
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const posts = await response.json()
-      set({ posts, isLoading: false })
+      set({ posts, isLoading: false, error: null })
     } catch (error) {
-      set({ error: 'Failed to fetch posts', isLoading: false, posts: [] })
       console.error('Error fetching posts:', error)
+      set({
+        error: error instanceof Error ? error.message : 'Failed to fetch posts',
+        isLoading: false,
+        posts: []
+      })
     }
   },
 
