@@ -122,32 +122,26 @@ export default function SpotifyChip() {
 
       const data = await res.json();
 
+      // Always update visibility based on isPlaying status
+      setIsVisible(data.isPlaying);
+
       if (data.isPlaying) {
-        // Only update track if it's different or if it's the first load
-        if (!track || track.name !== data.title || track.artist !== data.artist) {
-          setTrack({
-            name: data.title,
-            artist: data.artist,
-            albumArt: data.albumImageUrl,
-            previewUrl: data.previewUrl,
-            progress_ms: data.progress_ms,
-            duration_ms: data.duration_ms,
-            spotifyUrl: data.spotifyUrl
-          });
-        }
+        setTrack({
+          name: data.title,
+          artist: data.artist,
+          albumArt: data.albumImageUrl,
+          previewUrl: data.previewUrl,
+          progress_ms: data.progress_ms,
+          duration_ms: data.duration_ms,
+          spotifyUrl: data.spotifyUrl
+        });
 
-        // Only update visibility if it's not already visible
-        if (!isVisible) {
-          setIsVisible(true);
-        }
-
-        // Update progress even if track hasn't changed
         if (data.progress_ms) {
           setProgress(data.progress_ms / 1000);
           setDuration(data.duration_ms / 1000);
         }
 
-        // Handle audio setup only if needed
+        // Handle audio setup
         if (data.previewUrl && (!audio || audio.src !== data.previewUrl)) {
           if (audio) {
             audio.pause();
@@ -158,16 +152,14 @@ export default function SpotifyChip() {
           newAudio.muted = true;
           setAudio(newAudio);
         }
-      } else if (isVisible) { // Only update visibility if currently visible
-        setIsVisible(false);
+      } else {
+        // Clear track data when nothing is playing
         setTrack(null);
       }
     } catch (error) {
       console.error('Spotify fetch error:', error);
-      if (isVisible) { // Only update visibility if currently visible
-        setIsVisible(false);
-        setTrack(null);
-      }
+      setIsVisible(false);
+      setTrack(null);
     } finally {
       setIsRefreshing(false);
     }

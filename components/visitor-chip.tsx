@@ -42,12 +42,15 @@ export default function VisitorChip() {
 
     const fetchLocation = async () => {
       try {
-        // Only fetch if we don't have current location
+        // First, fetch the last visitor if we don't have one
+        if (!lastVisitor) {
+          await fetchLatestVisitor()
+        }
+
+        // Silently fetch and store current location without displaying it
         if (!currentLocation) {
           const res = await fetch('https://ipapi.co/json/')
-          if (!res.ok) {
-            throw new Error(`Location service error: ${res.status}`)
-          }
+          if (!res.ok) throw new Error(`Location service error: ${res.status}`)
 
           const data = await res.json()
           if (data?.city && data?.country_name && data?.country) {
@@ -60,15 +63,10 @@ export default function VisitorChip() {
 
             if (isMounted) {
               setCurrentLocation(locationInfo)
-              // Store visit but don't update UI immediately
+              // Silently store the visit without updating display
               await updateVisitor(locationInfo)
             }
           }
-        }
-
-        // Always fetch the last visitor before this session
-        if (!lastVisitor) {
-          await fetchLatestVisitor()
         }
 
         if (isMounted) {
