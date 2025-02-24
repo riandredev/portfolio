@@ -91,7 +91,10 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           blocks
         },
         technologies,
-        category
+        category,
+        published: existingPost.published,
+        createdAt: existingPost.createdAt,
+        updatedAt: new Date().toISOString()
       };
 
       await updatePost(updatedPost);
