@@ -112,49 +112,46 @@ export default function PostDetail({ post }: { post: Post }) {
   // Memoize section IDs
   const sectionIds = useMemo(() => sections.map(section => `#${section.id}`), [sections])
 
-  // Use optimized scroll spy
+  // Use scroll spy with improved options
   const activeSection = useScrollSpy(sectionIds, {
-    rootMargin: '-20% 0% -35% 0%'
+    rootMargin: '-20% 0% -35% 0%',
+    threshold: 0.5
   })
 
-  const { prevPost, nextPost } = useMemo(() => {
-    const currentIndex = posts.findIndex(p => p._id === post._id)
-    return {
-      prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
-      nextPost: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null
-    }
-  }, [posts, post._id])
-
-  // Optimize section updates
+  // Update section detection logic
   useEffect(() => {
     const updateSections = () => {
       if (!articleRef.current) return
 
-      // Only query headings within the article element
-      const headings = articleRef.current.querySelectorAll('h2, h3')
-      const sectionsData = Array.from(headings).map((heading) => {
+      const headings = Array.from(articleRef.current.querySelectorAll('h2, h3'))
+      const sectionsData = headings.map((heading) => {
+        // Ensure heading has an ID
         if (!heading.id) {
-          heading.id = heading.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || ''
+          const id = heading.textContent
+            ?.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '') || `section-${Math.random().toString(36).substr(2, 9)}`
+          heading.id = id
         }
+
         return {
           id: heading.id,
           title: heading.textContent || '',
           level: parseInt(heading.tagName[1])
         }
       })
+
       setSections(sectionsData)
     }
 
+    // Run initial update
     updateSections()
 
-    // Debounced observer to prevent excessive updates
-    let timeout: NodeJS.Timeout
+    // Set up mutation observer with debounce
     const observer = new MutationObserver(() => {
-      clearTimeout(timeout)
-      timeout = setTimeout(updateSections, 100)
+      requestAnimationFrame(updateSections)
     })
 
-    // Only observe the article element
     if (articleRef.current) {
       observer.observe(articleRef.current, {
         childList: true,
@@ -163,20 +160,32 @@ export default function PostDetail({ post }: { post: Post }) {
       })
     }
 
-    return () => {
-      observer.disconnect()
-      clearTimeout(timeout)
-    }
+    return () => observer.disconnect()
   }, [])
 
-  // Memoize scroll handler
+  // Improved smooth scroll handling
   const handleSectionClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
     const element = document.getElementById(sectionId.replace('#', ''))
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      const offset = 100 // Adjust this value based on your header height
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - offset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
     }
   }, [])
+
+  const { prevPost, nextPost } = useMemo(() => {
+    const currentIndex = posts.findIndex(p => p._id === post._id)
+    return {
+      prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
+      nextPost: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null
+    }
+  }, [posts, post._id])
 
   return (
     <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 bg-zinc-50 dark:bg-black">
@@ -197,7 +206,7 @@ export default function PostDetail({ post }: { post: Post }) {
                   className={`block py-1 text-sm transition-colors duration-200
                     ${section.level === 3 ? 'pl-4' : 'pl-0'}
                     ${activeSection === `#${section.id}`
-                      ? 'text-blue-500 dark:text-blue-400'
+                      ? 'text-blue-500 dark:text-blue-400 font-medium'
                       : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-300'
                     }`}
                 >
@@ -208,7 +217,7 @@ export default function PostDetail({ post }: { post: Post }) {
           </div>
         </aside>
 
-        {/* Main Content - Updated responsive spacing */}
+        {/* Main Content */}
         <article ref={articleRef} className="flex-1 w-full max-w-none lg:max-w-4xl">
           {/* Header */}
           <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-light mb-4">
@@ -248,7 +257,7 @@ export default function PostDetail({ post }: { post: Post }) {
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
           </div>
 
-          {/* Content - Updated responsive prose styles */}
+          {/* Content */}
           <div className="prose dark:prose-invert w-full max-w-none
             prose-p:text-base sm:prose-p:text-lg
             prose-p:text-zinc-700 dark:prose-p:text-zinc-300
@@ -263,7 +272,7 @@ export default function PostDetail({ post }: { post: Post }) {
             {post.content?.blocks && <ContentBlocks blocks={post.content.blocks} />}
           </div>
 
-          {/* Navigation - Remove border-t since PostNavigation has its own */}
+          {/* Navigation */}
           <div className="mt-8 sm:mt-12">
             <PostNavigation prevPost={prevPost} nextPost={nextPost} />
           </div>
