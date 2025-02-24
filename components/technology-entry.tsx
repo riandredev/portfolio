@@ -30,7 +30,7 @@ const Content = memo(({
           alt={entry.name}
           fill
           className={`object-contain ${imageClasses}`}
-          unoptimized // Add this to prevent unnecessary image optimization
+          unoptimized // prevent unnecessary image optimization
         />
       </div>
     )}
