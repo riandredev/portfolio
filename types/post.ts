@@ -10,19 +10,20 @@ export interface Post {
   slug: string;
   tags: string[];
   category: PostCategory;
+  published: boolean;
   pinned?: boolean;
-  video?: string;
-  demoUrl?: string;
-  sourceUrl?: string;
-  publishedAt?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  video?: string | null;
+  demoUrl?: string | null;
+  sourceUrl?: string | null;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
   content?: {
     blocks: ContentBlock[];
-  };
-  logo?: string;
+  } | null;
+  logo?: string | null;
   temporary?: boolean;
-  technologies?: TechnologyEntry[];
+  technologies?: TechnologyEntry[] | null;
 }
 
 export type ContentBlockTypes =
@@ -96,7 +97,7 @@ export type ContentBlock =
   | ImageBlock
   | VideoBlock
   | NoteBlock
-  | ListBlock 
+  | ListBlock
   | SeparatorBlock;
 
 export type TechnologyEntry = {

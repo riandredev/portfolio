@@ -2,17 +2,18 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Paths that require authentication
-  const protectedPaths = [
-    '/dashboard',
-    '/api/posts'
-  ]
+  // Only protect write operations
+  const protectedMethods = ['POST', 'PUT', 'DELETE', 'PATCH']
 
-  const isProtectedPath = protectedPaths.some(path =>
-    request.nextUrl.pathname.startsWith(path)
-  )
+  // Check if this is a protected operation
+  const isProtectedOperation =
+    request.nextUrl.pathname.startsWith('/api/posts') &&
+    protectedMethods.includes(request.method)
 
-  if (isProtectedPath) {
+  // Protect dashboard access
+  const isDashboardAccess = request.nextUrl.pathname.startsWith('/dashboard')
+
+  if (isProtectedOperation || isDashboardAccess) {
     const authToken = request.cookies.get('auth_token')
 
     if (!authToken || authToken.value !== process.env.AUTH_TOKEN) {

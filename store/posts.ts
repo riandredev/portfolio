@@ -19,6 +19,7 @@ interface PostsState {
   posts: Post[]
   isLoading: boolean
   error: string | null
+  hasInitialized: boolean // Add this to track initial load
   fetchPosts: () => Promise<void>
   addPost: (post: Omit<Post, '_id'> & { category: PostCategory }) => Promise<Post>
   updatePost: (post: Post & { category: PostCategory }) => Promise<Post>
@@ -28,38 +29,56 @@ interface PostsState {
 
 export const usePostsStore = create<PostsState>((set, get) => ({
   posts: [],
-  isLoading: false,
+  isLoading: false, // Start with false
   error: null,
+  hasInitialized: false,
 
   setPosts: (newPosts: Post[]) => set({ posts: newPosts }),
 
   fetchPosts: async () => {
-    // Don't fetch if already loading
-    if (get().isLoading) return;
+    // If already fetching or initialized, don't fetch again
+    if (get().isLoading || (get().hasInitialized && get().posts.length > 0)) {
+      return;
+    }
 
-    set({ isLoading: true, error: null })
+    set({ isLoading: true, error: null });
+    console.log('Fetching posts...'); // Debug log
+
     try {
       const response = await fetch('/api/posts', {
-        // Add cache control headers
+        method: 'GET',
         headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
         }
-      })
+      });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch posts');
       }
 
-      const posts = await response.json()
-      set({ posts, isLoading: false, error: null })
+      const data = await response.json();
+      console.log('Received posts:', data); // Debug log
+
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format - expected an array');
+      }
+
+      set({
+        posts: data,
+        isLoading: false,
+        error: null,
+        hasInitialized: true
+      });
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching posts:', error);
       set({
         error: error instanceof Error ? error.message : 'Failed to fetch posts',
         isLoading: false,
-        posts: []
-      })
+        posts: [],
+        hasInitialized: true
+      });
     }
   },
 

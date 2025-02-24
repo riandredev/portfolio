@@ -1,20 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/mongodb';
-import { Post, PostCategory } from '@/types/post';
+import { connectToDatabase } from '@/lib/mongodb';
+import { Post } from '@/types/post';
 import { ObjectId } from 'mongodb';
 
 export async function GET() {
   try {
-    const db = await getDb();
-    const posts = await db.collection('posts').find().toArray();
-    return NextResponse.json(posts.map(post => ({
+    const { db } = await connectToDatabase();
+
+    const posts = await db
+      .collection('posts')
+      .find({}) // Remove the published filter temporarily to debug
+      .sort({ publishedAt: -1 })
+      .toArray();
+
+    console.log('Fetched posts count:', posts.length); // Debug log
+
+    // Convert MongoDB _id to string
+    const formattedPosts = posts.map(post => ({
       ...post,
       _id: post._id.toString()
-    })));
+    }));
+
+    return NextResponse.json(formattedPosts, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Database error details:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch posts' },
+      { error: 'Failed to fetch posts', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -27,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Validate category
     if (!postData.category || !['development', 'design'].includes(postData.category)) {
       return NextResponse.json(
-        { error: 'Invalid category. Must be either "development" or "design"' },
+        { error: 'Invalid category' },
         { status: 400 }
       );
     }
@@ -44,8 +61,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(tempPost);
     }
 
-    // If not temporary, save to database
-    const db = await getDb();
+    const { db } = await connectToDatabase();
     const { _id, ...newPostData } = postData;
 
     const result = await db.collection('posts').insertOne({
@@ -74,17 +90,16 @@ export async function PUT(request: NextRequest) {
   try {
     const postData: Post = await request.json();
 
-    // Validate category
     if (!postData.category || !['development', 'design'].includes(postData.category)) {
       return NextResponse.json(
-        { error: 'Invalid category. Must be either "development" or "design"' },
+        { error: 'Invalid category' },
         { status: 400 }
       );
     }
 
     const { _id, ...updateData } = postData;
+    const { db } = await connectToDatabase();
 
-    const db = await getDb();
     const result = await db.collection('posts').updateOne(
       { _id: new ObjectId(_id) },
       {
@@ -96,7 +111,14 @@ export async function PUT(request: NextRequest) {
       }
     );
 
-    return NextResponse.json(result);
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: 'Post not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ ...postData });
   } catch (error) {
     console.error('Update error:', error);
     return NextResponse.json(

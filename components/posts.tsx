@@ -5,17 +5,22 @@ import PostCardSkeleton from './post-card-skeleton'
 import { usePostsStore } from '@/store/posts'
 
 export default function Posts() {
-  const { posts, fetchPosts, isLoading } = usePostsStore()
+  const { posts, fetchPosts, isLoading, error } = usePostsStore()
   const [recentPostsLimit, setRecentPostsLimit] = useState(4)
-  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false)
 
   useEffect(() => {
-    // Always fetch on initial mount
-    if (!hasAttemptedFetch) {
-      fetchPosts()
-      setHasAttemptedFetch(true)
-    }
-  }, [fetchPosts, hasAttemptedFetch])
+    console.log('Component mounted, fetching posts...'); // Debug log
+    fetchPosts();
+  }, [fetchPosts]);
+
+  // Debug logs
+  useEffect(() => {
+    console.log('Current state:', {
+      postsCount: posts.length,
+      isLoading,
+      error
+    });
+  }, [posts, isLoading, error]);
 
   useEffect(() => {
     // Fetch settings when component mounts
@@ -31,6 +36,34 @@ export default function Posts() {
 
     fetchSettings()
   }, [])
+
+  if (error) {
+    return (
+      <section className="relative w-full pt-4 pb-24 bg-zinc-100 dark:bg-black">
+        <div className="container px-4 mx-auto">
+          <div className="text-red-500 dark:text-red-400">
+            <h2 className="text-xl font-medium mb-2">Error loading posts</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <section className="relative w-full pt-4 pb-24 bg-zinc-100 dark:bg-black">
+        <div className="container px-4 mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <PostCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   const sortedPosts = [...posts].sort((a, b) => {
     // First sort by pinned status

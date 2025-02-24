@@ -1,12 +1,7 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, Db } from 'mongodb'
 
 if (!process.env.MONGODB_URI) {
-  if (process.env.NODE_ENV === 'development') {
-    throw new Error('Please add your Mongo URI to .env.local')
-  }
-  // In production, log error and use fallback
-  console.error('MongoDB URI not found, using fallback configuration')
-  process.env.MONGODB_URI = 'mongodb://localhost:27017/portfolio'
+  throw new Error('Please add your Mongo URI to .env.local')
 }
 
 const uri = process.env.MONGODB_URI
@@ -15,7 +10,6 @@ const options = {
   minPoolSize: 5,
 }
 
-let client: MongoClient
 let clientPromise: Promise<MongoClient>
 
 if (process.env.NODE_ENV === 'development') {
@@ -24,21 +18,25 @@ if (process.env.NODE_ENV === 'development') {
   }
 
   if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options)
+    const client = new MongoClient(uri, options)
     globalWithMongo._mongoClientPromise = client.connect()
   }
   clientPromise = globalWithMongo._mongoClientPromise
 } else {
-  client = new MongoClient(uri, options)
+  const client = new MongoClient(uri, options)
   clientPromise = client.connect()
 }
 
-export default clientPromise
+// Function that returns a database instance
+export async function connectToDatabase() {
+  const client = await clientPromise;
+  return { db: client.db('portfolio') };
+}
 
-// Helper function to get database
-export async function getDb() {
-  const client = await clientPromise
-  return client.db('portfolio')
+// Update getDb to use the new connection method
+export async function getDb(): Promise<Db> {
+  const { db } = await connectToDatabase();
+  return db;
 }
 
 export async function ensureCappedCollection() {
@@ -63,8 +61,9 @@ export async function ensureCappedCollection() {
   }
 }
 
+export default clientPromise;
+
 interface VisitorData {
-  city: string;
   country: string;
   countryCode: string;
   userAgent: string;
