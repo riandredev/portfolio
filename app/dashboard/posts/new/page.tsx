@@ -163,6 +163,8 @@ export default function NewPostPage() {
         },
         publishedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(), 
+        published: false,
         category: category as PostCategory
       }
 
