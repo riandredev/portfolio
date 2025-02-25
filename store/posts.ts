@@ -36,48 +36,24 @@ export const usePostsStore = create<PostsState>((set, get) => ({
   setPosts: (newPosts: Post[]) => set({ posts: newPosts }),
 
   fetchPosts: async () => {
-    // If already fetching or initialized, don't fetch again
-    if (get().isLoading || (get().hasInitialized && get().posts.length > 0)) {
-      return;
-    }
-
     set({ isLoading: true, error: null });
-    console.log('Fetching posts...'); // Debug log
-
     try {
-      const response = await fetch('/api/posts', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-        }
-      });
-
+      console.log('Fetching posts...');
+      const response = await fetch('/api/posts');
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch posts');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
-      console.log('Received posts:', data); // Debug log
-
-      if (!Array.isArray(data)) {
-        throw new Error('Invalid response format - expected an array');
-      }
-
+      const posts = await response.json();
+      console.log('Received posts:', posts);
       set({
-        posts: data,
-        isLoading: false,
-        error: null,
-        hasInitialized: true
+        posts,
+        isLoading: false
       });
     } catch (error) {
       console.error('Error fetching posts:', error);
       set({
         error: error instanceof Error ? error.message : 'Failed to fetch posts',
-        isLoading: false,
-        posts: [],
-        hasInitialized: true
+        isLoading: false
       });
     }
   },

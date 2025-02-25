@@ -15,6 +15,13 @@ interface PostCardProps {
   category?: string
 }
 
+const formatCategories = (category: string) => {
+  if (category === 'development,design') {
+    return 'Development & Design';
+  }
+  return category.charAt(0).toUpperCase() + category.slice(1);
+};
+
 const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category }: PostCardProps) => {
   return (
     <article className="group flex flex-col gap-6 font-manrope">
@@ -88,7 +95,7 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
                   |
                 </span>
                 <span className="text-zinc-400 dark:text-zinc-500 text-base font-normal capitalize">
-                  {category}
+                  {formatCategories(category)}
                 </span>
               </>
             )}

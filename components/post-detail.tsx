@@ -104,6 +104,21 @@ const ContentMediaSection = ({ post }: { post: Post }) => (
   </>
 )
 
+const CategoryBadge = ({ category }: { category: string }) => {
+  const isDesign = category === 'design';
+  const isDev = category === 'development';
+
+  return (
+    <span className={`px-2 py-0.5 rounded-md ${
+      isDesign
+        ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20'
+        : 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20'
+    } capitalize text-xs`}>
+      {category}
+    </span>
+  );
+};
+
 export default function PostDetail({ post }: { post: Post }) {
   const { posts } = usePostsStore()
   const [sections, setSections] = useState<Section[]>([])
@@ -232,9 +247,11 @@ export default function PostDetail({ post }: { post: Post }) {
               </div>
             )}
             {post.category && (
-              <span className="px-2 py-0.5 rounded-md text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 capitalize text-xs">
-                {post.category}
-              </span>
+              <div className="flex gap-2">
+                {post.category.split(',').map((cat) => (
+                  <CategoryBadge key={cat} category={cat} />
+                ))}
+              </div>
             )}
           </div>
 

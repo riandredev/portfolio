@@ -1,6 +1,7 @@
 import SeparatorBlock from "@/components/content-blocks/separator-block";
 
-export type PostCategory = 'development' | 'design';
+export type SingleCategory = 'development' | 'design';
+export type PostCategory = SingleCategory | 'development,design';
 
 export interface Post {
   _id: string;

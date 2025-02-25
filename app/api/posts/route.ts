@@ -41,8 +41,12 @@ export async function POST(request: NextRequest) {
   try {
     const postData: Post = await request.json();
 
-    // Validate category
-    if (!postData.category || !['development', 'design'].includes(postData.category)) {
+    // Validate categories
+    const categories = postData.category.split(',');
+    const validCategories = ['development', 'design'];
+    const areValidCategories = categories.every(cat => validCategories.includes(cat));
+
+    if (!postData.category || !areValidCategories) {
       return NextResponse.json(
         { error: 'Invalid category' },
         { status: 400 }

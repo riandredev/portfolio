@@ -76,9 +76,10 @@ export default function NewPostPage() {
   const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
   const [newTechUrl, setNewTechUrl] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [category, setCategory] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const [isCancelling, setIsCancelling] = useState(false)
+  const [categories, setCategories] = useState<string[]>([])
+  const [publishDate, setPublishDate] = useState('')
   const addPost = usePostsStore((state) => state.addPost)
 
   const cleanupUploadsInBackground = useCallback(async () => {
@@ -140,7 +141,7 @@ export default function NewPostPage() {
         blocks
       })
 
-      if (!title || !description || !slug || !image || !category) {
+      if (!title || !description || !slug || !image || !categories.length) {
         throw new Error('Required fields are missing')
       }
 
@@ -161,11 +162,11 @@ export default function NewPostPage() {
         content: {
           blocks
         },
-        publishedAt: new Date().toISOString(),
+        publishedAt: publishDate ? new Date(publishDate).toISOString() : new Date().toISOString(),
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(), 
+        updatedAt: new Date().toISOString(),
         published: false,
-        category: category as PostCategory
+        category: (categories.length > 0 ? (categories.includes('development') ? 'development' : 'design') : 'development') as PostCategory
       }
 
       console.log('Attempting to add post:', newPost)
@@ -371,16 +372,49 @@ export default function NewPostPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Category</label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as PostCategory)}
+                <label className="block text-sm font-medium mb-2">Categories</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={categories.includes('development')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCategories([...categories, 'development'])
+                        } else {
+                          setCategories(categories.filter(c => c !== 'development'))
+                        }
+                      }}
+                      className="rounded border-zinc-200 dark:border-zinc-700"
+                    />
+                    <span>Development</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={categories.includes('design')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCategories([...categories, 'design'])
+                        } else {
+                          setCategories(categories.filter(c => c !== 'design'))
+                        }
+                      }}
+                      className="rounded border-zinc-200 dark:border-zinc-700"
+                    />
+                    <span>Design</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Publish Date (optional)</label>
+                <input
+                  type="datetime-local"
+                  value={publishDate}
+                  onChange={(e) => setPublishDate(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                >
-                  <option value="">Select a category</option>
-                  <option value="development">Development</option>
-                  <option value="design">Design</option>
-                </select>
+                />
               </div>
 
             </div>
@@ -390,99 +424,99 @@ export default function NewPostPage() {
           <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-3">
             <h2 className="text-lg font-medium">Technologies</h2>
 
-        <div className="flex flex-wrap gap-2">
-          {technologies.map((tech, index) => (
-            <TechnologyEntry
-              key={index}
-              entry={tech}
-              onDelete={() => setTechnologies(technologies.filter((_, i) => i !== index))}
-            />
-          ))}
-        </div>
+            <div className="flex flex-wrap gap-2">
+              {technologies.map((tech, index) => (
+                <TechnologyEntry
+                  key={index}
+                  entry={tech}
+                  onDelete={() => setTechnologies(technologies.filter((_, i) => i !== index))}
+                />
+              ))}
+            </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Technology Name</label>
-            <input
-              type="text"
-              value={newTechName}
-              onChange={(e) => setNewTechName(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-transparent"
-            />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Technology Name</label>
+                <input
+                  type="text"
+                  value={newTechName}
+                  onChange={(e) => setNewTechName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Logo URL (Light Mode)</label>
+                <FileUpload
+                  type="image"
+                  value={newTechLogo}
+                  onChange={setNewTechLogo}
+                  accept="image/png"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Logo URL (Dark Mode - Optional)</label>
+                <FileUpload
+                  type="image"
+                  value={newTechDarkLogo}
+                  onChange={setNewTechDarkLogo}
+                  accept="image/png"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Technology URL (Optional)</label>
+                <input
+                  type="url"
+                  value={newTechUrl}
+                  onChange={(e) => setNewTechUrl(e.target.value)}
+                  placeholder="https://technology-website.com"
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-transparent"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAddTechnology}
+                className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+              >
+                Add Technology
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Logo URL (Light Mode)</label>
-            <FileUpload
-              type="image"
-              value={newTechLogo}
-              onChange={setNewTechLogo}
-              accept="image/png"
-            />
-          </div>
+{/* Content Blocks */}
+<div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
+  <BlockEditor
+    blocks={blocks}
+    onChange={setBlocks}
+    blockTypes={blockTypes}
+  />
+</div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Logo URL (Dark Mode - Optional)</label>
-            <FileUpload
-              type="image"
-              value={newTechDarkLogo}
-              onChange={setNewTechDarkLogo}
-              accept="image/png"
-            />
-          </div>
+{error && (
+  <p className="text-red-500 text-sm">{error}</p>
+)}
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Technology URL (Optional)</label>
-            <input
-              type="url"
-              value={newTechUrl}
-              onChange={(e) => setNewTechUrl(e.target.value)}
-              placeholder="https://technology-website.com"
-              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-transparent"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleAddTechnology}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-          >
-            Add Technology
-          </button>
-        </div>
-      </div>
-
-        {/* Content Blocks */}
-        <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
-          <BlockEditor
-            blocks={blocks}
-            onChange={setBlocks}
-            blockTypes={blockTypes}
-          />
-        </div>
-
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
-
-        <div className="flex justify-end gap-4">
-          <button
-            type="button"
-            onClick={handleCancel}
-            disabled={isCancelling}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-50"
-          >
-            {isCancelling ? 'Cancelling...' : 'Cancel'}
-          </button>
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? 'Creating...' : 'Create Post'}
-      </button>
-    </div>
-  </form>
+<div className="flex justify-end gap-4">
+  <button
+    type="button"
+    onClick={handleCancel}
+    disabled={isCancelling}
+    className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-50"
+  >
+    {isCancelling ? 'Cancelling...' : 'Cancel'}
+  </button>
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    {isSubmitting ? 'Creating...' : 'Create Post'}
+  </button>
+</div>
+</form>
 </div>
 </div>
   )

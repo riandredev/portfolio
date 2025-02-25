@@ -5,6 +5,7 @@ import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import { createNoise2D } from 'simplex-noise';
+import { useTheme } from 'next-themes';
 
 import cardGLB from "@/assets/lanyard/card.glb";
 
@@ -18,6 +19,7 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0] }
   const animationRef = useRef();
   const noise2D = useRef(createNoise2D());
   const startTime = useRef(Date.now());
+  const [isTabVisible, setIsTabVisible] = useState(true);
 
   useEffect(() => {
     // delay wind start by 2 seconds
@@ -34,6 +36,26 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0] }
     return () => {
       clearTimeout(windTimeout);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Handle tab visibility changes
+    const handleVisibilityChange = () => {
+      setIsTabVisible(!document.hidden);
+      setWindStarted(false); // Reset wind state
+
+      // If becoming visible, restart wind after a short delay
+      if (!document.hidden) {
+        setTimeout(() => {
+          setWindStarted(true);
+        }, 500);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -54,7 +76,12 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0] }
   ];
 
   return (
-    <Physics interpolate gravity={dynamicGravity} timeStep={1 / 60}>
+    <Physics
+      interpolate={isTabVisible}
+      gravity={dynamicGravity}
+      timeStep={1 / 60}
+      paused={!isTabVisible}
+    >
       <ambientLight intensity={Math.PI} />
       <Suspense fallback={null}>
         <Band />
@@ -70,6 +97,7 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0] }
 }
 
 function Band({ maxSpeed = 50, minSpeed = 8 }) { // Adjusted minSpeed
+  const { resolvedTheme } = useTheme();
   const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const segmentProps = {
@@ -82,20 +110,26 @@ function Band({ maxSpeed = 50, minSpeed = 8 }) { // Adjusted minSpeed
   const { nodes, materials } = useGLTF(cardGLB, true, true, (error) => {
     console.error('Error loading GLB:', error);
   });
-  const texture = useTexture('/images/lanyard.png', (texture) => {
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  }, undefined, (error) => {
-    console.error('Error loading lanyard texture:', error);
-  });
+  const texture = useTexture(
+    resolvedTheme === 'dark' ? '/images/lanyard.png' : '/images/lanyard-light.png',
+    (texture) => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    },
+    undefined,
+    (error) => {
+      console.error('Error loading lanyard texture:', error);
+    }
+  );
   const { width, height } = useThree((state) => state.size);
+  const [hovered, hover] = useState(false);
+  const [dragged, drag] = useState(false);
+
   const [curve] = useState(() => new THREE.CatmullRomCurve3([
     new THREE.Vector3(),
     new THREE.Vector3(),
     new THREE.Vector3(),
     new THREE.Vector3()
   ]));
-  const [dragged, drag] = useState(false);
-  const [hovered, hover] = useState(false);
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
@@ -110,6 +144,9 @@ function Band({ maxSpeed = 50, minSpeed = 8 }) { // Adjusted minSpeed
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    // Skip frame updates if tab is not visible
+    if (document.hidden) return;
+
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -167,6 +204,18 @@ function Band({ maxSpeed = 50, minSpeed = 8 }) { // Adjusted minSpeed
         });
       }
     }
+
+    // Reset positions if physics seems unstable
+    if (fixed.current && !dragged) {
+      const cardPos = card.current?.translation();
+      if (cardPos && (Math.abs(cardPos.x) > 10 || Math.abs(cardPos.y) > 10)) {
+        // Reset to default positions
+        card.current?.setTranslation({ x: 2, y: 0, z: 0 });
+        j1.current?.setTranslation({ x: 0.5, y: 0, z: 0 });
+        j2.current?.setTranslation({ x: 1, y: 0, z: 0 });
+        j3.current?.setTranslation({ x: 1.5, y: 0, z: 0 });
+      }
+    }
   });
 
   curve.curveType = 'chordal';
@@ -221,16 +270,15 @@ function Band({ maxSpeed = 50, minSpeed = 8 }) { // Adjusted minSpeed
         <meshLineMaterial
           color="white"
           depthTest={false}
-          resolution={[width, height]}
-          useMap
-          map={texture}
-          repeat={[-4, 1]}
           lineWidth={1}
+          repeat={[-4, 1]}
+          map={texture}
+          useMap
+          resolution={[width, height]}
         />
       </mesh>
     </>
   );
 }
 
-// Pre-load the model
-useGLTF.preload(cardGLB);
+useGLTF.preload(cardGLB); // Pre-load the model

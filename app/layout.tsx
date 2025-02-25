@@ -14,18 +14,24 @@ const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
+  preload: true,
+  display: 'swap',
 });
 
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+  preload: true,
+  display: 'swap',
 });
 
 const manrope = localFont({
   src: "./fonts/Manrope-VariableFont_wght.ttf",
   variable: "--font-manrope",
   weight: "100 900",
+  preload: true,
+  display: 'swap',
 });
 
 export const viewport: Viewport = {

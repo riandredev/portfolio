@@ -34,7 +34,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [newTechLogo, setNewTechLogo] = useState('')
   const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
   const [newTechUrl, setNewTechUrl] = useState('')
-  const [category, setCategory] = useState<PostCategory>('development')
+  const [categories, setCategories] = useState<string[]>([]);
+  const [publishDate, setPublishDate] = useState('');
 
   const blockTypes: { type: ContentBlockTypes; label: string }[] = [
     { type: 'heading', label: 'Heading' },
@@ -60,7 +61,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       setPinned(post.pinned || false)
       setLogo(post.logo || '')
       setTechnologies(post.technologies || [])
-      setCategory(post.category || 'development')
+      setCategories(post.category ? post.category.split(',') : [])
+      setPublishDate(post.publishedAt || '')
     }
   }, [params.slug, posts])
 
@@ -91,7 +93,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           blocks
         },
         technologies,
-        category,
+        category: (categories.length > 0 ? categories.join(',') : 'development') as PostCategory,
+        publishedAt: publishDate ? new Date(publishDate).toISOString() : existingPost.publishedAt,
         published: existingPost.published,
         createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString()
@@ -163,19 +166,6 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-6">
             <h2 className="text-lg font-medium">Basic Information</h2>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Category</label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as PostCategory)}
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                  required
-                >
-                  <option value="development">Development</option>
-                  <option value="design">Design</option>
-                </select>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium mb-2">Title</label>
                 <input
@@ -304,6 +294,52 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                   type="url"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Categories</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={categories.includes('development')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCategories([...categories, 'development'])
+                        } else {
+                          setCategories(categories.filter(c => c !== 'development'))
+                        }
+                      }}
+                      className="rounded border-zinc-200 dark:border-zinc-700"
+                    />
+                    <span>Development</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={categories.includes('design')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCategories([...categories, 'design'])
+                        } else {
+                          setCategories(categories.filter(c => c !== 'design'))
+                        }
+                      }}
+                      className="rounded border-zinc-200 dark:border-zinc-700"
+                    />
+                    <span>Design</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Publish Date (optional)</label>
+                <input
+                  type="datetime-local"
+                  value={publishDate}
+                  onChange={(e) => setPublishDate(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
                 />
               </div>

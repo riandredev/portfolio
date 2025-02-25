@@ -32,6 +32,16 @@ const nextConfig = {
           ],
         },
         {
+          // Add proper MIME type handling for CSS files
+          source: '/_next/static/css/:path*',
+          headers: [
+            {
+              key: 'Content-Type',
+              value: 'text/css',
+            }
+          ],
+        },
+        {
           // Allow Spotify API requests
           source: '/api/spotify/:path*',
           headers: [
