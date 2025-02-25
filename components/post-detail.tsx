@@ -17,38 +17,47 @@ interface Section {
   level: number
 }
 
-const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl?: string }) => (
-  <div className="flex lg:flex-col w-full gap-2">
-    {demoUrl && (
-      <a
-        href={demoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
-          rounded-lg border border-zinc-200 dark:border-zinc-800
-          bg-white hover:bg-zinc-100/50 dark:bg-zinc-800/75 dark:hover:bg-zinc-800
-          w-full whitespace-nowrap transition-colors"
-      >
-        <ExternalLink className="w-4 h-4 flex-shrink-0" />
-        Live Demo
-      </a>
-    )}
-    {sourceUrl && (
-      <a
-        href={sourceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
-          rounded-lg border border-zinc-200 dark:border-zinc-800
-          bg-white hover:bg-zinc-100/50 dark:bg-zinc-800/75 dark:hover:bg-zinc-800
-          w-full whitespace-nowrap transition-colors"
-      >
-        <Github className="w-4 h-4 flex-shrink-0" />
-        Source Code
-      </a>
-    )}
-  </div>
-)
+const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl?: string }) => {
+  const hasLinks = Boolean(demoUrl || sourceUrl);
+
+  return (
+    <div className="flex flex-col w-full">
+      <div className="flex lg:flex-col w-full gap-2">
+        {demoUrl && (
+          <a
+            href={demoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+              rounded-lg border border-zinc-200 dark:border-zinc-800
+              bg-white hover:bg-zinc-100/50 dark:bg-zinc-800/75 dark:hover:bg-zinc-800
+              w-full whitespace-nowrap transition-colors"
+          >
+            <ExternalLink className="w-4 h-4 flex-shrink-0" />
+            Live Demo
+          </a>
+        )}
+        {sourceUrl && (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+              rounded-lg border border-zinc-200 dark:border-zinc-800
+              bg-white hover:bg-zinc-100/50 dark:bg-zinc-800/75 dark:hover:bg-zinc-800
+              w-full whitespace-nowrap transition-colors"
+          >
+            <Github className="w-4 h-4 flex-shrink-0" />
+            Source Code
+          </a>
+        )}
+      </div>
+      {hasLinks && (
+        <div className="h-px bg-gradient-to-r from-zinc-200 dark:from-zinc-700 to-transparent my-6" />
+      )}
+    </div>
+  );
+};
 
 const ContentMediaSection = ({ post }: { post: Post }) => (
   <>
@@ -127,13 +136,13 @@ export default function PostDetail({ post }: { post: Post }) {
   // Memoize section IDs
   const sectionIds = useMemo(() => sections.map(section => `#${section.id}`), [sections])
 
-  // Use scroll spy with improved options
+  // Use scroll spy
   const activeSection = useScrollSpy(sectionIds, {
     rootMargin: '-20% 0% -35% 0%',
     threshold: 0.5
   })
 
-  // Update section detection logic
+  // Section detection logic
   useEffect(() => {
     const updateSections = () => {
       if (!articleRef.current) return
@@ -178,7 +187,7 @@ export default function PostDetail({ post }: { post: Post }) {
     return () => observer.disconnect()
   }, [])
 
-  // Improved smooth scroll handling
+  // Smooth scroll handling
   const handleSectionClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault()
     const element = document.getElementById(sectionId.replace('#', ''))
@@ -207,12 +216,11 @@ export default function PostDetail({ post }: { post: Post }) {
       <div className="container px-4 mx-auto flex flex-col lg:flex-row gap-6 lg:gap-12 items-start">
         {/* Table of Contents Sidebar - Now flexible */}
         <aside className="hidden lg:flex flex-col sticky top-32 w-72 flex-shrink-0">
-          <div className="flex flex-col flex-grow w-full gap-6">
+          <div className="flex flex-col flex-grow w-full">
             {/* Demo & Source Links */}
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
 
-            <div className="h-px bg-gradient-to-r from-zinc-200 dark:from-zinc-700 to-transparent" />
-            <nav className="space-y-1 flex-grow">
+            <nav className="space-y-1">
               {sections.map((section) => (
                 <a
                   key={section.id}

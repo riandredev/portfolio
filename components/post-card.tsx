@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ExternalLink } from 'lucide-react' // Add this import
 
 interface PostCardProps {
   title: string
@@ -118,9 +119,17 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
             </div>
           )}
         </div>
-        <p className="text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-          {description}
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed flex-1">
+            {description}
+          </p>
+          <Link
+            href={href}
+            className="shrink-0 p-1 -mr-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group/link"
+          >
+            <ExternalLink className="w-4 h-4 text-zinc-400 group-hover/link:text-zinc-900 dark:group-hover/link:text-zinc-100 transition-colors" />
+          </Link>
+        </div>
         {pinned && (
           <span className="text-xs shrink-0 font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -133,5 +142,7 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
     </article>
   )
 }
+
+
 
 export default PostCard
