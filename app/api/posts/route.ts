@@ -41,12 +41,19 @@ export async function POST(request: NextRequest) {
   try {
     const postData: Post = await request.json();
 
+    // Clean up empty strings
+    const cleanedData = {
+      ...postData,
+      demoUrl: postData.demoUrl?.trim() || null,
+      sourceUrl: postData.sourceUrl?.trim() || null,
+    };
+
     // Validate categories
-    const categories = postData.category.split(',');
+    const categories = cleanedData.category.split(',');
     const validCategories = ['development', 'design'];
     const areValidCategories = categories.every(cat => validCategories.includes(cat));
 
-    if (!postData.category || !areValidCategories) {
+    if (!cleanedData.category || !areValidCategories) {
       return NextResponse.json(
         { error: 'Invalid category' },
         { status: 400 }
@@ -54,25 +61,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if this is a temporary post
-    if (postData.temporary === true) {
+    if (cleanedData.temporary === true) {
       const tempPost = {
-        ...postData,
+        ...cleanedData,
         _id: `temp-${Date.now()}`,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        category: postData.category
+        category: cleanedData.category
       };
       return NextResponse.json(tempPost);
     }
 
     const { db } = await connectToDatabase();
-    const { _id, ...newPostData } = postData;
+    const { _id, ...newPostData } = cleanedData;
 
     const result = await db.collection('posts').insertOne({
       ...newPostData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      category: postData.category
+      category: cleanedData.category
     });
 
     const savedPost = {
@@ -94,14 +101,21 @@ export async function PUT(request: NextRequest) {
   try {
     const postData: Post = await request.json();
 
-    if (!postData.category || !['development', 'design'].includes(postData.category)) {
+    // Clean up empty strings
+    const cleanedData = {
+      ...postData,
+      demoUrl: postData.demoUrl?.trim() || null,
+      sourceUrl: postData.sourceUrl?.trim() || null,
+    };
+
+    if (!cleanedData.category || !['development', 'design'].includes(cleanedData.category)) {
       return NextResponse.json(
         { error: 'Invalid category' },
         { status: 400 }
       );
     }
 
-    const { _id, ...updateData } = postData;
+    const { _id, ...updateData } = cleanedData;
     const { db } = await connectToDatabase();
 
     const result = await db.collection('posts').updateOne(
@@ -110,7 +124,7 @@ export async function PUT(request: NextRequest) {
         $set: {
           ...updateData,
           updatedAt: new Date().toISOString(),
-          category: postData.category
+          category: cleanedData.category
         }
       }
     );
@@ -122,7 +136,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ ...postData });
+    return NextResponse.json({ ...cleanedData });
   } catch (error) {
     console.error('Update error:', error);
     return NextResponse.json(

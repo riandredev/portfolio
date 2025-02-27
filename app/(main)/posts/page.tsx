@@ -30,7 +30,7 @@ export default function PostsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-100 dark:bg-black pt-24 sm:pt-28 md:pt-32 lg:pt-36">
+    <main className="min-h-screen bg-zinc-100 dark:bg-black pt-24 pb-24 sm:pt-28 md:pt-32 lg:pt-36">
       <section className="w-full">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col gap-3 sm:gap-4 mb-8 sm:mb-12">

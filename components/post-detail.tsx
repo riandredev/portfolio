@@ -10,7 +10,7 @@ import { useScrollSpy } from '@/hooks/use-scroll-spy'
 import { usePostsStore } from '@/store/posts'
 import TechnologyEntry from './technology-entry'
 
-// Move interfaces outside component
+// Interfaces
 interface Section {
   id: string
   title: string
@@ -18,12 +18,15 @@ interface Section {
 }
 
 const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl?: string }) => {
-  const hasLinks = Boolean(demoUrl || sourceUrl);
+  // Check for null, undefined, or empty string
+  const hasDemo = demoUrl && demoUrl.trim().length > 0;
+  const hasSource = sourceUrl && sourceUrl.trim().length > 0;
+  const hasLinks = hasDemo || hasSource;
 
   return (
     <div className="flex flex-col w-full">
       <div className="flex lg:flex-col w-full gap-2">
-        {demoUrl && (
+        {hasDemo && (
           <a
             href={demoUrl}
             target="_blank"
@@ -37,7 +40,7 @@ const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl
             Live Demo
           </a>
         )}
-        {sourceUrl && (
+        {hasSource && (
           <a
             href={sourceUrl}
             target="_blank"
@@ -192,7 +195,7 @@ export default function PostDetail({ post }: { post: Post }) {
     e.preventDefault()
     const element = document.getElementById(sectionId.replace('#', ''))
     if (element) {
-      const offset = 100 // Adjust this value based on your header height
+      const offset = 100
       const elementPosition = element.getBoundingClientRect().top
       const offsetPosition = elementPosition + window.pageYOffset - offset
 
