@@ -80,6 +80,23 @@ export default function SpotifyChip() {
   const [duration, setDuration] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const opacity = useScrollFade()
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check if the device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    // Initial check
+    checkMobile()
+    
+    // Add event listener
+    window.addEventListener('resize', checkMobile)
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     let progressInterval: NodeJS.Timeout;
@@ -250,7 +267,7 @@ export default function SpotifyChip() {
     }
   }
 
-  if (!showSpotifyChip) return null;
+  if (!showSpotifyChip || isMobile) return null;
 
   return (
     <AnimatePresence>

@@ -25,8 +25,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [image, setImage] = useState('')
   const [video, setVideo] = useState('')
   const [blocks, setBlocks] = useState<ContentBlock[]>([])
-  const [demoUrl, setDemoUrl] = useState('')
-  const [sourceUrl, setSourceUrl] = useState('')
+  const [demoUrl, setDemoUrl] = useState<string | null>('')
+  const [sourceUrl, setSourceUrl] = useState<string | null>('')
   const [pinned, setPinned] = useState(false)
   const [logo, setLogo] = useState('')
   const [technologies, setTechnologies] = useState<TechnologyEntryType[]>([])
@@ -77,6 +77,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         throw new Error('Post not found');
       }
 
+      console.log('Demo URL before processing:', demoUrl);
+      console.log('Source URL before processing:', sourceUrl);
+      
       const updatedPost: Post = {
         _id: existingPost._id,
         title,
@@ -85,8 +88,8 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         tags,
         image,
         video: video || undefined,
-        demoUrl: demoUrl || undefined,
-        sourceUrl: sourceUrl || undefined,
+        demoUrl: demoUrl === '' ? null : demoUrl,
+        sourceUrl: sourceUrl === '' ? null : sourceUrl,
         pinned,
         logo: logo || undefined,
         content: {
@@ -280,22 +283,50 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Demo URL (optional)</label>
-                <input
-                  type="url"
-                  value={demoUrl}
-                  onChange={(e) => setDemoUrl(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={demoUrl || ''}
+                    onChange={(e) => setDemoUrl(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                  />
+                  {demoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setDemoUrl(null)}
+                      className="px-3 py-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400"
+                      title="Remove demo URL"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">Source Code URL (optional)</label>
-                <input
-                  type="url"
-                  value={sourceUrl}
-                  onChange={(e) => setSourceUrl(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={sourceUrl || ''}
+                    onChange={(e) => setSourceUrl(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                  />
+                  {sourceUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setSourceUrl(null)}
+                      className="px-3 py-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400"
+                      title="Remove source code URL"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -360,87 +391,88 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
               ))}
             </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Technology Name</label>
-            <input
-              type="text"
-              value={newTechName}
-              onChange={(e) => setNewTechName(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Technology Name</label>
+                <input
+                  type="text"
+                  value={newTechName}
+                  onChange={(e) => setNewTechName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Logo URL (Light Mode)</label>
+                <FileUpload
+                  type="image"
+                  value={newTechLogo}
+                  onChange={setNewTechLogo}
+                  accept="image/png"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Logo URL (Dark Mode - Optional)</label>
+                <FileUpload
+                  type="image"
+                  value={newTechDarkLogo}
+                  onChange={setNewTechDarkLogo}
+                  accept="image/png"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Technology URL (Optional)</label>
+                <input
+                  type="url"
+                  value={newTechUrl}
+                  onChange={(e) => setNewTechUrl(e.target.value)}
+                  placeholder="https://technology-website.com"
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAddTechnology}
+                className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+              >
+                Add Technology
+              </button>
+            </div>
+          </div>
+
+          {/* Content Blocks */}
+          <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
+            <BlockEditor
+              blocks={blocks}
+              onChange={setBlocks}
+              blockTypes={blockTypes}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Logo URL (Light Mode)</label>
-            <FileUpload
-              type="image"
-              value={newTechLogo}
-              onChange={setNewTechLogo}
-              accept="image/png"
-            />
+          <div className="flex justify-end gap-4">
+            {error && (
+              <p className="text-red-500 text-sm">{error}</p>
+            )}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Logo URL (Dark Mode - Optional)</label>
-            <FileUpload
-              type="image"
-              value={newTechDarkLogo}
-              onChange={setNewTechDarkLogo}
-              accept="image/png"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Technology URL (Optional)</label>
-            <input
-              type="url"
-              value={newTechUrl}
-              onChange={(e) => setNewTechUrl(e.target.value)}
-              placeholder="https://technology-website.com"
-              className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleAddTechnology}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-          >
-            Add Technology
-          </button>
-        </div>
+        </form>
       </div>
-
-      {/* Content Blocks */}
-      <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6">
-        <BlockEditor
-          blocks={blocks}
-          onChange={setBlocks}
-          blockTypes={blockTypes}
-        />
-      </div>
-
-      <div className="flex justify-end gap-4">
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSubmitting ? 'Saving...' : 'Save Changes'}
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-  )};
+    </div>
+  );
+}

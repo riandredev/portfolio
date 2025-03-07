@@ -25,6 +25,7 @@ export default function VisitorChip() {
     fetchLatestVisitor
   } = useVisitorsStore()
   const [initialLoadComplete, setInitialLoadComplete] = useState(false)
+  const [isFirstVisit, setIsFirstVisit] = useState(true)
 
   const formatLocation = (location: LocationInfo) => {
     const parts = []
@@ -37,17 +38,29 @@ export default function VisitorChip() {
     return parts.join(', ')
   }
 
+  // Check if this is a new session or reload
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const visitStatus = sessionStorage.getItem('visit-status')
+      if (visitStatus === 'returning') {
+        setIsFirstVisit(false)
+      } else {
+        sessionStorage.setItem('visit-status', 'returning')
+      }
+    }
+  }, [])
+
   useEffect(() => {
     let isMounted = true
 
     const fetchLocation = async () => {
       try {
-        // First, fetch the last visitor if we don't have one
+        // Always fetch the last visitor to display
         if (!lastVisitor) {
           await fetchLatestVisitor()
         }
 
-        // Silently fetch and store current location without displaying it
+        // Only fetch and store current location silently without updating display
         if (!currentLocation) {
           const res = await fetch('https://ipapi.co/json/')
           if (!res.ok) throw new Error(`Location service error: ${res.status}`)
@@ -63,8 +76,13 @@ export default function VisitorChip() {
 
             if (isMounted) {
               setCurrentLocation(locationInfo)
-              // Silently store the visit without updating display
-              await updateVisitor(locationInfo)
+              
+              // Only update visitor data in the database if this is a reload/returning visit
+              if (!isFirstVisit) {
+                await updateVisitor(locationInfo)
+                // After updating, fetch the latest again to show the current user
+                await fetchLatestVisitor()
+              }
             }
           }
         }
@@ -85,7 +103,7 @@ export default function VisitorChip() {
     return () => {
       isMounted = false
     }
-  }, [currentLocation, fetchLatestVisitor, lastVisitor, setCurrentLocation, updateVisitor])
+  }, [currentLocation, fetchLatestVisitor, lastVisitor, setCurrentLocation, updateVisitor, isFirstVisit])
 
   // Show loading state only during initial load
   const showLoading = isLoading && !initialLoadComplete

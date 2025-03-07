@@ -56,7 +56,7 @@ const DemoSourceButtons = ({ demoUrl, sourceUrl }: { demoUrl?: string; sourceUrl
         )}
       </div>
       {hasLinks && (
-        <div className="h-px bg-gradient-to-r from-zinc-200 dark:from-zinc-700 to-transparent my-6" />
+        <div className="h-px bg-gradient-to-r from-zinc-200 dark:from-zinc-700 to-transparent my-4 lg:my-6" />
       )}
     </div>
   );
@@ -99,8 +99,8 @@ const ContentMediaSection = ({ post }: { post: Post }) => (
 
     {/* Technologies Section - Moved here and updated styling */}
     {post.technologies && post.technologies.length > 0 && (
-      <div className="md:mb-4 sm:mb-2">
-        <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">Built with</h2>
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">Built with</h2>
         <div className="flex flex-wrap gap-3">
           {post.technologies.map((tech, index) => (
             <TechnologyEntry
@@ -281,7 +281,7 @@ export default function PostDetail({ post }: { post: Post }) {
           <ContentMediaSection post={post} />
 
           {/* Mobile Demo & Source Buttons - Shown only on mobile */}
-          <div className="lg:hidden mb-8">
+          <div className="lg:hidden mt-2 mb-6">
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
           </div>
 

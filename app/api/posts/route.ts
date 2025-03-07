@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     // Clean up empty strings
     const cleanedData = {
       ...postData,
-      demoUrl: postData.demoUrl?.trim() || null,
-      sourceUrl: postData.sourceUrl?.trim() || null,
+      demoUrl: postData.demoUrl === '' ? null : postData.demoUrl?.trim() || null,
+      sourceUrl: postData.sourceUrl === '' ? null : postData.sourceUrl?.trim() || null,
     };
 
     // Validate categories
@@ -104,8 +104,8 @@ export async function PUT(request: NextRequest) {
     // Clean up empty strings
     const cleanedData = {
       ...postData,
-      demoUrl: postData.demoUrl?.trim() || null,
-      sourceUrl: postData.sourceUrl?.trim() || null,
+      demoUrl: postData.demoUrl === '' ? null : postData.demoUrl?.trim() || null,
+      sourceUrl: postData.sourceUrl === '' ? null : postData.sourceUrl?.trim() || null,
     };
 
     if (!cleanedData.category || !['development', 'design'].includes(cleanedData.category)) {

@@ -95,6 +95,14 @@ export async function PUT(
     const postData: Post = await request.json();
     console.log('Received post data:', postData); // Debug log
 
+    // Clean up empty strings for URLs
+    const cleanedPostData = {
+      ...postData,
+      demoUrl: postData.demoUrl === '' ? null : postData.demoUrl?.trim() || null,
+      sourceUrl: postData.sourceUrl === '' ? null : postData.sourceUrl?.trim() || null,
+    };
+    console.log('Cleaned post data:', cleanedPostData); // Debug log
+
     const db = await getDb();
     const objectId = new ObjectId(id);
 
@@ -108,7 +116,7 @@ export async function PUT(
       );
     }
 
-    const { _id, ...updateData } = postData;
+    const { _id, ...updateData } = cleanedPostData;
 
     // Using updateOne instead of findOneAndUpdate for better error handling
     const result = await db.collection('posts').updateOne(
