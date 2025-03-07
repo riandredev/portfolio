@@ -18,10 +18,10 @@ export default function PostNavigation({ prevPost, nextPost }: PostNavigationPro
             : 'opacity-50 cursor-not-allowed bg-zinc-100 dark:bg-zinc-800/50'}`}
         onClick={(e) => !prevPost && e.preventDefault()}
       >
-        <ChevronLeft className="w-4 h-4" />
-        <span className="flex flex-col items-start">
+        <ChevronLeft className="w-4 h-4 flex-shrink-0" />
+        <span className="flex flex-col items-start min-w-0">
           <span className="text-xs text-zinc-500 dark:text-zinc-400">Previous</span>
-          <span className="truncate">{prevPost?.title || 'No previous post'}</span>
+          <span className="truncate max-w-[120px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[300px]">{prevPost?.title || 'No previous post'}</span>
         </span>
       </Link>
 
@@ -33,11 +33,11 @@ export default function PostNavigation({ prevPost, nextPost }: PostNavigationPro
             : 'opacity-50 cursor-not-allowed bg-zinc-100 dark:bg-zinc-800/50'}`}
         onClick={(e) => !nextPost && e.preventDefault()}
       >
-        <span className="flex flex-col items-end">
+        <span className="flex flex-col items-end min-w-0">
           <span className="text-xs text-zinc-500 dark:text-zinc-400">Next</span>
-          <span className="truncate">{nextPost?.title || 'No next post'}</span>
+          <span className="truncate max-w-[120px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[300px]">{nextPost?.title || 'No next post'}</span>
         </span>
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="w-4 h-4 flex-shrink-0" />
       </Link>
     </div>
   )

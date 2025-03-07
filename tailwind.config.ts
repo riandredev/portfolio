@@ -74,7 +74,28 @@ const config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
-      }
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
+            'code': {
+              display: 'inline-block',
+              borderRadius: '0.25rem',
+              padding: '0.125rem 0.5rem',
+              hyphens: 'none',
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
+              boxDecorationBreak: 'clone',
+            },
+          },
+        },
+      },
     }
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

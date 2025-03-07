@@ -24,7 +24,7 @@ const Content = memo(({
 }) => (
   <>
     {entry.logo && (
-      <div className="relative w-5 h-5 flex-shrink-0">
+      <div className="relative w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
         <Image
           src={entry.logo}
           alt={entry.name}
@@ -34,7 +34,7 @@ const Content = memo(({
         />
       </div>
     )}
-    <span className="text-sm font-medium">{entry.name}</span>
+    <span className="text-xs sm:text-sm font-medium">{entry.name}</span>
     {entry.url && (
       <ExternalLink className="w-3 h-3 text-zinc-400" />
     )}
@@ -60,7 +60,7 @@ const TechnologyEntry = memo(function TechnologyEntry({
 }: TechnologyEntryProps) {
   const { theme } = useTheme()
   const imageClasses = invertInDark ? 'dark:invert' : '';
-  const wrapperClasses = `flex items-center gap-2 px-3 py-2 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg ${className}`;
+  const wrapperClasses = `flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg ${className}`;
 
   // If there's no URL, return a div
   if (!entry.url) {

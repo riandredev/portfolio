@@ -215,11 +215,11 @@ export default function PostDetail({ post }: { post: Post }) {
   }, [posts, post._id])
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 bg-zinc-50 dark:bg-black">
-      <div className="container px-4 mx-auto flex flex-col lg:flex-row gap-6 lg:gap-12 items-start">
-        {/* Table of Contents Sidebar - Now flexible */}
-        <aside className="hidden lg:flex flex-col sticky top-32 w-72 flex-shrink-0">
-          <div className="flex flex-col flex-grow w-full">
+    <div className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-16 bg-zinc-50 dark:bg-black overflow-hidden">
+      <div className="container px-4 mx-auto lg:grid lg:grid-cols-[288px_1fr] gap-6 lg:gap-12">
+        {/* Table of Contents Sidebar */}
+        <div className="hidden lg:block w-72">
+          <div className="fixed top-32 w-72">
             {/* Demo & Source Links */}
             <DemoSourceButtons demoUrl={post.demoUrl} sourceUrl={post.sourceUrl} />
 
@@ -241,12 +241,12 @@ export default function PostDetail({ post }: { post: Post }) {
               ))}
             </nav>
           </div>
-        </aside>
+        </div>
 
         {/* Main Content */}
-        <article ref={articleRef} className="flex-1 w-full max-w-none lg:max-w-4xl">
+        <article ref={articleRef} className="w-full max-w-none lg:max-w-4xl overflow-hidden">
           {/* Header */}
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-light mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-light mb-4 break-words">
             {post.title}
           </h1>
 
@@ -301,7 +301,7 @@ export default function PostDetail({ post }: { post: Post }) {
           </div>
 
           {/* Navigation */}
-          <div className="mt-8 sm:mt-12">
+          <div className="mt-4 overflow-hidden">
             <PostNavigation prevPost={prevPost} nextPost={nextPost} />
           </div>
         </article>

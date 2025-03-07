@@ -36,15 +36,18 @@ export default function ParagraphBlock({ content }: ParagraphBlockProps) {
 
         if (codeContent) {
           parts.push(
-            <code
-              key={`code-${id++}`}
-              className="px-1.5 py-0.5 rounded font-mono text-sm
-                bg-zinc-100 dark:bg-zinc-800
-                text-pink-500 dark:text-pink-400
-                border border-zinc-200 dark:border-zinc-700"
-            >
-              {codeContent}
-            </code>
+            <span key={`code-wrapper-${id}`} className="inline-block mx-0.5 align-baseline">
+              <code
+                key={`code-${id++}`}
+                className="px-2 py-0.5 rounded font-mono text-sm
+                  bg-zinc-100 dark:bg-zinc-800
+                  text-pink-500 dark:text-pink-400
+                  border border-zinc-200 dark:border-zinc-700
+                  inline-block"
+              >
+                {codeContent}
+              </code>
+            </span>
           );
         }
       }
@@ -103,7 +106,7 @@ export default function ParagraphBlock({ content }: ParagraphBlockProps) {
 
   return (
     <div className="px-4 sm:px-12 -my-3">
-      <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-300">
+      <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-300 break-words">
         {renderContent()}
       </p>
     </div>
