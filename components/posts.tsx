@@ -69,6 +69,9 @@ export default function Posts() {
     // First sort by pinned status
     if (a.pinned && !b.pinned) return -1
     if (!a.pinned && b.pinned) return 1
+    // Then prioritize professional projects
+    if ((a.projectType === 'professional') && (b.projectType !== 'professional')) return -1
+    if ((a.projectType !== 'professional') && (b.projectType === 'professional')) return 1
     // Then sort by publishedAt date (most recent first)
     const dateA = a.publishedAt ? new Date(a.publishedAt) : new Date(0)
     const dateB = b.publishedAt ? new Date(b.publishedAt) : new Date(0)
@@ -94,19 +97,20 @@ export default function Posts() {
             ))
           ) : sortedPosts.length > 0 ? (
             sortedPosts.slice(0, recentPostsLimit).map((post) => (
-          <PostCard
-            key={post._id}
-            {...post}
-            href={`/posts/${post.slug}`}
-            pinned={post.pinned}
-          />
-        ))
-      ) : (
-        <p className="col-span-2 text-center text-zinc-500 dark:text-zinc-400">
-          No posts available.
-        </p>
-      )}
-    </div>
-  </div>
-</section>
-)}
+              <PostCard
+                key={post._id}
+                {...post}
+                href={`/posts/${post.slug}`}
+                pinned={post.pinned}
+              />
+            ))
+          ) : (
+            <p className="col-span-2 text-center text-zinc-500 dark:text-zinc-400">
+              No posts available.
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

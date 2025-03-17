@@ -2,7 +2,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink } from 'lucide-react' // Add this import
+import { ExternalLink } from 'lucide-react'
+import { ProjectType } from '@/types/post'
 
 interface PostCardProps {
   title: string
@@ -14,6 +15,7 @@ interface PostCardProps {
   tags?: string[]
   pinned?: boolean
   category?: string
+  projectType?: ProjectType
 }
 
 const formatCategories = (category: string) => {
@@ -23,7 +25,7 @@ const formatCategories = (category: string) => {
   return category.charAt(0).toUpperCase() + category.slice(1);
 };
 
-const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category }: PostCardProps) => {
+const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category, projectType = 'personal' }: PostCardProps) => {
   return (
     <article className="group flex flex-col gap-6 font-manrope">
       <Link href={href} className="relative block aspect-[16/10] overflow-hidden border dark:border-zinc-700 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
@@ -101,23 +103,21 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
               </>
             )}
           </h3>
-          {tags && tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 shrink-0">
-              {tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 text-xs rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-300 font-medium backdrop-blur-sm whitespace-nowrap"
-                >
-                  {tag}
-                </span>
-              ))}
-              {tags.length > 4 && (
-                <span className="text-xs text-zinc-500 dark:text-zinc-400 self-center">
-                  +{tags.length - 4}
-                </span>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2 shrink-0">
+            {tags && tags.length > 0 && tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 text-xs rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-300 font-medium backdrop-blur-sm whitespace-nowrap"
+              >
+                {tag}
+              </span>
+            ))}
+            {tags && tags.length > 3 && (
+              <span className="text-xs text-zinc-500 dark:text-zinc-400 self-center">
+                +{tags.length - 3}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-start justify-between gap-4">
           <p className="text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed flex-1">
@@ -142,7 +142,5 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
     </article>
   )
 }
-
-
 
 export default PostCard

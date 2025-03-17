@@ -89,15 +89,24 @@ export const usePostsStore = create<PostsState>((set, get) => ({
         throw new Error('Category is required');
       }
 
+      // Log the post data before sending to API
+      console.log('Updating post with data:', post);
+
       const response = await fetch(`/api/posts/${post._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...post, category: post.category }),
+        body: JSON.stringify({
+          ...post,
+          category: post.category,
+          projectType: post.projectType || 'personal' // Ensure projectType is explicitly included
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to update post');
 
       const updatedPost = await response.json();
+      console.log('Post updated with response:', updatedPost);
+
       set(state => ({
         posts: state.posts.map(p => p._id === post._id ? updatedPost : p)
       }));

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ContentBlockTypes, ContentBlock } from '@/types/post'
+import { ContentBlockTypes, ContentBlock, ProjectType } from '@/types/post'
 type PostCategory = 'development' | 'design'
 import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
@@ -75,11 +75,12 @@ export default function NewPostPage() {
   const [newTechLogo, setNewTechLogo] = useState('')
   const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
   const [newTechUrl, setNewTechUrl] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
-  const [isCancelling, setIsCancelling] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const [publishDate, setPublishDate] = useState('')
+  const [projectType, setProjectType] = useState<ProjectType>('personal')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const addPost = usePostsStore((state) => state.addPost)
 
   const cleanupUploadsInBackground = useCallback(async () => {
@@ -166,7 +167,8 @@ export default function NewPostPage() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         published: false,
-        category: (categories.length > 0 ? (categories.includes('development') ? 'development' : 'design') : 'development') as PostCategory
+        category: (categories.length > 0 ? (categories.includes('development') ? 'development' : 'design') : 'development') as PostCategory,
+        projectType
       }
 
       console.log('Attempting to add post:', newPost)
@@ -415,6 +417,30 @@ export default function NewPostPage() {
                   onChange={(e) => setPublishDate(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
                 />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-2">Project Type</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={projectType === 'personal'}
+                      onChange={() => setProjectType('personal')}
+                      className="rounded-full border-zinc-200 dark:border-zinc-700 text-blue-500"
+                    />
+                    <span>Personal Project</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={projectType === 'professional'}
+                      onChange={() => setProjectType('professional')}
+                      className="rounded-full border-zinc-200 dark:border-zinc-700 text-blue-500"
+                    />
+                    <span>Professional Work</span>
+                  </label>
+                </div>
               </div>
 
             </div>

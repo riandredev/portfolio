@@ -131,6 +131,8 @@ const CategoryBadge = ({ category }: { category: string }) => {
   );
 };
 
+// ProjectTypeBadge component is no longer needed and has been removed
+
 export default function PostDetail({ post }: { post: Post }) {
   const { posts } = usePostsStore()
   const [sections, setSections] = useState<Section[]>([])
@@ -257,13 +259,12 @@ export default function PostDetail({ post }: { post: Post }) {
                 {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
               </div>
             )}
-            {post.category && (
-              <div className="flex gap-2">
-                {post.category.split(',').map((cat) => (
-                  <CategoryBadge key={cat} category={cat} />
-                ))}
-              </div>
-            )}
+            <div className="flex gap-2">
+              {/* Project type badge removed */}
+              {post.category && post.category.split(',').map((cat) => (
+                <CategoryBadge key={cat} category={cat} />
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2 mb-8">

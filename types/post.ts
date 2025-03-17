@@ -2,6 +2,7 @@ import SeparatorBlock from "@/components/content-blocks/separator-block";
 
 export type SingleCategory = 'development' | 'design';
 export type PostCategory = SingleCategory | 'development,design';
+export type ProjectType = 'personal' | 'professional';
 
 export interface Post {
   _id: string;
@@ -25,6 +26,7 @@ export interface Post {
   logo?: string | null;
   temporary?: boolean;
   technologies?: TechnologyEntry[] | null;
+  projectType?: ProjectType;
 }
 
 export type ContentBlockTypes =

@@ -34,8 +34,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [newTechLogo, setNewTechLogo] = useState('')
   const [newTechDarkLogo, setNewTechDarkLogo] = useState('')
   const [newTechUrl, setNewTechUrl] = useState('')
-  const [categories, setCategories] = useState<string[]>([]);
-  const [publishDate, setPublishDate] = useState('');
+  const [categories, setCategories] = useState<string[]>([])
+  const [publishDate, setPublishDate] = useState('')
+  const [projectType, setProjectType] = useState('personal')
 
   const blockTypes: { type: ContentBlockTypes; label: string }[] = [
     { type: 'heading', label: 'Heading' },
@@ -49,6 +50,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   useEffect(() => {
     const post = posts.find(p => p.slug === params.slug)
     if (post) {
+      console.log("Loading post data:", post)
+      console.log("Post project type:", post.projectType)
+
       setTitle(post.title)
       setDescription(post.description)
       setSlug(post.slug)
@@ -61,25 +65,28 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       setPinned(post.pinned || false)
       setLogo(post.logo || '')
       setTechnologies(post.technologies || [])
+      setProjectType(post.projectType || 'personal')
       setCategories(post.category ? post.category.split(',') : [])
       setPublishDate(post.publishedAt || '')
+
+      console.log("Project type set to:", post.projectType || 'personal')
     }
   }, [params.slug, posts])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError('')
 
     try {
-      const existingPost = posts.find(p => p.slug === params.slug);
+      const existingPost = posts.find(p => p.slug === params.slug)
       if (!existingPost || !existingPost._id) {
-        throw new Error('Post not found');
+        throw new Error('Post not found')
       }
 
-      console.log('Demo URL before processing:', demoUrl);
-      console.log('Source URL before processing:', sourceUrl);
-      
+      console.log('Demo URL before processing:', demoUrl)
+      console.log('Source URL before processing:', sourceUrl)
+
       const updatedPost: Post = {
         _id: existingPost._id,
         title,
@@ -98,21 +105,22 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         technologies,
         category: (categories.length > 0 ? categories.join(',') : 'development') as PostCategory,
         publishedAt: publishDate ? new Date(publishDate).toISOString() : existingPost.publishedAt,
+        projectType: projectType as any, // Make sure to include the project type in the update payload
         published: existingPost.published,
         createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString()
-      };
+      }
 
-      await updatePost(updatedPost);
-      router.push('/dashboard/posts');
+      await updatePost(updatedPost)
+      router.push('/dashboard/posts')
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(`Failed to update post: ${errorMessage}`);
-      console.error('Update error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+      setError(`Failed to update post: ${errorMessage}`)
+      console.error('Update error:', err)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const handleAddTag = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -321,9 +329,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                       className="px-3 py-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400"
                       title="Remove source code URL"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>                      </svg>
                     </button>
                   )}
                 </div>
@@ -338,9 +346,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                       checked={categories.includes('development')}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setCategories([...categories, 'development'])
+                          setCategories([...categories, 'development']);
                         } else {
-                          setCategories(categories.filter(c => c !== 'development'))
+                          setCategories(categories.filter(c => c !== 'development'));
                         }
                       }}
                       className="rounded border-zinc-200 dark:border-zinc-700"
@@ -353,9 +361,9 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                       checked={categories.includes('design')}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setCategories([...categories, 'design'])
+                          setCategories([...categories, 'design']);
                         } else {
-                          setCategories(categories.filter(c => c !== 'design'))
+                          setCategories(categories.filter(c => c !== 'design'));
                         }
                       }}
                       className="rounded border-zinc-200 dark:border-zinc-700"
@@ -374,13 +382,42 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                   className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Project Type</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={projectType === 'personal'}
+                      onChange={() => {
+                        setProjectType('personal');
+                        console.log("Changed project type to: personal");
+                      }}
+                      className="rounded-full border-zinc-200 dark:border-zinc-700 text-blue-500"
+                    />
+                    <span>Personal Project</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={projectType === 'professional'}
+                      onChange={() => {
+                        setProjectType('professional');
+                        console.log("Changed project type to: professional");
+                      }}
+                      className="rounded-full border-zinc-200 dark:border-zinc-700 text-blue-500"
+                    />
+                    <span>Professional Work</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Technologies */}
           <div className="bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 space-y-6">
             <h2 className="text-lg font-medium">Technologies</h2>
-
             <div className="flex flex-wrap gap-2">
               {technologies.map((tech, index) => (
                 <TechnologyEntry
@@ -390,7 +427,6 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
                 />
               ))}
             </div>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Technology Name</label>
