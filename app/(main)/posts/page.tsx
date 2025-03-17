@@ -67,7 +67,7 @@ export default function PostsPage() {
                       Professional <span className="font-normal">Work</span>
                     </h2>
                     <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
-                      Client work and professional projects I've completed for companies.
+                      Client work and professional projects I&apos;ve completed for companies.
                     </p>
                   </div>
 
@@ -112,7 +112,7 @@ export default function PostsPage() {
                       Featured <span className="font-normal">Personal Projects</span>
                     </h2>
                     <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
-                      Personal work, side projects, and experiments I've built.
+                      Personal work, side projects, and experiments I&apos;ve built.
                     </p>
                   </div>
 
