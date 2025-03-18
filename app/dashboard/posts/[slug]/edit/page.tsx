@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ContentBlock, Post, ContentBlockTypes, PostCategory } from '@/types/post'
+import { ContentBlock, Post, ContentBlockTypes, PostCategory, ProjectType } from '@/types/post'
 import { usePostsStore } from '@/store/posts'
 import BlockEditor from '@/components/block-editor/block-editor'
 import FileUpload from '@/components/file-upload'
@@ -36,7 +36,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
   const [newTechUrl, setNewTechUrl] = useState('')
   const [categories, setCategories] = useState<string[]>([])
   const [publishDate, setPublishDate] = useState('')
-  const [projectType, setProjectType] = useState('personal')
+  const [projectType, setProjectType] = useState<ProjectType>('personal')
 
   const blockTypes: { type: ContentBlockTypes; label: string }[] = [
     { type: 'heading', label: 'Heading' },
@@ -65,7 +65,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
       setPinned(post.pinned || false)
       setLogo(post.logo || '')
       setTechnologies(post.technologies || [])
-      setProjectType(post.projectType || 'personal')
+      setProjectType((post.projectType || 'personal') as ProjectType)
       setCategories(post.category ? post.category.split(',') : [])
       setPublishDate(post.publishedAt || '')
 
@@ -107,15 +107,11 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         technologies,
         category: categoryString as PostCategory,
         publishedAt: publishDate ? new Date(publishDate).toISOString() : existingPost.publishedAt,
-        projectType, // Ensure we're using the correct project type
+        projectType,
         published: existingPost.published,
         createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString()
       }
-
-      // Add more debug logging
-      console.log('Updating post with project type:', projectType);
-      console.log('Updating post with category:', updatedPost.category);
 
       await updatePost(updatedPost)
       router.push('/dashboard/posts')
