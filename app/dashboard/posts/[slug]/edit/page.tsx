@@ -84,8 +84,10 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
         throw new Error('Post not found')
       }
 
-      console.log('Demo URL before processing:', demoUrl)
-      console.log('Source URL before processing:', sourceUrl)
+      // Add logging to debug category handling
+      console.log('Categories before forming category string:', categories);
+      const categoryString = categories.length > 0 ? categories.join(',') : 'development';
+      console.log('Final category string:', categoryString);
 
       const updatedPost: Post = {
         _id: existingPost._id,
@@ -103,13 +105,17 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           blocks
         },
         technologies,
-        category: (categories.length > 0 ? categories.join(',') : 'development') as PostCategory,
+        category: categoryString as PostCategory,
         publishedAt: publishDate ? new Date(publishDate).toISOString() : existingPost.publishedAt,
-        projectType: projectType as any, // Make sure to include the project type in the update payload
+        projectType, // Ensure we're using the correct project type
         published: existingPost.published,
         createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString()
       }
+
+      // Add more debug logging
+      console.log('Updating post with project type:', projectType);
+      console.log('Updating post with category:', updatedPost.category);
 
       await updatePost(updatedPost)
       router.push('/dashboard/posts')

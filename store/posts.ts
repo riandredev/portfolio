@@ -91,6 +91,8 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
       // Log the post data before sending to API
       console.log('Updating post with data:', post);
+      console.log('Project type:', post.projectType);
+      console.log('Category:', post.category);
 
       const response = await fetch(`/api/posts/${post._id}`, {
         method: 'PUT',
@@ -102,10 +104,16 @@ export const usePostsStore = create<PostsState>((set, get) => ({
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to update post');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error('Failed to update post');
+      }
 
       const updatedPost = await response.json();
       console.log('Post updated with response:', updatedPost);
+      console.log('Response project type:', updatedPost.projectType);
+      console.log('Response category:', updatedPost.category);
 
       set(state => ({
         posts: state.posts.map(p => p._id === post._id ? updatedPost : p)

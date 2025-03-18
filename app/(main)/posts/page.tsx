@@ -17,13 +17,39 @@ export default function PostsPage() {
   const professionalPosts = posts.filter(post => post.projectType === 'professional')
   const personalPosts = posts.filter(post => post.projectType !== 'professional')
 
-  // Group posts by category within each project type
-  const professionalDevelopmentPosts = professionalPosts.filter(post => post.category === 'development')
-  const professionalDesignPosts = professionalPosts.filter(post => post.category === 'design')
+  // Instead of filtering posts into potentially overlapping arrays, create a single array of unique posts
+  // First, gather all posts with their categories using Set to avoid duplicates
+  const professionalCategorizedPosts = new Set<Post>()
+
+  // Add posts to the Set - each unique post will only appear once
+  professionalPosts.forEach(post => {
+    if (post.category === 'development' ||
+        post.category === 'design' ||
+        post.category === 'development,design' ||
+        post.category === 'design,development') {
+      professionalCategorizedPosts.add(post)
+    }
+  })
+
+  // Convert the Set back to an array
+  const professionalDisplayPosts = Array.from(professionalCategorizedPosts)
+
+  // Only include posts that don't have any category at all
   const professionalUncategorizedPosts = professionalPosts.filter(post => !post.category)
 
-  const personalDevelopmentPosts = personalPosts.filter(post => post.category === 'development')
-  const personalDesignPosts = personalPosts.filter(post => post.category === 'design')
+  // Do the same for personal posts
+  const personalCategorizedPosts = new Set<Post>()
+
+  personalPosts.forEach(post => {
+    if (post.category === 'development' ||
+        post.category === 'design' ||
+        post.category === 'development,design' ||
+        post.category === 'design,development') {
+      personalCategorizedPosts.add(post)
+    }
+  })
+
+  const personalDisplayPosts = Array.from(personalCategorizedPosts)
   const personalUncategorizedPosts = personalPosts.filter(post => !post.category)
 
   // Sort posts: pinned posts first, then by date within each group
@@ -71,9 +97,9 @@ export default function PostsPage() {
                     </p>
                   </div>
 
-                  {/* Main Professional Projects Grid */}
+                  {/* Main Professional Projects Grid - Now using the deduplicated array */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-                    {sortPosts([...professionalDevelopmentPosts, ...professionalDesignPosts]).map((post) => (
+                    {sortPosts(professionalDisplayPosts).map((post) => (
                       <PostCard
                         key={post._id}
                         {...post}
@@ -116,9 +142,9 @@ export default function PostsPage() {
                     </p>
                   </div>
 
-                  {/* Main Personal Projects Grid */}
+                  {/* Main Personal Projects Grid - Now using the deduplicated array */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-                    {sortPosts([...personalDevelopmentPosts, ...personalDesignPosts]).map((post) => (
+                    {sortPosts(personalDisplayPosts).map((post) => (
                       <PostCard
                         key={post._id}
                         {...post}

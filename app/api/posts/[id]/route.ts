@@ -94,6 +94,7 @@ export async function PUT(
 
     const postData: Post = await request.json();
     console.log('Received post update with project type:', postData.projectType);
+    console.log('Received post update with category:', postData.category);
     console.log('Received post data:', postData); // Debug log
 
     // Clean up empty strings for URLs
@@ -126,7 +127,8 @@ export async function PUT(
         $set: {
           ...updateData,
           updatedAt: new Date().toISOString(),
-          projectType: updateData.projectType || 'personal'
+          projectType: updateData.projectType || 'personal',
+          category: updateData.category || 'development'
         }
       }
     );

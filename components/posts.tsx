@@ -70,6 +70,7 @@ export default function Posts() {
     if (a.pinned && !b.pinned) return -1
     if (!a.pinned && b.pinned) return 1
     // Then prioritize professional projects
+    // Improve how we check for professional project type to ensure consistency
     if ((a.projectType === 'professional') && (b.projectType !== 'professional')) return -1
     if ((a.projectType !== 'professional') && (b.projectType === 'professional')) return 1
     // Then sort by publishedAt date (most recent first)
