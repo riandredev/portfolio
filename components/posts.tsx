@@ -69,15 +69,19 @@ export default function Posts() {
     // First sort by pinned status
     if (a.pinned && !b.pinned) return -1
     if (!a.pinned && b.pinned) return 1
-    // Then prioritize professional projects
-    // Improve how we check for professional project type to ensure consistency
-    if ((a.projectType === 'professional') && (b.projectType !== 'professional')) return -1
-    if ((a.projectType !== 'professional') && (b.projectType === 'professional')) return 1
-    // Then sort by publishedAt date (most recent first)
-    const dateA = a.publishedAt ? new Date(a.publishedAt) : new Date(0)
-    const dateB = b.publishedAt ? new Date(b.publishedAt) : new Date(0)
-    return dateB.getTime() - dateA.getTime()
+
+    // Then sort by date (most recent first)
+    const dateA = new Date(a.publishedAt || a.createdAt || 0).getTime()
+    const dateB = new Date(b.publishedAt || b.createdAt || 0).getTime()
+    return dateB - dateA
   })
+
+  // Add debug log to check date sorting
+  console.log('Sorted posts:', sortedPosts.map(p => ({
+    title: p.title,
+    date: p.publishedAt || p.createdAt,
+    dateObj: new Date(p.publishedAt || p.createdAt || 0)
+  })));
 
   return (
     <section className="relative w-full pt-4 pb-24 bg-zinc-100 dark:bg-black">
