@@ -1,146 +1,207 @@
 'use client'
-import Image from 'next/image'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink } from 'lucide-react'
-import { ProjectType } from '@/types/post'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { Trophy } from 'lucide-react'
+import { Post } from '@/types/post'
+import { useInView } from 'react-intersection-observer'
 
-interface PostCardProps {
-  title: string
-  description: string
-  image: string
-  video?: string
-  logo?: string
+interface PostCardProps extends Post {
   href: string
-  tags?: string[]
   pinned?: boolean
-  category?: string
-  projectType?: ProjectType
 }
 
-const formatCategories = (category: string) => {
-  if (category === 'development,design') {
-    return 'Development & Design';
-  }
-  return category.charAt(0).toUpperCase() + category.slice(1);
-};
+export default function PostCard({ title, description, image, href, pinned, logo, video, tags, category, projectType }: PostCardProps) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hasLoaded, setHasLoaded] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
-const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category, projectType = 'personal' }: PostCardProps) => {
+  // Increased rootMargin to load earlier, lower threshold to trigger sooner
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+    rootMargin: '200px 0px',
+  })
+
+  useEffect(() => {
+    if (videoRef.current && video) {
+      if (inView) {
+        // Play video when in view
+        videoRef.current.play().catch((err) => {
+          console.log('Video autoplay prevented:', err)
+          setHasError(true)
+        })
+      } else {
+        // Pause when out of view
+        videoRef.current.pause()
+      }
+    }
+  }, [inView, video])
+
+  // Format category for display
+  const getCategoryLabel = () => {
+    if (!category) return '';
+
+    const categories = category.split(',');
+    if (categories.includes('development') && categories.includes('design')) {
+      return 'Development & Design';
+    } else if (categories.includes('development')) {
+      return 'Development';
+    } else if (categories.includes('design')) {
+      return 'Design';
+    }
+    return '';
+  };
+
   return (
-    <article className="group flex flex-col gap-4 sm:gap-6 font-manrope">
-      <Link href={href} className="relative block aspect-[16/10] overflow-hidden border dark:border-zinc-700 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
-        <div className="relative w-full h-full transform transition-transform duration-700 ease-out group-hover:scale-105">
+    <div className="group flex flex-col space-y-4">
+      {/* Media Card - Only Contains Media */}
+      <div
+        className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm transition-all duration-300 group-hover:shadow-md"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Link href={href} className="absolute inset-0 z-10">
+          <span className="sr-only">View {title}</span>
+        </Link>
+
+        {/* Featured Badge */}
+        {pinned && (
+          <div className="absolute top-3 right-3 z-20 p-1.5 bg-amber-500 text-white rounded-full shadow-md transform transition-transform duration-300 group-hover:scale-110" title="Featured Project">
+            <Trophy className="w-4 h-4" />
+          </div>
+        )}
+
+        {/* Media Background */}
+        <div ref={ref} className="relative w-full h-full transform transition-transform duration-700 ease-out group-hover:scale-105">
           {video ? (
-            <video
-              src={video}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="object-cover w-full h-full will-change-transform"
-              style={{
-                objectFit: 'cover',
-                imageRendering: 'auto',
-                transform: 'translate3d(0, 0, 0)' // Force GPU acceleration
-              }}
-            />
+            <>
+              {/* Show image as fallback until video loads */}
+              {!hasLoaded && !hasError && image && (
+                <Image
+                  src={image}
+                  alt={title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              )}
+
+              {/* Loading spinner */}
+              {!hasLoaded && !hasError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/30 backdrop-blur-[1px] z-[1]">
+                  <div className="w-8 h-8 border-4 border-zinc-300 dark:border-zinc-600 border-t-zinc-500 dark:border-t-zinc-300 rounded-full animate-spin"></div>
+                </div>
+              )}
+
+              {/* Video */}
+              <video
+                ref={videoRef}
+                src={video}
+                loop
+                muted
+                playsInline
+                preload="metadata" // Only load metadata initially
+                className="object-cover w-full h-full will-change-transform"
+                style={{
+                  imageRendering: 'auto',
+                  transform: 'translate3d(0, 0, 0)', // Force GPU acceleration
+                  opacity: hasLoaded ? 1 : 0,
+                  transition: 'opacity 0.3s ease-in-out',
+                }}
+                onLoadedData={() => setHasLoaded(true)}
+                onError={() => setHasError(true)}
+              />
+            </>
           ) : (
             <Image
               src={image}
               alt={title}
               fill
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={pinned} // Only prioritize pinned posts
+              loading={pinned ? "eager" : "lazy"}
             />
           )}
         </div>
-        <AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px]"
-          >
-            {logo && logo.length > 0 ? (
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className="relative w-48 sm:w-64 h-48 sm:h-64"
-              >
-                <Image
-                  src={logo}
-                  alt={`${title} logo`}
-                  fill
-                  className="object-contain filter brightness-0 invert"
-                  unoptimized
-                />
-              </motion.div>
-            ) : (
-              <motion.span
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className="text-white/90 text-xl sm:text-2xl lg:text-4xl font-serif italic tracking-wide px-4 sm:px-6 py-2 sm:py-3"
-              >
-                View Project
-              </motion.span>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </Link>
-      <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
-          <h3 className="text-xl sm:text-2xl font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1 sm:gap-2">
-            {title}
-            {category && (
-              <>
-                <span className="text-xl sm:text-2xl text-zinc-400 dark:text-zinc-500 font-normal">
-                  |
-                </span>
-                <span className="text-zinc-400 dark:text-zinc-500 text-sm sm:text-base font-normal capitalize">
-                  {formatCategories(category)}
-                </span>
-              </>
-            )}
-          </h3>
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0">
-            {tags && tags.length > 0 && tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-300 font-medium backdrop-blur-sm whitespace-nowrap"
-              >
+
+        {/* Hover state overlay with logo - using conditional rendering based on state */}
+        <motion.div
+          initial={false}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px] z-[2] pointer-events-none"
+        >
+          {logo && logo.length > 0 ? (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{
+                scale: isHovered ? 1 : 0.8,
+                opacity: isHovered ? 1 : 0
+              }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="w-48 h-48 relative" // Increased size from w-32 h-32
+            >
+              <Image
+                src={logo}
+                alt={title}
+                fill
+                className="object-contain brightness-[10] invert" // Added filters to make logo white
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{
+                y: isHovered ? 0 : 20,
+                opacity: isHovered ? 1 : 0
+              }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="flex flex-col items-center justify-center text-center p-6"
+            >
+              <p className="font-serif italic text-2xl text-white mb-3">View project</p>
+              {projectType && (
+                <div className="text-xs text-zinc-300 mt-1">
+                  {projectType === 'professional' ? 'Professional Work' : 'Personal Project'}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Content Below the Card */}
+      <div className="flex-1 flex flex-col">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-lg font-medium line-clamp-1 text-zinc-900 dark:text-zinc-100">{title}</h3>
+          {getCategoryLabel() && (
+            <span className="ml-2 text-xs bg-zinc-100 dark:bg-zinc-700 px-2 py-0.5 rounded-full text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+              {getCategoryLabel()}
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-3">{description}</p>
+
+        {/* Tags */}
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-auto">
+            {tags.slice(0, 3).map(tag => (
+              <span key={tag} className="px-1.5 py-0.5 text-xs bg-zinc-100 dark:bg-zinc-700/60 text-zinc-700 dark:text-zinc-300 rounded-full">
                 {tag}
               </span>
             ))}
-            {tags && tags.length > 3 && (
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 self-center">
+            {tags.length > 3 && (
+              <span className="px-1.5 py-0.5 text-xs bg-zinc-100 dark:bg-zinc-700/60 text-zinc-700 dark:text-zinc-300 rounded-full">
                 +{tags.length - 3}
               </span>
             )}
           </div>
-        </div>
-        <div className="flex items-start justify-between gap-3 sm:gap-4">
-          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed flex-1">
-            {description}
-          </p>
-          <Link
-            href={href}
-            className="shrink-0 p-1 -mr-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group/link"
-          >
-            <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 group-hover/link:text-zinc-900 dark:group-hover/link:text-zinc-100 transition-colors" />
-          </Link>
-        </div>
-        {pinned && (
-          <span className="text-xs shrink-0 font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
-              <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 01-1.085.67L12 18.089l-7.165 3.583A.75.75 0 013.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93z" clipRule="evenodd" />
-            </svg>
-            Featured
-          </span>
         )}
       </div>
-    </article>
+    </div>
   )
 }
-
-export default PostCard
