@@ -101,20 +101,13 @@ export default function Posts() {
               <PostCardSkeleton key={i} />
             ))
           ) : sortedPosts.length > 0 ? (
-            sortedPosts.slice(0, recentPostsLimit).map((post, index) => (
-              <div
+            sortedPosts.slice(0, recentPostsLimit).map((post) => (
+              <PostCard
                 key={post._id}
-                // Add a small mounting delay for each subsequent post to prevent all videos from loading at once
-                style={{
-                  animation: `fadeIn 0.5s ease-in-out ${index * 0.15}s both`
-                }}
-              >
-                <PostCard
-                  {...post}
-                  href={`/posts/${post.slug}`}
-                  pinned={post.pinned}
-                />
-              </div>
+                {...post}
+                href={`/posts/${post.slug}`}
+                pinned={post.pinned}
+              />
             ))
           ) : (
             <p className="col-span-2 text-center text-zinc-500 dark:text-zinc-400">
@@ -126,17 +119,3 @@ export default function Posts() {
     </section>
   )
 }
-
-// Add this CSS either inline or in your global CSS
-{/* Add this to your global CSS
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-*/}

@@ -16,25 +16,29 @@ const SpotifyIcon = () => (
 
 function AudioVisualizer() {
     const bars = Array.from({ length: 5 }, (_, i) => {
-      const duration = Math.random() * 1 + 1.5;
-      const delay = Math.random() * -2;
-      const baseHeight = Math.random() * 8 + 8;
+      const duration = 0.8 + (i * 0.1); // Faster durations
+      const delay = -i * 0.15; // Shorter delays between bars
+      const baseHeight = 12 + (i % 2) * 6; // Slightly taller bars with more variation
 
       return (
         <div
           key={i}
-          className="w-[2px] bg-green-500 rounded-full transform-gpu"
+          className="visualizer-bar w-[2px] bg-green-500 rounded-full transform-gpu will-change-transform"
           style={{
             height: `${baseHeight}px`,
             animation: `visualizer${i + 1} ${duration}s ease-in-out infinite`,
             animationDelay: `${delay}s`,
+            // Force hardware acceleration and isolation
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            perspective: '1000px'
           }}
         />
       );
     });
 
     return (
-      <div className="flex items-center gap-[2px]">
+      <div className="flex items-center gap-[2px] h-[20px] transform-gpu">
         {bars}
       </div>
     );

@@ -170,46 +170,39 @@
 }
 
 @keyframes visualizer1 {
-  0%, 100% { transform: scaleY(0.5); }
-  20% { transform: scaleY(0.8); }
-  40% { transform: scaleY(0.4); }
-  60% { transform: scaleY(1); }
-  80% { transform: scaleY(0.3); }
+  0%, 100% { transform: scaleY(0.4) translateZ(0); }
+  50% { transform: scaleY(1) translateZ(0); }
 }
 
 @keyframes visualizer2 {
-  0%, 100% { transform: scaleY(0.3); }
-  25% { transform: scaleY(1); }
-  50% { transform: scaleY(0.5); }
-  75% { transform: scaleY(0.8); }
+  0%, 100% { transform: scaleY(0.2) translateZ(0); }
+  50% { transform: scaleY(0.8) translateZ(0); }
 }
 
 @keyframes visualizer3 {
-  0%, 100% { transform: scaleY(0.8); }
-  30% { transform: scaleY(0.4); }
-  60% { transform: scaleY(1); }
-  80% { transform: scaleY(0.3); }
+  0%, 100% { transform: scaleY(0.5) translateZ(0); }
+  50% { transform: scaleY(1) translateZ(0); }
 }
 
 @keyframes visualizer4 {
-  0%, 100% { transform: scaleY(0.4); }
-  20% { transform: scaleY(1); }
-  40% { transform: scaleY(0.3); }
-  60% { transform: scaleY(0.8); }
-  80% { transform: scaleY(0.5); }
+  0%, 100% { transform: scaleY(0.3) translateZ(0); }
+  50% { transform: scaleY(0.9) translateZ(0); }
 }
 
 @keyframes visualizer5 {
-  0%, 100% { transform: scaleY(0.6); }
-  15% { transform: scaleY(0.3); }
-  35% { transform: scaleY(1); }
-  55% { transform: scaleY(0.5); }
-  75% { transform: scaleY(0.8); }
+  0%, 100% { transform: scaleY(0.4) translateZ(0); }
+  50% { transform: scaleY(0.7) translateZ(0); }
 }
 
 .visualizer-bar {
-  transform-origin: bottom;
+  transform-origin: center;
   will-change: transform;
+  isolation: isolate;
+  contain: layout style paint;
+  position: relative;
+  top: 0%;
+  margin-top: -1px;
+  border-radius: 4px;
 }
 
 @layer utilities {
@@ -312,47 +305,4 @@
 ::selection {
     background-color: rgba(200, 200, 200, 0.2);
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-}
-
-/* Add at the end of your globals.css file */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Video optimization */
-video {
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-/* Improve video performance */
-.video-optimized {
-  transform: translateZ(0);
-  image-rendering: auto;
-}
-
-/* Styling for placeholder while video loads */
-.video-placeholder {
-  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
-  background-size: 200% 100%;
-  animation: 1.5s shine linear infinite;
-}
-
-.dark .video-placeholder {
-  background: linear-gradient(110deg, #2a2a2a 8%, #333333 18%, #2a2a2a 33%);
-  background-size: 200% 100%;
-  animation: 1.5s shine linear infinite;
-}
-
-@keyframes shine {
-  to {
-    background-position-x: -200%;
-  }
 }
