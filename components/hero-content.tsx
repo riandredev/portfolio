@@ -16,8 +16,8 @@ export default function HeroContent() {
       <p className="text-base sm:text-lg md:text-xl font-manrope text-zinc-700 dark:text-zinc-300 max-w-xl">
         A front-end engineer
         with a passion for creating engaging user experiences. Currently {' '}
-        <a href="#" className="underline underline-offset-4 transition-colors cursor-default">
-          Freelancing
+        <a href="https://pixelperfect.co.za" className="underline cursor-pointer underline-offset-4 transition-colors" target="_blank" rel="noopener noreferrer">
+          at PixelMeta, formerly PixelPerfect
         </a>.
       </p>
       <div className="flex flex-wrap gap-3 sm:gap-4 pt-2 justify-center sm:justify-start">
