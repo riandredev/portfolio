@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation"
 import { Settings } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import NavLink from '@/components/nav-link'
 import ThemeSettings from '@/components/theme-settings'
@@ -10,12 +10,12 @@ import VisitorChip from '@/components/visitor-chip'
 import SpotifyChip from '@/components/spotify-chip'
 import { useThemeStore } from '@/store/theme'
 
-const navVariants = {
+const navVariants: Variants = {
   collapsed: { height: 48 },
   expanded: { height: 310 }
 }
 
-const contentVariants = {
+const contentVariants: Variants = {
   hidden: { opacity: 0, y: -8 },
   visible: {
     opacity: 1,

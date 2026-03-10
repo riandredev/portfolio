@@ -126,69 +126,72 @@ export default function SpotifyChip() {
     };
   }, [track, isMuted]);
 
-  const fetchNowPlaying = async () => {
-    try {
-      if (!isRefreshing) {
-        setIsRefreshing(true);
-      }
-
-      const res = await fetch('/api/spotify/now-playing', {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch');
-
-      const data = await res.json();
-
-      // Always update visibility based on isPlaying status
-      setIsVisible(data.isPlaying);
-
-      if (data.isPlaying) {
-        setTrack({
-          name: data.title,
-          artist: data.artist,
-          albumArt: data.albumImageUrl,
-          previewUrl: data.previewUrl,
-          progress_ms: data.progress_ms,
-          duration_ms: data.duration_ms,
-          spotifyUrl: data.spotifyUrl
-        });
-
-        if (data.progress_ms) {
-          setProgress(data.progress_ms / 1000);
-          setDuration(data.duration_ms / 1000);
-        }
-
-        // Handle audio setup
-        if (data.previewUrl && (!audio || audio.src !== data.previewUrl)) {
-          if (audio) {
-            audio.pause();
-            audio.src = '';
-          }
-          const newAudio = new Audio(data.previewUrl);
-          newAudio.volume = 0.5;
-          newAudio.muted = true;
-          setAudio(newAudio);
-        }
-      } else {
-        // Clear track data when nothing is playing
-        setTrack(null);
-      }
-    } catch (error) {
-      console.error('Spotify fetch error:', error);
-      setIsVisible(false);
-      setTrack(null);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
   useEffect(() => {
     let mounted = true;
+
+    const fetchNowPlaying = async () => {
+      try {
+        if (!isRefreshing) {
+          setIsRefreshing(true);
+        }
+
+        const res = await fetch('/api/spotify/now-playing', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch');
+
+        const data = await res.json();
+
+        // Always update visibility based on isPlaying status
+        if (!mounted) return;
+        setIsVisible(data.isPlaying);
+
+        if (data.isPlaying) {
+          setTrack({
+            name: data.title,
+            artist: data.artist,
+            albumArt: data.albumImageUrl,
+            previewUrl: data.previewUrl,
+            progress_ms: data.progress_ms,
+            duration_ms: data.duration_ms,
+            spotifyUrl: data.spotifyUrl
+          });
+
+          if (data.progress_ms) {
+            setProgress(data.progress_ms / 1000);
+            setDuration(data.duration_ms / 1000);
+          }
+
+          // Handle audio setup
+          if (data.previewUrl && (!audio || audio.src !== data.previewUrl)) {
+            if (audio) {
+              audio.pause();
+              audio.src = '';
+            }
+            const newAudio = new Audio(data.previewUrl);
+            newAudio.volume = 0.5;
+            newAudio.muted = true;
+            setAudio(newAudio);
+          }
+        } else {
+          // Clear track data when nothing is playing
+          setTrack(null);
+        }
+      } catch (error) {
+        console.error('Spotify fetch error:', error);
+        if (mounted) {
+          setIsVisible(false);
+          setTrack(null);
+        }
+      } finally {
+        if (mounted) setIsRefreshing(false);
+      }
+    };
 
     const fetchAndUpdate = async () => {
       if (!mounted) return;
@@ -205,7 +208,7 @@ export default function SpotifyChip() {
       mounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [audio, isRefreshing]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
