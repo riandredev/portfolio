@@ -35,7 +35,7 @@ async function generateAuth() {
 
     await db.collection('auth').deleteMany({});
     await db.collection('auth').insertOne({
-      email: process.env.AUTH_EMAIL || 'ri4ndre@gmail.com',
+      email: process.env.AUTH_EMAIL || 'hello@riandre.com',
       password: hashedPassword,
       salt,
       authToken

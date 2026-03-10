@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     // Determine the correct redirect URI based on environment
     const baseUrl = process.env.NODE_ENV === 'production'
       ? 'https://riandre.com'
-      : 'http://localhost:3000';
+      : 'http://127.0.0.1:3000';
 
     const REDIRECT_URI = `${baseUrl}/api/spotify/callback`;
 

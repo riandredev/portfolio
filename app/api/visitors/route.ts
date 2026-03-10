@@ -15,6 +15,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    if (
+      data.city.toLowerCase() === 'unknown' ||
+      data.country.toLowerCase() === 'unknown' ||
+      data.countryCode.toLowerCase() === 'unknown'
+    ) {
+      console.log('Ignoring visitor with Unknown location:', data)
+      return NextResponse.json({ message: 'Ignored Unknown location' }, { status: 200 })
+    }
+
     const visitor = {
       city: data.city,
       region: data.region || 'Unknown',

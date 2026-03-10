@@ -16,7 +16,7 @@ export default function Footer({ className = '' }: FooterProps) {
   const [copied, setCopied] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
-  const email = 'ri4ndre@gmail.com'
+  const email = 'hello@riandre.com'
 
   const handleMouseEnter = (e: React.MouseEvent) => {
     e.preventDefault()

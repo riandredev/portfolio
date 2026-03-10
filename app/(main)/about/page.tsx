@@ -4,9 +4,23 @@ import Card from '@/components/about/card'
 const experiences = [
     {
         id: 1,
-        role: 'Freelancing',
+        role: 'UI/UX Designer and Software Developer',
+        company: 'PixelMeta',
+        period: 'Jun 2025 - Present',
+        link: '#'
+    },
+    {
+        id: 2,
+        role: 'Software Developer',
+        company: 'Konzult',
+        period: 'Apr 2025 - Jun 2025',
+        link: '#'
+    },
+    {
+        id: 3,
+        role: 'Front-end Web Engineer',
         company: 'JB Decorative Concrete',
-        period: 'Aug 2024 - Oct 2024',
+        period: 'Aug 2024 - Present',
         link: 'https://company.com'
     },
 ]
@@ -29,34 +43,34 @@ const education = [
 ]
 
 const certifications = [
-        {
-                id: 1,
-                name: 'Meta Certified Digital Marketing Associate',
-                issuer: 'Meta',
-                date: 'Nov 2024',
-                link: 'https://www.credly.com/earner/earned/badge/2477fe4f-f774-4b34-8c77-2f08dbd4c72a'
-        },
-        {
-                id: 2,
-                name: 'IT Specialist - HTML and CSS',
-                issuer: 'Certiport',
-                date: 'Nov 2023',
-                link: 'https://www.credly.com/badges/9d425dc8-1ef2-4d1a-a09e-94cc5c469db3'
-        },
-        {
-                id: 3,
-                name: 'Adobe Certified Professional in Visual Design',
-                issuer: 'Adobe',
-                date: 'Oct 2023',
-                link: 'https://www.credly.com/badges/7a625f15-48ed-49e7-aeeb-1aa619daa7e0'
-        },
-        {
-                id: 4,
-                name: 'Adobe Certified Professional in Graphic Design & Illustration Using Adobe Illustrator',
-                issuer: 'Adobe',
-                date: 'Oct 2023',
-                link: 'https://www.credly.com/badges/688e8c77-6650-4172-b373-e8edde08dd86'
-        },
+    {
+        id: 1,
+        name: 'Meta Certified Digital Marketing Associate',
+        issuer: 'Meta',
+        date: 'Nov 2024',
+        link: 'https://www.credly.com/earner/earned/badge/2477fe4f-f774-4b34-8c77-2f08dbd4c72a'
+    },
+    {
+        id: 2,
+        name: 'IT Specialist - HTML and CSS',
+        issuer: 'Certiport',
+        date: 'Nov 2023',
+        link: 'https://www.credly.com/badges/9d425dc8-1ef2-4d1a-a09e-94cc5c469db3'
+    },
+    {
+        id: 3,
+        name: 'Adobe Certified Professional in Visual Design',
+        issuer: 'Adobe',
+        date: 'Oct 2023',
+        link: 'https://www.credly.com/badges/7a625f15-48ed-49e7-aeeb-1aa619daa7e0'
+    },
+    {
+        id: 4,
+        name: 'Adobe Certified Professional in Graphic Design & Illustration Using Adobe Illustrator',
+        issuer: 'Adobe',
+        date: 'Oct 2023',
+        link: 'https://www.credly.com/badges/688e8c77-6650-4172-b373-e8edde08dd86'
+    },
     {
         id: 5,
         name: 'Adobe Certified Professional in Visual Design Using Adobe Photoshop',

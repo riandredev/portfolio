@@ -106,16 +106,17 @@ export default function SpotifyChip() {
     let progressInterval: NodeJS.Timeout;
 
     const updateProgress = () => {
-      if (track?.duration_ms && !isMuted) {
+      if (track?.duration_ms && isMuted) {
         setProgress(prev => {
-          const newProgress = prev + 0.1;
-          return newProgress >= (track.duration_ms / 1000) ? 0 : newProgress;
+          const newProgress = prev + 1;
+          const durationSec = track.duration_ms! / 1000;
+          return newProgress >= durationSec ? durationSec : newProgress;
         });
       }
     };
 
-    if (track && !isMuted) {
-      progressInterval = setInterval(updateProgress, 100);
+    if (track && isMuted) {
+      progressInterval = setInterval(updateProgress, 1000);
     }
 
     return () => {
@@ -255,11 +256,17 @@ export default function SpotifyChip() {
     if (!audio) return
     audio.muted = !audio.muted
     setIsMuted(!isMuted)
-    if (!audio.muted && audio.paused) {
+    if (!audio.muted) {
       audio.play()
       // Reset progress to match audio when unmuting
       if (audio.currentTime) {
         setProgress(audio.currentTime);
+      }
+    } else {
+      audio.pause()
+      if (track) {
+        if (track.progress_ms) setProgress(track.progress_ms / 1000);
+        if (track.duration_ms) setDuration(track.duration_ms / 1000);
       }
     }
   }

@@ -21,6 +21,7 @@ export default function VisitorChip() {
     lastVisitor,
     isLoading,
     setCurrentLocation,
+    setLastVisitor,
     updateVisitor,
     fetchLatestVisitor
   } = useVisitorsStore()
@@ -50,6 +51,27 @@ export default function VisitorChip() {
     }
   }, [])
 
+  // Clear stale 'Unknown' data from persisted store
+  useEffect(() => {
+    if (
+      lastVisitor &&
+      (lastVisitor.country_code?.toLowerCase() === 'unknown' ||
+       lastVisitor.country?.toLowerCase() === 'unknown' ||
+       lastVisitor.city?.toLowerCase() === 'unknown')
+    ) {
+      setLastVisitor(null)
+    }
+    if (
+      currentLocation &&
+      (currentLocation.country_code?.toLowerCase() === 'unknown' ||
+       currentLocation.country?.toLowerCase() === 'unknown' ||
+       currentLocation.city?.toLowerCase() === 'unknown')
+    ) {
+      setCurrentLocation(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     let isMounted = true
 
@@ -62,11 +84,11 @@ export default function VisitorChip() {
 
         // Only fetch and store current location silently without updating display
         if (!currentLocation) {
-          const res = await fetch('https://ipapi.co/json/')
+          const res = await fetch('/api/location')
           if (!res.ok) throw new Error(`Location service error: ${res.status}`)
 
           const data = await res.json()
-          if (data?.city && data?.country_name && data?.country) {
+          if (data?.city && data?.country_name && data?.country && data.city !== 'Unknown') {
             const locationInfo = {
               city: data.city,
               region: data.region || 'Unknown',
