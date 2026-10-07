@@ -1,29 +1,63 @@
+import type { Metadata } from 'next'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from '@/lib/get-query-client'
 import { getPostBySlug } from '@/lib/posts-server'
 import { postsKeys } from '@/lib/posts-keys'
 import PostPageClient from './post-page-client'
+import PostJsonLd from '@/components/post-json-ld'
+import { absoluteUrl, privateRouteRobots } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const queryClient = getQueryClient()
+type PageProps = { params: { slug: string } }
 
-  await queryClient.prefetchQuery({
-    queryKey: postsKeys.detail(params.slug),
-    queryFn: async () => {
-      const post = await getPostBySlug(params.slug)
-      if (!post) throw new Error('Post not found')
-      return post
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug)
+
+  if (!post || post.published === false) {
+    return {
+      title: 'Project not found',
+      robots: privateRouteRobots,
+    }
+  }
+
+  const canonicalPath = `/posts/${post.slug}`
+
+  return {
+    title: post.title,
+    description: post.description,
+    alternates: {
+      canonical: canonicalPath,
     },
-  })
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: absoluteUrl(canonicalPath),
+      type: 'article',
+      publishedTime: post.publishedAt ?? undefined,
+      modifiedTime: post.updatedAt,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+    },
+  }
+}
 
-  const prefetched = queryClient.getQueryData(postsKeys.detail(params.slug))
-  if (!prefetched) {
+export default async function PostPage({ params }: PageProps) {
+  const post = await getPostBySlug(params.slug)
+
+  if (!post || post.published === false) {
     notFound()
   }
 
+  const queryClient = getQueryClient()
+
+  queryClient.setQueryData(postsKeys.detail(params.slug), post)
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <PostJsonLd post={post} />
       <PostPageClient slug={params.slug} />
     </HydrationBoundary>
   )

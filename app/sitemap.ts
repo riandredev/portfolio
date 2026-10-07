@@ -6,7 +6,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Get all post slugs from database
   const { db } = await connectToDatabase()
-  const posts = await db.collection('posts').find({}, { projection: { slug: 1, updatedAt: 1 } }).toArray()
+  const posts = await db
+    .collection('posts')
+    .find({ published: { $ne: false } }, { projection: { slug: 1, updatedAt: 1, publishedAt: 1 } })
+    .toArray()
 
   // Static routes
   const staticRoutes = [
@@ -23,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic post routes
   const postRoutes = posts.map((post) => ({
     url: `${baseUrl}/posts/${post.slug}`,
-    lastModified: post.updatedAt || new Date().toISOString(),
+    lastModified: post.updatedAt || post.publishedAt || new Date().toISOString(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }))

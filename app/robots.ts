@@ -10,6 +10,9 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/dashboard/',
+          '/login',
+          '/spotify-auth',
           '/private/',
           '/admin/',
         ],

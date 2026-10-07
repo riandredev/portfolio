@@ -9,6 +9,7 @@ import "./globals.css";
 import { Viewport } from "next/types"
 import ErrorBoundary from '@/components/error-boundary'
 import QueryProvider from '@/providers/query-provider'
+import { defaultTwitter, getSiteUrl } from '@/lib/seo'
 import { Suspense } from 'react'
 
 const geistSans = localFont({
@@ -45,7 +46,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://riandre.com'),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Riandre van der Voorden | Software Engineer Portfolio",
     template: "%s | Riandre van der Voorden"
@@ -71,35 +72,25 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "Riandre van der Voorden",
-      url: process.env.NEXT_PUBLIC_BASE_URL,
+      url: getSiteUrl(),
     }
   ],
   creator: "Riandre van der Voorden",
   publisher: "Riandre van der Voorden",
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     type: "website",
     locale: "en_ZA",
-    url: process.env.NEXT_PUBLIC_BASE_URL,
+    url: getSiteUrl(),
     title: "Riandre van der Voorden - Software Engineer",
     description: "Full Stack Software Engineer specializing in modern web development. View my portfolio, projects, and professional experience.",
     siteName: "Riandre van der Voorden",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Riandre Portoflio Logo - Full Stack Software Engineer"
-      }
-    ]
   },
   other: {
     mastodon: ["@riandre@mastodon.social"]
   },
+  twitter: defaultTwitter,
   verification: {
-    google: "google-site-verification=uMpOp0miclTOg-JvzSF7Iu8hRS3w_GWObcxbLsNeNTo",
+    google: "uMpOp0miclTOg-JvzSF7Iu8hRS3w_GWObcxbLsNeNTo",
     other: {
       "me": ["https://mastodon.social/@riandre"]
     }
