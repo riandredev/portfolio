@@ -1,7 +1,6 @@
 import { renderOgImage, ogContentType, ogSize } from '@/lib/og/render-og'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
 
 export const alt = 'About Riandre van der Voorden'
 export const size = ogSize
@@ -12,7 +11,7 @@ export default async function Image() {
     eyebrow: 'About',
     title: 'Experience & craft',
     description:
-      'UI-focused software engineer — experience, education, and certifications across modern web development.',
+      'UI-focused front-end engineer — experience, education, and certifications across modern web development.',
     footer: 'riandre.com/about',
   })
 }

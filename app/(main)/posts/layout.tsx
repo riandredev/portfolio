@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { postsListOgAlt } from '@/lib/og/posts-list'
+import { ogSize } from '@/lib/og/render-og'
 import { absoluteUrl } from '@/lib/seo'
 
 export const metadata: Metadata = {
@@ -13,6 +15,18 @@ export const metadata: Metadata = {
     description:
       'Explore professional client work and personal software projects built with React, Next.js, and modern web tooling.',
     url: absoluteUrl('/posts'),
+    images: [
+      {
+        url: absoluteUrl('/posts/opengraph-image'),
+        width: ogSize.width,
+        height: ogSize.height,
+        alt: postsListOgAlt,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [absoluteUrl('/posts/opengraph-image')],
   },
 }
 

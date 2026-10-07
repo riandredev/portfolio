@@ -5,12 +5,17 @@ import { getPostBySlug } from '@/lib/posts-server'
 import { postsKeys } from '@/lib/posts-keys'
 import PostPageClient from './post-page-client'
 import PostJsonLd from '@/components/post-json-ld'
+import { isReservedPostSlug } from '@/lib/og/posts-list'
 import { absoluteUrl, privateRouteRobots } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 
 type PageProps = { params: { slug: string } }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  if (isReservedPostSlug(params.slug)) {
+    notFound()
+  }
+
   const post = await getPostBySlug(params.slug)
 
   if (!post || post.published === false) {
@@ -45,6 +50,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PostPage({ params }: PageProps) {
+  if (isReservedPostSlug(params.slug)) {
+    notFound()
+  }
+
   const post = await getPostBySlug(params.slug)
 
   if (!post || post.published === false) {

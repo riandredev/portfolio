@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og'
-import { getOgFonts } from './fonts'
+import { getOgImageFonts } from './fonts'
 import { OgLayout, type OgLayoutProps } from './og-layout'
 
 export const ogSize = {
@@ -10,35 +10,10 @@ export const ogSize = {
 export const ogContentType = 'image/png'
 
 export async function renderOgImage(props: OgLayoutProps) {
-  const { geistSans, manrope } = await getOgFonts()
+  const fonts = await getOgImageFonts()
 
-  return new ImageResponse(await OgLayout(props), {
+  return new ImageResponse(OgLayout(props), {
     ...ogSize,
-    fonts: [
-      {
-        name: 'Geist',
-        data: geistSans,
-        style: 'normal',
-        weight: 400,
-      },
-      {
-        name: 'Geist',
-        data: geistSans,
-        style: 'normal',
-        weight: 300,
-      },
-      {
-        name: 'Manrope',
-        data: manrope,
-        style: 'normal',
-        weight: 400,
-      },
-      {
-        name: 'Manrope',
-        data: manrope,
-        style: 'normal',
-        weight: 500,
-      },
-    ],
+    fonts,
   })
 }

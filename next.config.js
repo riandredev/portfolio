@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async rewrites() {
+      return [
+        {
+          source: '/posts/opengraph-image',
+          destination: '/api/og/posts',
+        },
+      ]
+    },
     images: {
       remotePatterns: [
         {

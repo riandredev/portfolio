@@ -1,6 +1,5 @@
 import React from 'react'
-import { readFile } from 'fs/promises'
-import { join } from 'path'
+import { getLogoDataUrl } from './logo'
 
 export type OgLayoutProps = {
   eyebrow: string
@@ -9,18 +8,8 @@ export type OgLayoutProps = {
   footer?: string
 }
 
-let logoDataUrl: string | null = null
-
-async function getLogoDataUrl() {
-  if (!logoDataUrl) {
-    const svg = await readFile(join(process.cwd(), 'app/icon.svg'), 'utf8')
-    logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
-  }
-  return logoDataUrl
-}
-
-export async function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps) {
-  const logo = await getLogoDataUrl()
+export function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps) {
+  const logo = getLogoDataUrl()
 
   return (
     <div
@@ -37,39 +26,41 @@ export async function OgLayout({ eyebrow, title, description, footer }: OgLayout
         fontFamily: 'Manrope',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: -120,
-          right: -80,
-          width: 520,
-          height: 520,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: -160,
-          left: -100,
-          width: 480,
-          height: 480,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(63, 209, 255, 0.22) 0%, rgba(63, 209, 255, 0) 72%)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: 120,
-          left: 420,
-          width: 280,
-          height: 280,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, rgba(96, 165, 250, 0) 70%)',
-        }}
-      />
+      <div style={{ display: 'flex', position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: -120,
+            right: -80,
+            width: 520,
+            height: 520,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -160,
+            left: -100,
+            width: 480,
+            height: 480,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(63, 209, 255, 0.22) 0%, rgba(63, 209, 255, 0) 72%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: 120,
+            left: 420,
+            width: 280,
+            height: 280,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, rgba(96, 165, 250, 0) 70%)',
+          }}
+        />
+      </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 20, position: 'relative', zIndex: 1 }}>
         <img src={logo} width={88} height={56} alt="" />
@@ -80,34 +71,35 @@ export async function OgLayout({ eyebrow, title, description, footer }: OgLayout
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             color: '#a1a1aa',
-            fontFamily: 'Geist',
+            fontFamily: 'Manrope',
           }}
         >
           {eyebrow}
         </div>
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 980 }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: 980,
+        }}
+      >
         <div
           style={{
+            display: 'flex',
             fontSize: 72,
             fontWeight: 300,
             lineHeight: 1.05,
             letterSpacing: '-0.03em',
-            color: '#fafafa',
-            fontFamily: 'Geist',
+            color: '#e0f2fe',
+            fontFamily: 'Manrope',
             marginBottom: 24,
           }}
         >
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #ffffff 0%, #93c5fd 55%, #3fd1ff 100%)',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            {title}
-          </span>
+          {title}
         </div>
         <div
           style={{
@@ -115,6 +107,7 @@ export async function OgLayout({ eyebrow, title, description, footer }: OgLayout
             lineHeight: 1.45,
             color: '#d4d4d8',
             fontWeight: 400,
+            fontFamily: 'Manrope',
             maxWidth: 900,
           }}
         >
@@ -133,20 +126,21 @@ export async function OgLayout({ eyebrow, title, description, footer }: OgLayout
           paddingTop: 28,
         }}
       >
-        <div style={{ fontSize: 22, color: '#71717a', fontFamily: 'Geist' }}>
+        <div style={{ fontSize: 22, color: '#71717a', fontFamily: 'Manrope' }}>
           {footer ?? 'riandre.com'}
         </div>
         <div
           style={{
             fontSize: 18,
             color: '#52525b',
+            fontFamily: 'Manrope',
             padding: '10px 18px',
             borderRadius: 999,
             border: '1px solid rgba(63, 63, 70, 0.8)',
             background: 'rgba(24, 24, 27, 0.65)',
           }}
         >
-          Software Engineer
+          Front-end Engineer
         </div>
       </div>
     </div>

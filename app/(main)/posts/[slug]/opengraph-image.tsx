@@ -1,32 +1,32 @@
 import { ImageResponse } from 'next/og'
-import { getPostBySlug } from '@/lib/posts-server'
+import { fetchPostForOg } from '@/lib/og/fetch-post-for-og'
+import { getOgImageFonts } from '@/lib/og/fonts'
+import { getLogoDataUrl } from '@/lib/og/logo'
+import { isPostsListOgSlug, postsListOgAlt, postsListOgProps } from '@/lib/og/posts-list'
+import { ogContentType, ogSize, renderOgImage } from '@/lib/og/render-og'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-import { getOgFonts } from '@/lib/og/fonts'
-import { ogContentType, ogSize } from '@/lib/og/render-og'
-import { readFile } from 'fs/promises'
-import { join } from 'path'
+export const runtime = 'edge'
 
 export const contentType = ogContentType
 export const size = ogSize
 
 export async function generateImageMetadata({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug)
-  return {
-    alt: post?.title ?? 'Project',
+  if (isPostsListOgSlug(params.slug)) {
+    return [{ alt: postsListOgAlt }]
   }
-}
 
-async function getLogoDataUrl() {
-  const svg = await readFile(join(process.cwd(), 'app/icon.svg'), 'utf8')
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+  const post = await fetchPostForOg(params.slug)
+  return [{ alt: post?.title ?? 'Project' }]
 }
 
 export default async function Image({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug)
-  const { geistSans, manrope } = await getOgFonts()
-  const logo = await getLogoDataUrl()
+  if (isPostsListOgSlug(params.slug)) {
+    return renderOgImage(postsListOgProps)
+  }
+
+  const post = await fetchPostForOg(params.slug)
+  const fonts = await getOgImageFonts()
+  const logo = getLogoDataUrl()
 
   if (!post || post.published === false) {
     return new ImageResponse(
@@ -41,13 +41,13 @@ export default async function Image({ params }: { params: { slug: string } }) {
             background: '#09090b',
             color: '#fafafa',
             fontSize: 48,
-            fontFamily: 'Geist',
+            fontFamily: 'Manrope',
           }}
         >
           Project not found
         </div>
       ),
-      { ...ogSize, fonts: [{ name: 'Geist', data: geistSans, style: 'normal', weight: 400 }] }
+      { ...ogSize, fonts }
     )
   }
 
@@ -90,26 +90,36 @@ export default async function Image({ params }: { params: { slug: string } }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
             <img src={logo} width={72} height={46} alt="" />
-            <div style={{ fontSize: 18, color: '#a1a1aa', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 18,
+                color: '#a1a1aa',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                fontFamily: 'Manrope',
+              }}
+            >
               {categoryLabel}
             </div>
           </div>
-          <div style={{ maxWidth: 620 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 620 }}>
             <div
               style={{
                 fontSize: 56,
                 fontWeight: 300,
                 lineHeight: 1.08,
                 color: '#fafafa',
-                fontFamily: 'Geist',
+                fontFamily: 'Manrope',
                 marginBottom: 20,
               }}
             >
               {post.title}
             </div>
-            <div style={{ fontSize: 24, lineHeight: 1.45, color: '#d4d4d8' }}>{post.description}</div>
+            <div style={{ fontSize: 24, lineHeight: 1.45, color: '#d4d4d8', fontFamily: 'Manrope' }}>
+              {post.description}
+            </div>
           </div>
-          <div style={{ fontSize: 20, color: '#71717a', fontFamily: 'Geist' }}>riandre.com/posts/{post.slug}</div>
+          <div style={{ fontSize: 20, color: '#71717a', fontFamily: 'Manrope' }}>riandre.com/posts/{post.slug}</div>
         </div>
         {post.image ? (
           <div
@@ -142,11 +152,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
     ),
     {
       ...ogSize,
-      fonts: [
-        { name: 'Geist', data: geistSans, style: 'normal', weight: 300 },
-        { name: 'Geist', data: geistSans, style: 'normal', weight: 400 },
-        { name: 'Manrope', data: manrope, style: 'normal', weight: 400 },
-      ],
+      fonts,
     }
   )
 }

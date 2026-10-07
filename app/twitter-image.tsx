@@ -1,9 +1,8 @@
 import { renderOgImage, ogContentType, ogSize } from '@/lib/og/render-og'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
 
-export const alt = 'Riandre van der Voorden — Software Engineer Portfolio'
+export const alt = 'Riandre van der Voorden — Front-end Engineer Portfolio'
 export const size = ogSize
 export const contentType = ogContentType
 
