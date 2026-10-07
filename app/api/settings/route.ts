@@ -5,7 +5,11 @@ import { headers } from 'next/headers'
 export async function GET() {
   try {
     const settings = await getSettings()
-    return NextResponse.json(settings)
+    return NextResponse.json(settings, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    })
   } catch {
     return NextResponse.json({ error: 'Failed to get settings' }, { status: 500 })
   }

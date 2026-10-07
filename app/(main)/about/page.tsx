@@ -99,9 +99,12 @@ export default function AboutPage() {
                                 <Image
                                     src="/me.jpg"
                                     alt="Riandre van der Voorden"
-                                    width={200}
-                                    height={200}
-                                    className="object-fill"
+                                    width={144}
+                                    height={144}
+                                    sizes="(max-width: 640px) 112px, 144px"
+                                    priority
+                                    quality={80}
+                                    className="object-cover w-full h-full"
                                 />
                             </div>
                         </div>

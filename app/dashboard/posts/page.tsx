@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
-import { usePostsStore } from '@/store/posts'
 import PostListItem from '@/components/dashboard/post-list-item'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { usePostsFull } from '@/hooks/use-posts-query'
 import { Skeleton } from '@/components/ui/skeleton'
 
 function PostSkeleton() {
@@ -27,12 +27,8 @@ function PostSkeleton() {
 }
 
 export default function PostsPage() {
-  const { posts, fetchPosts, isLoading, error } = usePostsStore()
+  const { data: posts = [], isLoading, error } = usePostsFull()
   const [deleteError, setDeleteError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchPosts()
-  }, [fetchPosts])
 
   if (isLoading) return (
     <div className="container px-4 mx-auto py-24 min-h-screen">
@@ -50,7 +46,13 @@ export default function PostsPage() {
     </div>
   )
 
-  if (error) return <div>Error: {error}</div>
+  if (error) {
+    return (
+      <div>
+        Error: {error instanceof Error ? error.message : 'Failed to load posts'}
+      </div>
+    )
+  }
 
   return (
     <div className="container px-4 mx-auto py-24 min-h-screen">

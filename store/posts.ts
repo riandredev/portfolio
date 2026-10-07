@@ -1,5 +1,11 @@
 import { create } from 'zustand'
 import { Post, PostCategory } from '@/types/post'
+import { getQueryClient } from '@/lib/get-query-client'
+import { postsKeys } from '@/lib/posts-keys'
+
+function invalidatePostsQueries() {
+  getQueryClient().invalidateQueries({ queryKey: postsKeys.all })
+}
 
 async function deleteMedia(url: string) {
   try {
@@ -39,7 +45,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       console.log('Fetching posts...');
-      const response = await fetch('/api/posts');
+      const response = await fetch('/api/posts?view=full');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -76,6 +82,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
       set(state => ({
         posts: [...state.posts, newPost]
       }));
+      invalidatePostsQueries();
       return newPost;
     } catch (error) {
       console.error('Add post error:', error);
@@ -118,6 +125,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
       set(state => ({
         posts: state.posts.map(p => p._id === post._id ? updatedPost : p)
       }));
+      invalidatePostsQueries();
       return updatedPost;
     } catch (error) {
       console.error('Update post error:', error);
@@ -166,6 +174,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
       set((state) => ({
         posts: state.posts.filter(p => p._id !== id)
       }))
+      invalidatePostsQueries();
     } catch (error) {
       console.error('Delete error:', error)
       throw error

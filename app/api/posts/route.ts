@@ -3,19 +3,35 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Post } from '@/types/post';
 import { ObjectId } from 'mongodb';
 
-export async function GET() {
+const LIST_PROJECTION = {
+  title: 1,
+  description: 1,
+  image: 1,
+  slug: 1,
+  tags: 1,
+  category: 1,
+  published: 1,
+  pinned: 1,
+  video: 1,
+  logo: 1,
+  publishedAt: 1,
+  createdAt: 1,
+  updatedAt: 1,
+  projectType: 1,
+} as const;
+
+export async function GET(request: NextRequest) {
   try {
     const { db } = await connectToDatabase();
+    const view = request.nextUrl.searchParams.get('view') ?? 'list';
+    const isFullView = view === 'full';
 
     const posts = await db
       .collection('posts')
-      .find({}) // Remove the published filter temporarily to debug
+      .find({}, isFullView ? undefined : { projection: LIST_PROJECTION })
       .sort({ publishedAt: -1 })
       .toArray();
 
-    console.log('Fetched posts count:', posts.length); // Debug log
-
-    // Convert MongoDB _id to string
     const formattedPosts = posts.map(post => ({
       ...post,
       _id: post._id.toString()
@@ -24,7 +40,9 @@ export async function GET() {
     return NextResponse.json(formattedPosts, {
       status: 200,
       headers: {
-        'Cache-Control': 'no-store, must-revalidate',
+        'Cache-Control': isFullView
+          ? 'private, no-cache'
+          : 'public, s-maxage=60, stale-while-revalidate=300',
         'Content-Type': 'application/json',
       },
     });

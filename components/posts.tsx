@@ -1,41 +1,13 @@
 'use client'
-import { useEffect, useState } from 'react'
 import PostCard from './post-card'
 import PostCardSkeleton from './post-card-skeleton'
-import { usePostsStore } from '@/store/posts'
+import { usePostsList, useSiteSettings } from '@/hooks/use-posts-query'
 
 export default function Posts() {
-  const { posts, fetchPosts, isLoading, error } = usePostsStore()
-  const [recentPostsLimit, setRecentPostsLimit] = useState(4)
-
-  useEffect(() => {
-    console.log('Component mounted, fetching posts...'); // Debug log
-    fetchPosts();
-  }, [fetchPosts]);
-
-  // Debug logs
-  useEffect(() => {
-    console.log('Current state:', {
-      postsCount: posts.length,
-      isLoading,
-      error
-    });
-  }, [posts, isLoading, error]);
-
-  useEffect(() => {
-    // Fetch settings when component mounts
-    const fetchSettings = async () => {
-      try {
-        const response = await fetch('/api/settings')
-        const settings = await response.json()
-        setRecentPostsLimit(settings.recentPostsLimit)
-      } catch (error) {
-        console.error('Failed to fetch settings:', error)
-      }
-    }
-
-    fetchSettings()
-  }, [])
+  const { data: posts = [], isLoading, isFetching, error } = usePostsList()
+  const { data: settings } = useSiteSettings()
+  const recentPostsLimit = settings?.recentPostsLimit ?? 4
+  const showSkeleton = isLoading && posts.length === 0
 
   if (error) {
     return (
@@ -43,22 +15,7 @@ export default function Posts() {
         <div className="container px-4 mx-auto">
           <div className="text-red-500 dark:text-red-400">
             <h2 className="text-xl font-medium mb-2">Error loading posts</h2>
-            <p>{error}</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <section className="relative w-full pt-4 pb-24 bg-zinc-100 dark:bg-black">
-        <div className="container px-4 mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <PostCardSkeleton key={i} />
-            ))}
+            <p>{error instanceof Error ? error.message : 'Failed to load posts'}</p>
           </div>
         </div>
       </section>
@@ -66,22 +23,12 @@ export default function Posts() {
   }
 
   const sortedPosts = [...posts].sort((a, b) => {
-    // First sort by pinned status
     if (a.pinned && !b.pinned) return -1
     if (!a.pinned && b.pinned) return 1
-
-    // Then sort by date (most recent first)
     const dateA = new Date(a.publishedAt || a.createdAt || 0).getTime()
     const dateB = new Date(b.publishedAt || b.createdAt || 0).getTime()
     return dateB - dateA
   })
-
-  // Add debug log to check date sorting
-  console.log('Sorted posts:', sortedPosts.map(p => ({
-    title: p.title,
-    date: p.publishedAt || p.createdAt,
-    dateObj: new Date(p.publishedAt || p.createdAt || 0)
-  })));
 
   return (
     <section className="relative w-full pt-4 pb-24 bg-zinc-100 dark:bg-black">
@@ -95,18 +42,18 @@ export default function Posts() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-          {isLoading ? (
-            // Show 4 skeleton cards while loading
+          {showSkeleton ? (
             Array.from({ length: 4 }).map((_, i) => (
               <PostCardSkeleton key={i} />
             ))
           ) : sortedPosts.length > 0 ? (
-            sortedPosts.slice(0, recentPostsLimit).map((post) => (
+            sortedPosts.slice(0, recentPostsLimit).map((post, index) => (
               <PostCard
                 key={post._id}
                 {...post}
                 href={`/posts/${post.slug}`}
                 pinned={post.pinned}
+                priority={index < 2}
               />
             ))
           ) : (
@@ -115,6 +62,9 @@ export default function Posts() {
             </p>
           )}
         </div>
+        {isFetching && posts.length > 0 ? (
+          <p className="sr-only" aria-live="polite">Refreshing projects</p>
+        ) : null}
       </div>
     </section>
   )

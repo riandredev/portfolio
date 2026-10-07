@@ -8,6 +8,7 @@ import { GraphicsProvider } from '@/context/graphics-context'
 import "./globals.css";
 import { Viewport } from "next/types"
 import ErrorBoundary from '@/components/error-boundary'
+import QueryProvider from '@/providers/query-provider'
 import { Suspense } from 'react'
 
 const geistSans = localFont({
@@ -150,9 +151,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <GraphicsProvider>
-              <Suspense fallback={null}>
-                {children}
-              </Suspense>
+              <QueryProvider>
+                <Suspense fallback={null}>
+                  {children}
+                </Suspense>
+              </QueryProvider>
             </GraphicsProvider>
           </ThemeProvider>
         </ErrorBoundary>

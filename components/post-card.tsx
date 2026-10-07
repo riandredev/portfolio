@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 import { ProjectType } from '@/types/post'
+import { usePrefetchPost } from '@/hooks/use-prefetch-post'
 
 interface PostCardProps {
   title: string
@@ -16,6 +17,7 @@ interface PostCardProps {
   pinned?: boolean
   category?: string
   projectType?: ProjectType
+  priority?: boolean
 }
 
 const formatCategories = (category: string) => {
@@ -25,10 +27,18 @@ const formatCategories = (category: string) => {
   return category.charAt(0).toUpperCase() + category.slice(1);
 };
 
-const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category, projectType = 'personal' }: PostCardProps) => {
+const PostCard = ({ title, description, image, video, logo, href, tags, pinned, category, projectType = 'personal', priority = false }: PostCardProps) => {
+  const prefetchPost = usePrefetchPost()
+  const slug = href.replace(/^\/posts\//, '')
+
   return (
     <article className="group flex flex-col gap-4 sm:gap-6 font-manrope">
-      <Link href={href} className="relative block aspect-[16/10] overflow-hidden border dark:border-zinc-700 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
+      <Link
+        href={href}
+        onMouseEnter={() => prefetchPost(slug)}
+        onFocus={() => prefetchPost(slug)}
+        className="relative block aspect-[16/10] overflow-hidden border dark:border-zinc-700 rounded-2xl bg-zinc-100 dark:bg-zinc-800"
+      >
         <div className="relative w-full h-full transform transition-transform duration-700 ease-out group-hover:scale-105">
           {video ? (
             <video
@@ -49,6 +59,8 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
               src={image}
               alt={title}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority={priority}
               className="object-cover"
             />
           )}
@@ -125,6 +137,8 @@ const PostCard = ({ title, description, image, video, logo, href, tags, pinned, 
           </p>
           <Link
             href={href}
+            onMouseEnter={() => prefetchPost(slug)}
+            onFocus={() => prefetchPost(slug)}
             className="shrink-0 p-1 -mr-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group/link"
           >
             <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 group-hover/link:text-zinc-900 dark:group-hover/link:text-zinc-100 transition-colors" />

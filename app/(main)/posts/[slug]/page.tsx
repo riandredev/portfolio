@@ -1,39 +1,30 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { usePostsStore } from '@/store/posts'
-import PostDetail from '@/components/post-detail'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/get-query-client'
+import { getPostBySlug } from '@/lib/posts-server'
+import { postsKeys } from '@/lib/posts-keys'
+import PostPageClient from './post-page-client'
 import { notFound } from 'next/navigation'
 
-// In [slug]/page.tsx
-export default function PostPage({ params }: { params: { slug: string } }) {
-    const [isLoading, setIsLoading] = useState(true)
-    const { posts, fetchPosts } = usePostsStore()
+export default async function PostPage({ params }: { params: { slug: string } }) {
+  const queryClient = getQueryClient()
 
-    useEffect(() => {
-      const loadPost = async () => {
-        try {
-          await fetchPosts()
-        } finally {
-          setIsLoading(false)
-        }
-      }
-      loadPost()
-    }, [fetchPosts])
+  await queryClient.prefetchQuery({
+    queryKey: postsKeys.detail(params.slug),
+    queryFn: async () => {
+      const post = await getPostBySlug(params.slug)
+      if (!post) throw new Error('Post not found')
+      return post
+    },
+  })
 
-    if (isLoading) {
-      return (
-        <div className="min-h-screen pt-20 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white" />
-        </div>
-      )
-    }
-
-    const post = posts.find(p => p.slug === params.slug)
-    if (!post) return notFound()
-
-    return (
-      <div className="w-full">
-        <PostDetail post={post} />
-      </div>
-    )
+  const prefetched = queryClient.getQueryData(postsKeys.detail(params.slug))
+  if (!prefetched) {
+    notFound()
   }
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PostPageClient slug={params.slug} />
+    </HydrationBoundary>
+  )
+}

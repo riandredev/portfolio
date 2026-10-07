@@ -7,7 +7,7 @@ import type { Post } from '@/types/post'
 import ContentBlocks from './content-blocks'
 import PostNavigation from './post-navigation'
 import { useScrollSpy } from '@/hooks/use-scroll-spy'
-import { usePostsStore } from '@/store/posts'
+import { usePostsList } from '@/hooks/use-posts-query'
 import TechnologyEntry from './technology-entry'
 
 // Interfaces
@@ -134,7 +134,7 @@ const CategoryBadge = ({ category }: { category: string }) => {
 // ProjectTypeBadge component is no longer needed and has been removed
 
 export default function PostDetail({ post }: { post: Post }) {
-  const { posts } = usePostsStore()
+  const { data: posts = [] } = usePostsList()
   const [sections, setSections] = useState<Section[]>([])
   const articleRef = useRef<HTMLElement>(null)
 

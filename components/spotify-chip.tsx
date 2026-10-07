@@ -127,6 +127,8 @@ export default function SpotifyChip() {
   }, [track, isMuted]);
 
   useEffect(() => {
+    if (!showSpotifyChip) return
+
     let mounted = true;
 
     const fetchNowPlaying = async () => {
@@ -208,7 +210,7 @@ export default function SpotifyChip() {
       mounted = false;
       clearInterval(interval);
     };
-  }, [audio, isRefreshing]);
+  }, [audio, isRefreshing, showSpotifyChip]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

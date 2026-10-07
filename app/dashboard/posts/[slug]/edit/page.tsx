@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ContentBlock, Post, ContentBlockTypes, PostCategory, ProjectType } from '@/types/post'
 import { usePostsStore } from '@/store/posts'
+import { usePostsFull } from '@/hooks/use-posts-query'
 import BlockEditor from '@/components/block-editor/block-editor'
 import FileUpload from '@/components/file-upload'
 import { generateSlug } from '@/lib/utils'
@@ -12,7 +13,8 @@ import { getDefaultTechIcon } from '@/lib/tech-icons'
 
 export default function EditPostPage({ params }: { params: { slug: string } }) {
   const router = useRouter()
-  const { posts, updatePost } = usePostsStore()
+  const { data: posts = [] } = usePostsFull()
+  const updatePost = usePostsStore((state) => state.updatePost)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
