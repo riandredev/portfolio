@@ -7,6 +7,7 @@ import {
   fetchPostsList,
   fetchSiteSettings,
 } from '@/lib/posts-client'
+import type { Post } from '@/types/post'
 import { postsKeys, settingsKeys } from '@/lib/posts-keys'
 
 export { postsKeys, settingsKeys }
@@ -25,12 +26,13 @@ export function usePostsFull() {
   })
 }
 
-export function usePostBySlug(slug: string) {
+export function usePostBySlug(slug: string, initialData?: Post) {
   return useQuery({
     queryKey: postsKeys.detail(slug),
     queryFn: () => fetchPostBySlug(slug),
     enabled: Boolean(slug),
     staleTime: 5 * 60 * 1000,
+    initialData,
   })
 }
 

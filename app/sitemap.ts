@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { db } = await connectToDatabase()
   const posts = await db
     .collection('posts')
-    .find({ published: { $ne: false } }, { projection: { slug: 1, updatedAt: 1, publishedAt: 1 } })
+    .find({}, { projection: { slug: 1, updatedAt: 1, publishedAt: 1 } })
     .toArray()
 
   // Static routes

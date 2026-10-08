@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const post = await getPostBySlug(params.slug)
 
-  if (!post || post.published === false) {
+  if (!post) {
     return {
       title: 'Project not found',
       robots: privateRouteRobots,
@@ -56,7 +56,7 @@ export default async function PostPage({ params }: PageProps) {
 
   const post = await getPostBySlug(params.slug)
 
-  if (!post || post.published === false) {
+  if (!post) {
     notFound()
   }
 
@@ -67,7 +67,7 @@ export default async function PostPage({ params }: PageProps) {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <PostJsonLd post={post} />
-      <PostPageClient slug={params.slug} />
+      <PostPageClient slug={params.slug} initialPost={post} />
     </HydrationBoundary>
   )
 }

@@ -28,7 +28,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
   const fonts = await getOgImageFonts()
   const logo = getLogoDataUrl()
 
-  if (!post || post.published === false) {
+  if (!post) {
     return new ImageResponse(
       (
         <div
