@@ -98,8 +98,8 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: [{ url: '/icon', sizes: '32x32', type: 'image/png' }],
-    apple: [{ url: '/apple-icon', sizes: '180x180', type: 'image/png' }],
+    icon: [{ url: '/favi.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/favi.svg', type: 'image/svg+xml' }],
   },
   robots: {
     index: true,
