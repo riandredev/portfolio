@@ -529,6 +529,14 @@
   width: max-content;
   gap: 0.625rem;
   animation: design-marquee-left 52s linear infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.design-marquee-thumb img {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .design-marquee-row--reverse .design-marquee-track {

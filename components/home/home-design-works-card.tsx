@@ -28,18 +28,27 @@ function MarqueeRow({
     >
       <div className="design-marquee-track flex h-full items-center">
         {loop.map((tile, i) => {
-          const isLogo = tile.id.includes('logo')
+          const isBrandTile =
+            tile.id.includes('wordmark') ||
+            tile.id.includes('mark') ||
+            tile.id.includes('og') ||
+            tile.id === 'orion-dashboard'
           return (
             <div
               key={`${tile.id}-${i}`}
-              className="design-marquee-thumb relative size-[3.5rem] shrink-0 overflow-hidden rounded-[0.65rem] sm:size-[3.85rem] sm:rounded-[0.7rem]"
+              className="design-marquee-thumb relative size-[3.5rem] shrink-0 overflow-hidden rounded-[0.65rem] bg-white/[0.06] sm:size-[3.85rem] sm:rounded-[0.7rem]"
             >
               <Image
                 src={tile.src}
                 alt=""
                 fill
-                sizes="64px"
-                className={isLogo ? 'object-cover object-center scale-110' : 'object-cover object-center'}
+                sizes="160px"
+                quality={92}
+                className={
+                  isBrandTile
+                    ? 'object-contain object-center p-1'
+                    : 'object-cover object-center'
+                }
                 unoptimized={isRemoteDesignSrc(tile.src)}
               />
             </div>

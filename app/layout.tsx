@@ -99,13 +99,16 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favi-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
       { url: '/favi-dark.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' },
-      { url: '/favi-light.svg', type: 'image/svg+xml' },
+      { url: '/favi-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
+    ],
+    shortcut: [
+      { url: '/favi-dark.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' },
+      { url: '/favi-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
     ],
     apple: [
-      { url: '/favi-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
       { url: '/favi-dark.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' },
+      { url: '/favi-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
     ],
   },
   robots: {
@@ -146,6 +149,20 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/favi-dark.svg"
+          media="(prefers-color-scheme: dark)"
+        />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/favi-light.svg"
+          media="(prefers-color-scheme: light)"
+        />
+      </head>
       <body
         className={`min-h-screen bg-background font-sans ${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${averiaSerifLibre.variable}`}
       >
