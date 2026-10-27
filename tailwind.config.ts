@@ -26,6 +26,7 @@ const config = {
         sans: ["Manrope", "system-ui", "sans-serif"],
         geist: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         serif: ["Georgia", "serif"],
+        heading: ["var(--font-heading)", "Georgia", "serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
       },
       colors: {

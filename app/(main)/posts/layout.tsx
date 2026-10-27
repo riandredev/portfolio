@@ -1,32 +1,27 @@
 import type { Metadata } from 'next'
 import { postsListOgAlt } from '@/lib/og/posts-list'
-import { ogSize } from '@/lib/og/render-og'
-import { absoluteUrl } from '@/lib/seo'
+import { absoluteUrl, ogImageMeta, siteName } from '@/lib/seo'
+
+const postsDescription =
+  'Selected client and personal work: marketing sites, web apps, design systems, and Next.js builds.'
 
 export const metadata: Metadata = {
-  title: 'Projects',
-  description:
-    'Featured professional and personal software projects by Riandre van der Voorden, including web applications, design systems, and full-stack work.',
+  title: 'Work',
+  description: postsDescription,
   alternates: {
     canonical: '/posts',
   },
   openGraph: {
-    title: 'Projects | Riandre van der Voorden',
-    description:
-      'Explore professional client work and personal software projects built with React, Next.js, and modern web tooling.',
+    title: `Work | ${siteName}`,
+    description: postsDescription,
     url: absoluteUrl('/posts'),
-    images: [
-      {
-        url: absoluteUrl('/posts/opengraph-image'),
-        width: ogSize.width,
-        height: ogSize.height,
-        alt: postsListOgAlt,
-      },
-    ],
+    images: ogImageMeta('/posts/opengraph-image', postsListOgAlt),
   },
   twitter: {
     card: 'summary_large_image',
-    images: [absoluteUrl('/posts/opengraph-image')],
+    title: `Work | ${siteName}`,
+    description: postsDescription,
+    images: ['/posts/opengraph-image'],
   },
 }
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "generate-auth": "tsx -r dotenv/config scripts/generate-auth.ts",
-    "preview:og": "npm run build && node scripts/fetch-og-preview.mjs"
+    "preview:og": "npm run build && node scripts/fetch-og-preview.mjs",
+    "optimize:life-images": "node scripts/optimize-life-images.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -35,18 +36,21 @@
     "mongoose": "^8.1.1",
     "next": "^14.1.0",
     "next-themes": "^0.2.1",
+    "next-view-transitions": "^0.3.5",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.5.3",
     "react-syntax-highlighter": "^15.5.0",
     "recharts": "^2.15.1",
+    "sharp": "^0.35.5",
     "simplex-noise": "^4.0.3",
     "sonner": "^2.0.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.161.0",
     "uploadthing": "^7.5.2",
+    "yet-another-react-lightbox": "^3.32.2",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

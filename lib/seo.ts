@@ -1,5 +1,25 @@
 import type { Metadata } from 'next'
 
+export const siteName = 'Riandre van der Voorden'
+
+export const defaultTitle = 'Riandre van der Voorden | Front-end engineer'
+
+export const siteDescription =
+  'Front-end engineer in Gauteng, South Africa. React and Next.js products with attention to typography, layout, motion, and performance.'
+
+export const ogImageSize = { width: 1200, height: 630 }
+
+export function ogImageMeta(path: string, alt: string) {
+  return [
+    {
+      url: path,
+      width: ogImageSize.width,
+      height: ogImageSize.height,
+      alt,
+    },
+  ]
+}
+
 export function getSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_BASE_URL || 'https://riandre.com'
   return raw.replace(/\/$/, '')

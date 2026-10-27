@@ -1,23 +1,22 @@
-'use client'
-
-import Hero from '@/components/hero'
-import Posts from '@/components/posts'
+import SiteCanvas from '@/components/site-canvas'
+import HomeAboutCta from '@/components/home/home-about-cta'
+import HomeIntro from '@/components/home/home-intro'
+import HomeRails from '@/components/home/home-rails'
+import HomeResume from '@/components/home/home-resume'
+import HomeResumeDownload from '@/components/home/home-resume-download'
+import PrefetchAboutAssets from '@/components/home/prefetch-about-assets'
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-transparent dark:text-white relative">
-      <div className="sticky container mx-auto top-0 min-h-[40vh] md:min-h-[50vh] lg:h-screen -mt-16">
-        <Hero />
-      </div>
-      <div className="relative mt-0 md:mt-0 lg:mt-[-20vh] z-[1]">
-        <div className="relative">
-          <div className="relative bg-zinc-100 dark:bg-black">
-            <div className="absolute inset-x-0 -top-28 h-56 bg-gradient-to-b from-transparent via-zinc-100 to-zinc-100 dark:via-black dark:to-black pointer-events-none" />
-            <div className="h-16 sm:h-24 bg-zinc-100 dark:bg-black" />
-            <Posts />
-          </div>
-        </div>
-      </div>
-    </main>
+    <div className="relative">
+      <PrefetchAboutAssets />
+      <SiteCanvas>
+        <HomeIntro />
+        <HomeAboutCta />
+        <HomeResume />
+        <HomeResumeDownload />
+      </SiteCanvas>
+      <HomeRails />
+    </div>
   )
 }

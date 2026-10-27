@@ -2,7 +2,7 @@ type OgFont = {
   name: string
   data: ArrayBuffer
   style: 'normal'
-  weight: 300 | 400 | 500 | 600
+  weight: 300 | 400 | 500 | 600 | 700
 }
 
 const fontCache = new Map<string, ArrayBuffer>()
@@ -36,11 +36,13 @@ async function fetchGoogleFont(family: string, weight: number): Promise<ArrayBuf
 }
 
 export async function getOgImageFonts(): Promise<OgFont[]> {
-  const [light, regular, medium, semibold] = await Promise.all([
+  const [light, regular, medium, semibold, averiaRegular, averiaBold] = await Promise.all([
     fetchGoogleFont('Manrope', 300),
     fetchGoogleFont('Manrope', 400),
     fetchGoogleFont('Manrope', 500),
     fetchGoogleFont('Manrope', 600),
+    fetchGoogleFont('Averia Serif Libre', 400),
+    fetchGoogleFont('Averia Serif Libre', 700),
   ])
 
   return [
@@ -48,5 +50,7 @@ export async function getOgImageFonts(): Promise<OgFont[]> {
     { name: 'Manrope', data: regular, style: 'normal', weight: 400 },
     { name: 'Manrope', data: medium, style: 'normal', weight: 500 },
     { name: 'Manrope', data: semibold, style: 'normal', weight: 600 },
+    { name: 'Averia Serif Libre', data: averiaRegular, style: 'normal', weight: 400 },
+    { name: 'Averia Serif Libre', data: averiaBold, style: 'normal', weight: 700 },
   ]
 }

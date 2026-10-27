@@ -1,18 +1,25 @@
 import type { Metadata } from 'next'
-import { absoluteUrl } from '@/lib/seo'
+import { absoluteUrl, ogImageMeta, siteName } from '@/lib/seo'
+
+const aboutDescription =
+  'Bits of my life: a few stories in photos, with songs behind them. Journal from travels and everyday moments.'
 
 export const metadata: Metadata = {
   title: 'About',
-  description:
-    'About Riandre van der Voorden — frontend engineer focused on performant web apps, design systems, and modern React/Next.js development.',
+  description: aboutDescription,
   alternates: {
     canonical: '/about',
   },
   openGraph: {
-    title: 'About | Riandre van der Voorden',
-    description:
-      'Experience, education, and certifications for Riandre van der Voorden, software engineer and UI-focused developer.',
+    title: `About | ${siteName}`,
+    description: aboutDescription,
     url: absoluteUrl('/about'),
+    images: ogImageMeta('/about/opengraph-image', 'Bits of my life — Riandre van der Voorden'),
+  },
+  twitter: {
+    title: `About | ${siteName}`,
+    description: aboutDescription,
+    images: ['/about/opengraph-image'],
   },
 }
 

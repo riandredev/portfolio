@@ -1,0 +1,22 @@
+Work
+(Replace the “Projects” section in Tech_Engineer_Resume_Template.pdf with this block. Full ATS/LaTeX guide: content/resume-latex-ats.md)
+
+GenX Digital — Next.js, TypeScript, React | Oct 2026 - Nov 2026
+https://genxdigital.co.za/
+• Designed and shipped the GenX Digital marketing site (genxdigital.co.za): responsive design, service positioning, and a contact funnel for a web, design, and digital marketing agency.
+• Delivered brand collateral in production: dual product wordmarks (Digital + Secure), OG/social preview art, and a cohesive visual system across 10+ layout variants.
+• Architected performance-optimized Next.js pages with clear IA so visitors reach services and contact in 2 clicks or fewer from the homepage.
+
+AIMS — Hugo, Markdown, Git | Feb 2026
+https://aims.ac.za/
+• Extended the AIMS public site (aims.ac.za) on Hugo: customized the theme and shipped reusable section partials for institute-wide pages.
+• Implemented a Markdown templating workflow so editors can publish new pages and compose section layouts without copying HTML or duplicating front-end files.
+• Reduced developer-only deploys for routine content by standardizing 6+ repeatable section types (hero, stats, CTAs, cards, etc.) in Markdown front matter.
+
+Kliio — Next.js, TypeScript, React.js | Oct 2025 - Present
+https://getkliio.com/
+• Founding engineer on Kliio (getkliio.com): React.js / Next.js SaaS with REST API integration, authentication, and billing for agencies and freelancers.
+• Own product UI, marketing site, and core app flows end to end (TypeScript, responsive design, web accessibility (WCAG-aware patterns)).
+• Designed the workspace to replace 4+ disconnected tools (docs, chat, PM, invoicing) with one client-facing delivery hub.
+
+Experience bullets (ATS): lib/resume-content.ts → experiences[].resumeBullets (JB needs real [X]/[Y] % before send).

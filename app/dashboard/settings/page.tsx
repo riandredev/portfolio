@@ -6,6 +6,7 @@ import { Toast } from '@/components/ui/toast'
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useSiteSettings } from "@/store/site-settings"
+import { useThemeStore } from '@/store/theme'
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Settings {
@@ -70,6 +71,12 @@ export default function SettingsPage() {
   })
 
   const { showSpotifyChip, setShowSpotifyChip } = useSiteSettings()
+  const setThemeShowSpotifyChip = useThemeStore((s) => s.setShowSpotifyChip)
+
+  const handleSpotifyChipToggle = (show: boolean) => {
+    setShowSpotifyChip(show)
+    setThemeShowSpotifyChip(show)
+  }
 
   useEffect(() => {
     fetchSettings()
@@ -175,7 +182,7 @@ export default function SettingsPage() {
                                 <Switch
                                     id="spotify-toggle"
                                     checked={showSpotifyChip}
-                                    onCheckedChange={setShowSpotifyChip}
+                                    onCheckedChange={handleSpotifyChipToggle}
                                 />
                             </div>
                         </div>

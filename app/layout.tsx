@@ -2,15 +2,14 @@ import '@/app/globals.css'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Navbar from "@/components/ui/navbar";
-import Footer from '@/components/footer';
-import { GraphicsProvider } from '@/context/graphics-context'
+import { Averia_Serif_Libre } from 'next/font/google';
 import "./globals.css";
 import { Viewport } from "next/types"
 import ErrorBoundary from '@/components/error-boundary'
 import QueryProvider from '@/providers/query-provider'
-import { defaultTwitter, getSiteUrl } from '@/lib/seo'
+import { defaultTwitter, getSiteUrl, siteDescription, siteName, defaultTitle } from '@/lib/seo'
 import { Suspense } from 'react'
+import ViewTransitionsRoot from '@/components/view-transitions-root'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,10 +35,18 @@ const manrope = localFont({
   display: 'swap',
 });
 
+const averiaSerifLibre = Averia_Serif_Libre({
+  weight: ['300', '400', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#f8f9fb' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c1917' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -48,26 +55,21 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Riandre van der Voorden | Software Engineer Portfolio",
-    template: "%s | Riandre van der Voorden"
+    default: defaultTitle,
+    template: `%s | ${siteName}`,
   },
-  description: "Official portfolio of Riandre van der Voorden - Full Stack Software Engineer specializing in React, Next.js, and modern web development. Explore my projects and professional experience.",
+  description: siteDescription,
   keywords: [
-    "Riandre",
-    "Riandre van der Voorden",
-    "van der Voorden",
-    "Software Engineer",
-    "Web Developer",
-    "Full Stack Developer",
-    "React Developer",
-    "Next.js Developer",
-    "TypeScript Expert",
-    "JavaScript Developer",
-    "Portfolio",
-    "Frontend Development",
-    "Backend Development",
-    "South African Developer",
-    "Software Development"
+    'Riandre van der Voorden',
+    'Front-end engineer',
+    'React developer',
+    'Next.js developer',
+    'TypeScript',
+    'Web developer',
+    'Gauteng',
+    'South Africa',
+    'UI engineer',
+    'Portfolio',
   ],
   authors: [
     {
@@ -78,12 +80,12 @@ export const metadata: Metadata = {
   creator: "Riandre van der Voorden",
   publisher: "Riandre van der Voorden",
   openGraph: {
-    type: "website",
-    locale: "en_ZA",
+    type: 'website',
+    locale: 'en_ZA',
     url: getSiteUrl(),
-    title: "Riandre van der Voorden - Software Engineer",
-    description: "Full Stack Software Engineer specializing in modern web development. View my portfolio, projects, and professional experience.",
-    siteName: "Riandre van der Voorden",
+    title: defaultTitle,
+    description: siteDescription,
+    siteName,
   },
   other: {
     mastodon: ["@riandre@mastodon.social"]
@@ -94,6 +96,10 @@ export const metadata: Metadata = {
     other: {
       "me": ["https://mastodon.social/@riandre"]
     }
+  },
+  icons: {
+    icon: [{ url: '/icon', sizes: '32x32', type: 'image/png' }],
+    apple: [{ url: '/apple-icon', sizes: '180x180', type: 'image/png' }],
   },
   robots: {
     index: true,
@@ -133,21 +139,21 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`min-h-screen bg-background ${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}>
+      <body
+        className={`min-h-screen bg-background font-sans ${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${averiaSerifLibre.variable}`}
+      >
         <ErrorBoundary>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
-            <GraphicsProvider>
-              <QueryProvider>
-                <Suspense fallback={null}>
-                  {children}
-                </Suspense>
-              </QueryProvider>
-            </GraphicsProvider>
+            <QueryProvider>
+              <ViewTransitionsRoot>
+                <Suspense fallback={null}>{children}</Suspense>
+              </ViewTransitionsRoot>
+            </QueryProvider>
           </ThemeProvider>
         </ErrorBoundary>
       </body>

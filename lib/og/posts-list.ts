@@ -1,12 +1,12 @@
 import type { OgLayoutProps } from './og-layout'
 
-export const postsListOgAlt = 'Projects by Riandre van der Voorden'
+export const postsListOgAlt = 'Work by Riandre van der Voorden'
 
 export const postsListOgProps: OgLayoutProps = {
-  eyebrow: 'Projects',
-  title: 'Featured work',
+  eyebrow: 'Work',
+  title: 'Selected work',
   description:
-    'Professional client projects and personal builds — from product UI to full-stack Next.js applications.',
+    'Client sites and personal builds, from agency marketing sites to product UI and full-stack Next.js applications.',
   footer: 'riandre.com/posts',
 }
 

@@ -6,6 +6,14 @@ const nextConfig = {
           source: '/posts/opengraph-image',
           destination: '/api/og/posts',
         },
+        {
+          source: '/about/opengraph-image',
+          destination: '/api/og/about',
+        },
+        {
+          source: '/design/opengraph-image',
+          destination: '/api/og/design',
+        },
       ]
     },
     images: {

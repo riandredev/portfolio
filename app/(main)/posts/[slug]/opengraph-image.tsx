@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og'
 import { fetchPostForOg } from '@/lib/og/fetch-post-for-og'
 import { getOgImageFonts } from '@/lib/og/fonts'
 import { getLogoDataUrl } from '@/lib/og/logo'
+import { paperOg } from '@/lib/og/paper-theme'
 import { isPostsListOgSlug, postsListOgAlt, postsListOgProps } from '@/lib/og/posts-list'
 import { ogContentType, ogSize, renderOgImage } from '@/lib/og/render-og'
 
@@ -38,16 +39,16 @@ export default async function Image({ params }: { params: { slug: string } }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#09090b',
-            color: '#fafafa',
-            fontSize: 48,
+            background: paperOg.bg,
+            color: paperOg.fg,
+            fontSize: 44,
             fontFamily: 'Manrope',
           }}
         >
           Project not found
         </div>
       ),
-      { ...ogSize, fonts }
+      { ...ogSize, fonts },
     )
   }
 
@@ -60,7 +61,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
           width: '100%',
           height: '100%',
           display: 'flex',
-          background: 'linear-gradient(145deg, #09090b 0%, #18181b 42%, #0c1222 100%)',
+          background: paperOg.bg,
           position: 'relative',
           overflow: 'hidden',
           fontFamily: 'Manrope',
@@ -69,12 +70,11 @@ export default async function Image({ params }: { params: { slug: string } }) {
         <div
           style={{
             position: 'absolute',
-            top: -100,
-            right: -60,
-            width: 460,
-            height: 460,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.32) 0%, rgba(37, 99, 235, 0) 70%)',
+            inset: 24,
+            borderRadius: 20,
+            border: `1px solid ${paperOg.border}`,
+            background: paperOg.surface,
+            boxShadow: '0 18px 48px -28px rgba(44, 42, 40, 0.22)',
           }}
         />
         <div
@@ -89,12 +89,13 @@ export default async function Image({ params }: { params: { slug: string } }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <img src={logo} width={72} height={46} alt="" />
+            <img src={logo} width={88} height={40} alt="" style={{ objectFit: 'contain' }} />
             <div
               style={{
-                fontSize: 18,
-                color: '#a1a1aa',
-                letterSpacing: '0.06em',
+                fontSize: 16,
+                fontWeight: 600,
+                color: paperOg.accent,
+                letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 fontFamily: 'Manrope',
               }}
@@ -102,37 +103,46 @@ export default async function Image({ params }: { params: { slug: string } }) {
               {categoryLabel}
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 620 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 620, paddingLeft: 4 }}>
             <div
               style={{
-                fontSize: 56,
-                fontWeight: 300,
+                fontSize: 52,
+                fontWeight: 400,
                 lineHeight: 1.08,
-                color: '#fafafa',
-                fontFamily: 'Manrope',
-                marginBottom: 20,
+                color: paperOg.fg,
+                fontFamily: 'Averia Serif Libre',
+                marginBottom: 18,
               }}
             >
               {post.title}
             </div>
-            <div style={{ fontSize: 24, lineHeight: 1.45, color: '#d4d4d8', fontFamily: 'Manrope' }}>
+            <div
+              style={{
+                fontSize: 22,
+                lineHeight: 1.45,
+                color: paperOg.muted,
+                fontFamily: 'Manrope',
+              }}
+            >
               {post.description}
             </div>
           </div>
-          <div style={{ fontSize: 20, color: '#71717a', fontFamily: 'Manrope' }}>riandre.com/posts/{post.slug}</div>
+          <div style={{ fontSize: 18, color: paperOg.muted, fontFamily: 'Manrope' }}>
+            riandre.com/posts/{post.slug}
+          </div>
         </div>
         {post.image ? (
           <div
             style={{
-              width: 420,
+              width: 400,
               margin: 48,
               marginLeft: 0,
-              borderRadius: 24,
+              borderRadius: 20,
               overflow: 'hidden',
-              border: '1px solid rgba(63, 63, 70, 0.75)',
+              border: `1px solid ${paperOg.border}`,
               display: 'flex',
               alignItems: 'stretch',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.45)',
+              boxShadow: '0 16px 40px -24px rgba(44, 42, 40, 0.35)',
               position: 'relative',
               zIndex: 1,
             }}
@@ -153,6 +163,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
     {
       ...ogSize,
       fonts,
-    }
+    },
   )
 }

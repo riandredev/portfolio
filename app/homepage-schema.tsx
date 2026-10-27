@@ -5,7 +5,7 @@ export default function HomepageSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Riandre van der Voorden',
-    jobTitle: 'Software Engineer',
+    jobTitle: 'Front-end engineer',
     url: absoluteUrl('/'),
     sameAs: [
       'https://github.com/riandredev',
@@ -13,7 +13,7 @@ export default function HomepageSchema() {
       'https://mastodon.social/@riandre',
     ],
     description:
-      'Full Stack Software Engineer specializing in React, Next.js, and modern web development',
+      'Front-end engineer in Gauteng, South Africa, building React and Next.js products with attention to typography, layout, and performance.',
     image: absoluteUrl('/me.jpg'),
     alumniOf: {
       '@type': 'Organization',

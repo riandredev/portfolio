@@ -1,17 +1,24 @@
 import type { Metadata } from 'next'
 import HomepageSchema from '@/app/homepage-schema'
 import HomePage from './home-page'
-import { absoluteUrl } from '@/lib/seo'
+import { absoluteUrl, defaultTitle, ogImageMeta, siteDescription } from '@/lib/seo'
 
 export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  title: defaultTitle,
+  description: siteDescription,
   openGraph: {
     url: absoluteUrl('/'),
-    title: 'Riandre van der Voorden - Software Engineer',
-    description:
-      'Full Stack Software Engineer specializing in modern web development. View my portfolio, projects, and professional experience.',
+    title: defaultTitle,
+    description: siteDescription,
+    images: ogImageMeta('/opengraph-image', 'Riandre van der Voorden — front-end engineer portfolio'),
+  },
+  twitter: {
+    title: defaultTitle,
+    description: siteDescription,
+    images: ['/twitter-image'],
   },
 }
 

@@ -1,17 +1,15 @@
 'use client'
 
 import { Suspense } from 'react'
-import Footer from '@/components/footer'
-import Navbar from '@/components/ui/navbar'
+import SiteSignature from '@/components/site-signature'
 
 export default function MainShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen bg-white dark:bg-black">
-      <Navbar />
+    <div className="site-shell relative min-h-screen">
+      <SiteSignature />
       <Suspense fallback={null}>
-        <main className="relative mx-auto">{children}</main>
+        <main className="relative z-10">{children}</main>
       </Suspense>
-      <Footer />
     </div>
   )
 }

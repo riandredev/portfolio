@@ -1,14 +1,16 @@
 import React from 'react'
 import { getLogoDataUrl } from './logo'
+import { paperOg } from './paper-theme'
 
 export type OgLayoutProps = {
   eyebrow: string
   title: string
   description: string
   footer?: string
+  tag?: string
 }
 
-export function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps) {
+export function OgLayout({ eyebrow, title, description, footer, tag = 'Front-end engineer' }: OgLayoutProps) {
   const logo = getLogoDataUrl()
 
   return (
@@ -19,58 +21,34 @@ export function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps)
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '72px 80px',
-        background: 'linear-gradient(145deg, #09090b 0%, #18181b 42%, #0c1222 100%)',
+        padding: '64px 72px',
+        background: paperOg.bg,
         position: 'relative',
         overflow: 'hidden',
         fontFamily: 'Manrope',
       }}
     >
-      <div style={{ display: 'flex', position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <div
-          style={{
-            position: 'absolute',
-            top: -120,
-            right: -80,
-            width: 520,
-            height: 520,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            bottom: -160,
-            left: -100,
-            width: 480,
-            height: 480,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(63, 209, 255, 0.22) 0%, rgba(63, 209, 255, 0) 72%)',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: 120,
-            left: 420,
-            width: 280,
-            height: 280,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, rgba(96, 165, 250, 0) 70%)',
-          }}
-        />
-      </div>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 24,
+          borderRadius: 20,
+          border: `1px solid ${paperOg.border}`,
+          background: paperOg.surface,
+          boxShadow: '0 18px 48px -28px rgba(44, 42, 40, 0.22)',
+          pointerEvents: 'none',
+        }}
+      />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 20, position: 'relative', zIndex: 1 }}>
-        <img src={logo} width={88} height={56} alt="" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 22, position: 'relative', zIndex: 1 }}>
+        <img src={logo} width={96} height={44} alt="" style={{ objectFit: 'contain' }} />
         <div
           style={{
-            fontSize: 22,
-            fontWeight: 500,
-            letterSpacing: '0.08em',
+            fontSize: 17,
+            fontWeight: 600,
+            letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: '#a1a1aa',
+            color: paperOg.accent,
             fontFamily: 'Manrope',
           }}
         >
@@ -85,30 +63,31 @@ export function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps)
           position: 'relative',
           zIndex: 1,
           maxWidth: 980,
+          paddingLeft: 8,
         }}
       >
         <div
           style={{
             display: 'flex',
-            fontSize: 72,
-            fontWeight: 300,
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            color: '#e0f2fe',
-            fontFamily: 'Manrope',
-            marginBottom: 24,
+            fontSize: 64,
+            fontWeight: 400,
+            lineHeight: 1.08,
+            letterSpacing: '-0.02em',
+            color: paperOg.fg,
+            fontFamily: 'Averia Serif Libre',
+            marginBottom: 22,
           }}
         >
           {title}
         </div>
         <div
           style={{
-            fontSize: 28,
-            lineHeight: 1.45,
-            color: '#d4d4d8',
+            fontSize: 26,
+            lineHeight: 1.5,
+            color: paperOg.muted,
             fontWeight: 400,
             fontFamily: 'Manrope',
-            maxWidth: 900,
+            maxWidth: 920,
           }}
         >
           {description}
@@ -122,25 +101,27 @@ export function OgLayout({ eyebrow, title, description, footer }: OgLayoutProps)
           alignItems: 'center',
           position: 'relative',
           zIndex: 1,
-          borderTop: '1px solid rgba(63, 63, 70, 0.65)',
-          paddingTop: 28,
+          borderTop: `1px solid ${paperOg.border}`,
+          paddingTop: 24,
+          marginTop: 8,
         }}
       >
-        <div style={{ fontSize: 22, color: '#71717a', fontFamily: 'Manrope' }}>
+        <div style={{ fontSize: 20, color: paperOg.muted, fontFamily: 'Manrope' }}>
           {footer ?? 'riandre.com'}
         </div>
         <div
           style={{
-            fontSize: 18,
-            color: '#52525b',
+            fontSize: 16,
+            fontWeight: 500,
+            color: paperOg.fg,
             fontFamily: 'Manrope',
             padding: '10px 18px',
             borderRadius: 999,
-            border: '1px solid rgba(63, 63, 70, 0.8)',
-            background: 'rgba(24, 24, 27, 0.65)',
+            border: `1px solid ${paperOg.border}`,
+            background: paperOg.bg,
           }}
         >
-          Front-end Engineer
+          {tag}
         </div>
       </div>
     </div>
