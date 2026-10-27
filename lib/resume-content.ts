@@ -113,7 +113,7 @@ export const experiences: ResumeExperience[] = [
   {
     id: 'pixelmeta',
     company: 'PixelMeta',
-    role: 'UI/UX Designer and Software Developer',
+    role: 'Front-end Web Engineer & UI/UX Designer',
     period: 'Jun 2025 - Present',
     location: 'Cape Town, South Africa',
     href: 'https://pixelperfect.co.za',
