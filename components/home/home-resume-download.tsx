@@ -1,7 +1,7 @@
 import { Download } from 'lucide-react'
 
 /** Bump when replacing `public/riandre-resume.pdf` so browsers skip cached PDFs. */
-const RESUME_VERSION = '2026-10-27'
+const RESUME_VERSION = '2026-10-27-edu'
 const RESUME_PATH = `/riandre-resume.pdf?v=${RESUME_VERSION}`
 
 export default function HomeResumeDownload() {
