@@ -8,7 +8,7 @@ export default function HomeIntro() {
 
       <div className="space-y-4 font-geist text-[16px] leading-[1.72] text-[var(--paper-fg)] sm:text-[17px]">
         <p>
-          I&apos;m a front-end engineer in Gauteng, South Africa. I build web products with React and Next.js, and I
+          I&apos;m a front-end engineer in Gauteng, South Africa. I build web products primarily with React and Next.js, and I
           care about the small details: typography, layout, motion, and keeping things fast as they scale.
         </p>
         <p>
