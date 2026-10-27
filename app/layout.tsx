@@ -98,7 +98,10 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: [{ url: '/favi.svg', type: 'image/svg+xml' }],
+    icon: [
+      { url: '/favi.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
+      { url: '/favi.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' },
+    ],
     apple: [{ url: '/favi.svg', type: 'image/svg+xml' }],
   },
   robots: {
