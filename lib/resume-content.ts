@@ -160,7 +160,7 @@ export const education: ResumeEducation[] = [
     id: 'ctu-fet',
     degree: 'Further Education and Training Certificate: Information Technology',
     school: 'CTU Training Solutions',
-    period: '2023 - 2024',
+    period: '2023 - 2025',
     href: 'https://ctutraining.ac.za',
   },
 ]
