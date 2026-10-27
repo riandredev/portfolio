@@ -1,11 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    async rewrites() {
+    async redirects() {
       return [
         {
-          source: '/posts/opengraph-image',
-          destination: '/api/og/posts',
+          source: '/posts',
+          destination: '/#work',
+          permanent: true,
         },
+        {
+          source: '/posts/:slug',
+          destination: '/#work',
+          permanent: true,
+        },
+      ]
+    },
+    async rewrites() {
+      return [
         {
           source: '/about/opengraph-image',
           destination: '/api/og/about',

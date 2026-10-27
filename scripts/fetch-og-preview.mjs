@@ -9,8 +9,7 @@ const outDir = join(process.cwd(), 'og-preview')
 const routes = [
   { path: '/opengraph-image', file: 'home.png' },
   { path: '/about/opengraph-image', file: 'about.png' },
-  { path: '/posts/opengraph-image', file: 'posts.png' },
-  { path: '/posts/cms/opengraph-image', file: 'post-cms.png' },
+  { path: '/design/opengraph-image', file: 'design.png' },
 ]
 
 function wait(ms) {

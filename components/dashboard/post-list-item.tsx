@@ -73,12 +73,6 @@ export default function PostListItem({ post }: PostListItemProps) {
       {/* Actions */}
       <div className="flex items-center gap-2">
         <Link
-          href={`/posts/${post.slug}`}
-          className="p-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
-        >
-          View
-        </Link>
-        <Link
           href={`/dashboard/posts/${post.slug}/edit`}
           className="p-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
         >

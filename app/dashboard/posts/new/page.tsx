@@ -277,7 +277,7 @@ export default function NewPostPage() {
                   required
                 />
                 <p className="mt-1 text-xs text-zinc-500">
-                  This will be the URL of your post: /posts/<span className="font-mono">{slug || 'your-post-title'}</span>
+                  Slug (for your records): <span className="font-mono">{slug || 'your-post-title'}</span>
                 </p>
               </div>
 
