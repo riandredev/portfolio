@@ -157,11 +157,11 @@ export const experiences: ResumeExperience[] = [
 
 export const education: ResumeEducation[] = [
   {
-    id: 'ctu-fet',
-    degree: 'Further Education and Training Certificate: Information Technology',
+    id: 'ctu-nc',
+    degree: 'National Certificate: Information Technology (Systems Development)',
     school: 'CTU Training Solutions',
     period: '2023 - 2025',
-    href: 'https://ctutraining.ac.za',
+    href: 'https://allqs.saqa.org.za/showQualification.php?id=48872',
   },
 ]
 
