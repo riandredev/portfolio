@@ -17,7 +17,7 @@ export default function HomeIntro() {
         </p>
         <p>
           At{' '}
-          <Link href="https://pixelperfect.co.za" className="intro-link" target="_blank" rel="noopener noreferrer">
+          <Link href="https://pixelmeta.co.za/" className="intro-link" target="_blank" rel="noopener noreferrer">
             PixelMeta
           </Link>{' '}
           I&apos;ve built 30+ client sites and lifted average Lighthouse performance scores by 40% across 20+ WordPress

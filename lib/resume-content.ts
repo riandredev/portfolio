@@ -115,7 +115,7 @@ export const experiences: ResumeExperience[] = [
     role: 'Front-end Engineer & UI/UX Designer',
     period: 'Jun 2025 - Present',
     location: 'Cape Town, South Africa',
-    href: 'https://pixelperfect.co.za',
+    href: 'https://pixelmeta.co.za/',
     summary:
       'Designed and built 30+ client websites and web apps, from WordPress builds to Next.js applications on MERN and T3 stacks; designed 10+ sites from scratch in Figma, including hand-offs to other developers. Built Solara Psychics end to end: the Next.js website, a real-time live chat service and third-party integrations. Lifted average Lighthouse performance scores by 40% across 20+ migrated WordPress sites.',
     resumeBullets: [
