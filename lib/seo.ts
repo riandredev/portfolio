@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 
 export const siteName = 'Riandre van der Voorden'
 
-export const defaultTitle = 'Riandre van der Voorden | Front-end engineer'
+export const defaultTitle = 'Riandre van der Voorden | Front-end Engineer · UI Engineer'
 
 export const siteDescription =
-  'Front-end engineer in Gauteng, South Africa. React and Next.js products with attention to typography, layout, motion, and performance.'
+  'Front-end engineer with 2+ years shipping production Next.js, React and TypeScript apps. Founding engineer at Kliio. 30+ client sites at PixelMeta with 40% average Lighthouse improvement. Strong UI/UX in Figma, accessible fast front ends. Remote, based in South Africa (UTC+2).'
 
 export const ogImageSize = { width: 1200, height: 630 }
 
