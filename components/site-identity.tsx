@@ -25,7 +25,7 @@ export default function SiteIdentity({ className, priority, homeTooltip }: SiteI
           Riandre van der Voorden
         </p>
         <p className="font-geist text-sm leading-tight text-[var(--paper-muted)]">
-          Front-end Engineer · UI Engineer
+          Front-end engineer · UI &amp; performance
         </p>
       </div>
     </>

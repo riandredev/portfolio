@@ -8,35 +8,26 @@ export default function HomeIntro() {
 
       <div className="space-y-4 font-geist text-[16px] leading-[1.72] text-[var(--paper-fg)] sm:text-[17px]">
         <p>
-          I&apos;m a front-end engineer with 2+ years shipping production web apps in Next.js, React and TypeScript.
-          Founding engineer at{' '}
-          <Link href="https://getkliio.com/" className="intro-link" target="_blank" rel="noopener noreferrer">
-            Kliio
-          </Link>
-          , a project-delivery CRM for agencies, where I own the product UI and core app flows end to end.
+          I&apos;m a front-end engineer in Gauteng, South Africa. I build web products primarily with React and Next.js, and I
+          care about the small details: typography, layout, motion, and keeping things fast as they scale.
         </p>
         <p>
-          At{' '}
+          Right now I&apos;m at{' '}
           <Link href="https://pixelperfect.co.za" className="intro-link" target="_blank" rel="noopener noreferrer">
             PixelMeta
-          </Link>{' '}
-          I&apos;ve built 30+ client sites and lifted average Lighthouse performance scores by 40% across 20+ WordPress
-          migrations. Strong in UI/UX (Figma) and accessible, fast front ends.
+          </Link>
+          , working across UI design and development for client and in-house products.
         </p>
         <p>
           See{' '}
           <Link href="/#work" className="intro-link">
             work
           </Link>{' '}
-          for shipped products, or find me on{' '}
-          <Link href="https://github.com/riandredev" className="intro-link" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </Link>{' '}
-          and{' '}
+          for shipped products and the design gallery, or{' '}
           <Link href="https://linkedin.com/in/riandre" className="intro-link" target="_blank" rel="noopener noreferrer">
             LinkedIn
-          </Link>
-          . Remote, based in South Africa (UTC+2). Open to interesting front-end roles and collaborations.
+          </Link>{' '}
+          for the full timeline. Open to interesting front-end roles and collaborations.
         </p>
       </div>
       <p className="font-geist text-[15px] leading-[1.65] text-[var(--paper-muted)]">
