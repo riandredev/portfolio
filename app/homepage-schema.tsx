@@ -5,7 +5,7 @@ export default function HomepageSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Riandre van der Voorden',
-    jobTitle: 'Front-end engineer',
+    jobTitle: 'Front-end Engineer · UI Engineer',
     url: absoluteUrl('/'),
     sameAs: [
       'https://github.com/riandredev',
@@ -13,18 +13,24 @@ export default function HomepageSchema() {
       'https://mastodon.social/@riandre',
     ],
     description:
-      'Front-end engineer in Gauteng, South Africa, building React and Next.js products with attention to typography, layout, and performance.',
+      'Front-end engineer with 2+ years shipping production Next.js, React and TypeScript apps. Founding engineer at Kliio. 30+ client sites at PixelMeta with 40% average Lighthouse improvement. Strong UI/UX in Figma, accessible fast front ends. Remote, based in South Africa (UTC+2).',
     image: absoluteUrl('/me.jpg'),
     alumniOf: {
       '@type': 'Organization',
       name: 'CTU Training Solutions',
     },
     knowsAbout: [
-      'Software Development',
+      'TypeScript',
+      'JavaScript',
       'React',
       'Next.js',
-      'TypeScript',
-      'Full Stack Development',
+      'Astro',
+      'Vue.js',
+      'Electron',
+      'Tailwind CSS',
+      'Figma',
+      'WCAG Accessibility',
+      'Core Web Vitals',
       'Web Development',
     ],
   }

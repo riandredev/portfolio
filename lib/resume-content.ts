@@ -41,45 +41,30 @@ export type ResumeWork = {
 
 export const work: ResumeWork[] = [
   {
+    id: 'orion',
+    title: 'Orion',
+    subtitle: 'Electron, React 19, TypeScript, Vite',
+    period: 'Dec 2024 - Nov 2026',
+    href: 'https://github.com/riandredev/orion',
+    summary:
+      'Open-source church presentation software built for my church\'s 5-person IT team, used every week to project hymns, Bible passages and slides to 2 projectors. Multi-display projection, PowerPoint/Keynote/PDF/Bible importers, 37k lines TypeScript with 119 Vitest tests, cross-platform installers. GPL-3.0 license. Live at orion.riandre.com.',
+    bullets: [
+      'Built a cross-platform desktop app for my church\'s 5-person IT team, used every week in services to send the order of service, hymns, Bible passages and slides to 2 projectors; free under GPL-3.0.',
+      'Engineered multi-display projection to any number of enabled outputs (sandboxed windows, video and web output, transitions), plus PowerPoint, Keynote, PDF and Bible importers.',
+      'Prototyping a lighter experimental build with a native projector written in Rust (wgpu GPU rendering, WGSL transition shaders) aimed at lower memory use, switchable from the stable release in-app.',
+      '37k lines of TypeScript with 119 passing Vitest unit tests; Windows, Linux and universal macOS installers built via electron-builder, with the macOS release automated in GitHub Actions.',
+    ],
+  },
+  {
     id: 'genx-digital',
     title: 'GenX Digital',
-    subtitle: 'Next.js, TypeScript, React',
+    subtitle: 'Astro, TypeScript, Markdown, Git',
     period: 'Oct 2026 - Nov 2026',
     href: 'https://genxdigital.co.za/',
     summary:
-      'Designed and built the public site for GenX Digital, a web development, design, and digital marketing agency: responsive design, performance optimization, and a fast path from homepage to contact.',
+      'Designed and shipped the agency\'s marketing site and brand system (wordmarks, OG art, 10+ layout variants), with information architecture that puts services and contact within 2 clicks of the homepage.',
     bullets: [
-      'Designed and shipped the GenX Digital marketing site (genxdigital.co.za): responsive design, service positioning, and a contact funnel for a web, design, and digital marketing agency.',
-      'Delivered brand collateral in production: dual product wordmarks (Digital + Secure), OG/social preview art, and a cohesive visual system across 10+ layout variants.',
-      'Architected performance-optimized Next.js pages with clear IA so visitors reach services and contact in 2 clicks or fewer from the homepage.',
-    ],
-  },
-  {
-    id: 'aims',
-    title: 'AIMS',
-    subtitle: 'African Institute for Mathematical Sciences',
-    period: 'Feb 2026',
-    href: 'https://aims.ac.za/',
-    summary:
-      'Evolved the AIMS public site on Hugo: refreshed the theme, then built on top of it with a Markdown templating system so the team can add content and section layouts without repeating the same structure by hand.',
-    bullets: [
-      'Extended the AIMS public site (aims.ac.za) on Hugo: customized the theme and shipped reusable section partials for institute-wide pages.',
-      'Implemented a Markdown templating workflow so editors can publish new pages and compose section layouts without copying HTML or duplicating front-end files.',
-      'Reduced reliance on developer-only deploys for content updates by standardizing 15+ repeatable section types (hero, stats, CTAs, cards, etc.) in Markdown front matter.',
-    ],
-  },
-  {
-    id: 'kliio',
-    title: 'Kliio',
-    subtitle: 'Project delivery CRM for agencies and freelancers',
-    period: 'Oct 2025 - Present',
-    href: 'https://getkliio.com/',
-    summary:
-      'Building Kliio end to end: a workspace that ties briefs, projects, client conversations, approvals, and billing together so freelancers and agencies can deliver without juggling a stack of tools. Ongoing product, UI, and marketing site work.',
-    bullets: [
-      'Founding engineer on Kliio (getkliio.com): React.js / Next.js SaaS with REST API integration, authentication, and billing for agencies and freelancers.',
-      'Own product UI, marketing site, and core app flows end to end (TypeScript, responsive design, web accessibility (WCAG-aware patterns)).',
-      'Designed the workspace to replace 5+ disconnected tools (docs, chat, PM, invoicing) with one client-facing delivery hub.',
+      'Designed and shipped the agency\'s marketing site and brand system (wordmarks, OG art, 10+ layout variants), with information architecture that puts services and contact within 2 clicks of the homepage.',
     ],
   },
 ]
@@ -111,18 +96,33 @@ export function formatExperienceForResumePdf(): string {
 
 export const experiences: ResumeExperience[] = [
   {
+    id: 'kliio',
+    company: 'Kliio',
+    role: 'Founding Engineer',
+    period: 'Oct 2025 - Present',
+    location: 'Next.js, React, TypeScript',
+    href: 'https://getkliio.com/',
+    summary:
+      'Own the product UI, marketing site and core app flows end to end for a pre-launch project-delivery CRM unifying briefs, tasks, client chat, approvals and billing. Designed the workspace to replace 5+ disconnected tools with one client-facing hub.',
+    resumeBullets: [
+      'Own the product UI, marketing site and core app flows end to end for a pre-launch project-delivery CRM unifying briefs, tasks, client chat, approvals and billing.',
+      'Designed the workspace to replace 5+ disconnected tools (docs, chat, PM, invoicing) with one client-facing hub.',
+    ],
+  },
+  {
     id: 'pixelmeta',
-    company: 'PixelMeta',
-    role: 'Front-end Web Engineer & UI/UX Designer',
+    company: 'PixelMeta (formerly PixelPerfect)',
+    role: 'Front-end Engineer & UI/UX Designer',
     period: 'Jun 2025 - Present',
     location: 'Cape Town, South Africa',
-    href: 'https://pixelperfect.co.za',
+    href: 'https://pixelmeta.co.za/',
     summary:
-      'I design and build client sites and apps with WordPress, React, Next.js, and modern JS stacks (MERN, T3), including large-scale WordPress migrations and front-end performance work. I focus on responsive UI, SEO, and conversion-focused delivery.',
+      'Designed and built 30+ client websites and web apps, from WordPress builds to Next.js applications on MERN and T3 stacks; designed 10+ sites from scratch in Figma, including hand-offs to other developers. Built Solara Psychics end to end: the Next.js website, a real-time live chat service and third-party integrations. Lifted average Lighthouse performance scores by 40% across 20+ migrated WordPress sites.',
     resumeBullets: [
-      'Designed and developed websites and web applications for clients using WordPress and modern JavaScript frameworks including MERN and T3 stacks.',
-      'Migrated 20+ WordPress client sites to updated themes and performance-tuned setups, improving average Lighthouse performance scores by 40% through caching, asset optimization, responsive design, and SEO-focused front-end work.',
-      'Delivered responsive UI/UX designs and optimized front-end performance to improve usability, SEO, and client conversion rates.',
+      'Designed and built 30+ client websites and web apps, from WordPress builds to Next.js applications on MERN and T3 stacks; designed 10+ sites from scratch in Figma, including hand-offs to other developers.',
+      'Built Solara Psychics end to end: the Next.js website, a real-time live chat service and third-party integrations.',
+      'Lifted average Lighthouse performance scores by 40% across 20+ migrated client WordPress sites through caching, asset optimisation, responsive design and SEO-focused front-end work.',
+      'Extended the AIMS public site (aims.ac.za) on Hugo: customised the theme, built reusable section partials and standardised 15+ section types in Markdown front matter so editors publish without copying HTML.',
     ],
   },
   {
@@ -133,10 +133,9 @@ export const experiences: ResumeExperience[] = [
     location: 'Krugersdorp, South Africa',
     href: 'https://konzult.co.za/',
     summary:
-      'I built custom Microsoft Power Apps for business analytics clients on the Power Platform (Power Apps, Automate, Power BI, Entra ID)—internal tools teams actually use.',
+      'Built a Microsoft Power Platform business app for BrightRock (insurance) as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
     resumeBullets: [
-      'Designed and built custom Microsoft Power Apps for businesses, improving collaboration and operational reporting.',
-      'Used Power Platform (Power Apps, Power Automate, Power BI, Entra ID) to deliver 3+ responsive internal applications.',
+      'Built a Microsoft Power Platform business app for BrightRock (insurance) as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
     ],
   },
   {
@@ -146,11 +145,9 @@ export const experiences: ResumeExperience[] = [
     period: 'Aug 2024 - Nov 2024',
     location: 'Roodepoort, South Africa',
     summary:
-      'I shipped their Next.js marketing site with technical SEO, responsive design, and performance optimization, plus UX iterations that improved conversions on key service pages.',
+      'Built a user-friendly Next.js website with modern SEO best practices; ran UX research to refine usability.',
     resumeBullets: [
-      'Launched a Next.js marketing site with responsive design, technical SEO, and performance optimization (Core Web Vitals).',
-      'Increased organic traffic by [X]% within 4 months post-launch — replace [X] with your Analytics figure before sending.',
-      'Improved contact-page conversion rate by [Y]% through UX research and WCAG-aware layout refinements — replace [Y] with your figure.',
+      'Built a user-friendly Next.js website with modern SEO best practices; ran UX research to refine usability.',
     ],
   },
 ]
@@ -158,7 +155,7 @@ export const experiences: ResumeExperience[] = [
 export const education: ResumeEducation[] = [
   {
     id: 'ctu-nc',
-    degree: 'National Certificate: Information Technology (Systems Development)',
+    degree: 'National Certificate: IT (Systems Development) · GPA 3.74/4.0',
     school: 'CTU Training Solutions',
     period: '2023 - 2025',
     href: 'https://allqs.saqa.org.za/showQualification.php?id=48872',
