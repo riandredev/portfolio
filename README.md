@@ -1,14 +1,7 @@
-# Riandre van der Voorden — Portfolio
+# Portfolio
 
-Personal portfolio site: [riandre.com](https://riandre.com)
+<img src="./assets/github-header.png" alt="Logo for Portfolio" width="500"/>
 
-![riandre.com homepage](docs/homepage.png)
+My portfolio site.
 
-**Stack:** Next.js 14, React, TypeScript, Tailwind CSS, MongoDB
-
-## Run locally
-
-```bash
-npm install
-npm run dev
-```
+![Portfolio showcase](./assets/showcase.png)
