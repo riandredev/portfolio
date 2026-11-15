@@ -1,7 +1,7 @@
 import { Download } from 'lucide-react'
 
-/** Versioned resume filename to ensure CDN/browser cache busting. */
-const RESUME_PATH = `/riandre-resume-frontend-v3.pdf`
+/** Resume filename. */
+const RESUME_PATH = `/riandre-resume.pdf`
 
 export default function HomeResumeDownload() {
   return (

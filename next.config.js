@@ -3,6 +3,11 @@ const nextConfig = {
     async redirects() {
       return [
         {
+          source: '/riandre-resume-frontend-v3.pdf',
+          destination: '/riandre-resume.pdf',
+          permanent: true,
+        },
+        {
           source: '/posts',
           destination: '/#work',
           permanent: true,
