@@ -155,7 +155,7 @@ export const experiences: ResumeExperience[] = [
 export const education: ResumeEducation[] = [
   {
     id: 'ctu-nc',
-    degree: 'National Certificate: IT (Systems Development) · GPA 3.74/4.0',
+    degree: 'National Certificate: IT (Systems Development) · 83% avg | FETC 88% avg · Web Programming 91%',
     school: 'CTU Training Solutions',
     period: '2023 - 2025',
     href: 'https://allqs.saqa.org.za/showQualification.php?id=48872',
