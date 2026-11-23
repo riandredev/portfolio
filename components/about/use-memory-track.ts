@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const MEMORY_PREVIEW_VOLUME = 0.3
+export const MEMORY_PREVIEW_VOLUME = 0.2
 
 export type TrackMeta = {
   previewUrl: string | null
