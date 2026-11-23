@@ -133,9 +133,9 @@ export const experiences: ResumeExperience[] = [
     location: 'Krugersdorp, South Africa',
     href: 'https://konzult.co.za/',
     summary:
-      'Built a Microsoft Power Platform business app for BrightRock (insurance) as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
+      'Built a Microsoft Power Platform business app for a national insurance client as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
     resumeBullets: [
-      'Built a Microsoft Power Platform business app for BrightRock (insurance) as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
+      'Built a Microsoft Power Platform business app for a national insurance client as Konzult client work, using Power Apps, Power Automate, Power BI and Entra ID.',
     ],
   },
   {
